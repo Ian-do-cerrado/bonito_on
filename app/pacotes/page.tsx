@@ -1,0 +1,309 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { ArrowLeft, Star, Clock, Users, Filter, Search } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { SiteLayout } from "@/components/site-layout"
+import type { Package } from "@/types/package"
+import { useContactModal } from "@/hooks/use-contact-modal"
+import { packageService } from "@/services/supabase-packages"
+
+export default function PackagesPage() {
+  const router = useRouter()
+  const { openModal } = useContactModal()
+  const [packages, setPackages] = useState<Package[]>([])
+  const [filteredPackages, setFilteredPackages] = useState<Package[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState("all")
+  const [sortBy, setSortBy] = useState("price-asc")
+
+  // Garantir que a página inicie no topo
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+  }, [])
+
+  useEffect(() => {
+    const loadPackages = async () => {
+      try {
+        setIsLoading(true)
+        const packageData = await packageService.getAllPackages()
+        setPackages(packageData)
+        setFilteredPackages(packageData)
+      } catch (error) {
+        console.error("Error loading packages:", error)
+        // Fallback to localStorage
+        const savedPackages = localStorage.getItem("packages")
+        if (savedPackages) {
+          const localPackages: Package[] = JSON.parse(savedPackages)
+          setPackages(localPackages)
+          setFilteredPackages(localPackages)
+        }
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadPackages()
+  }, [])
+
+  // Filter and sort packages
+  useEffect(() => {
+    const filtered = packages.filter((pkg) => {
+      const matchesSearch =
+        pkg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesCategory = categoryFilter === "all" || pkg.category === categoryFilter
+      return matchesSearch && matchesCategory
+    })
+
+    // Sort packages
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "price-asc":
+          return a.price - b.price
+        case "price-desc":
+          return b.price - a.price
+        case "duration-asc":
+          return Number.parseInt(a.duration) - Number.parseInt(b.duration)
+        case "duration-desc":
+          return Number.parseInt(b.duration) - Number.parseInt(a.duration)
+        case "rating":
+          return b.rating - a.rating
+        default:
+          return 0
+      }
+    })
+
+    setFilteredPackages(filtered)
+  }, [packages, searchTerm, categoryFilter, sortBy])
+
+  const getCategoryLabel = (category: string) => {
+    switch (category) {
+      case "economico":
+        return "Econômico"
+      case "premium":
+        return "Premium"
+      case "luxo":
+        return "Luxo"
+      default:
+        return "Padrão"
+    }
+  }
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "economico":
+        return "bg-blue-100 text-blue-800"
+      case "premium":
+        return "bg-purple-100 text-purple-800"
+      case "luxo":
+        return "bg-amber-100 text-amber-800"
+      default:
+        return "bg-gray-100 text-gray-800"
+    }
+  }
+
+  const createSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+  }
+
+  if (isLoading) {
+    return (
+      <SiteLayout>
+        <div className="pt-16 flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Carregando pacotes...</p>
+          </div>
+        </div>
+      </SiteLayout>
+    )
+  }
+
+  return (
+    <SiteLayout>
+      {/* Hero Section */}
+      <section className="relative h-64 pt-16 bg-gradient-to-r from-green-600 to-green-800">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          <div>
+            <div className="mb-4">
+              <Button
+                onClick={() => router.back()}
+                variant="outline"
+                size="sm"
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Voltar
+              </Button>
+            </div>
+            <h1 className="text-4xl font-bold text-white mb-4">Pacotes Completos</h1>
+            <p className="text-xl text-green-100">
+              Experiências completas em Bonito com hospedagem, passeios e refeições inclusos
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Filters */}
+      <section className="py-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Buscar pacotes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Categoria" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas as categorias</SelectItem>
+                <SelectItem value="economico">Econômico</SelectItem>
+                <SelectItem value="premium">Premium</SelectItem>
+                <SelectItem value="luxo">Luxo</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger>
+                <SelectValue placeholder="Ordenar por" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="price-asc">Menor preço</SelectItem>
+                <SelectItem value="price-desc">Maior preço</SelectItem>
+                <SelectItem value="duration-asc">Menor duração</SelectItem>
+                <SelectItem value="duration-desc">Maior duração</SelectItem>
+                <SelectItem value="rating">Melhor avaliação</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-gray-500" />
+              <span className="text-sm text-gray-600">
+                {filteredPackages.length} pacote{filteredPackages.length !== 1 ? "s" : ""} encontrado
+                {filteredPackages.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Packages Grid */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {filteredPackages.length === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum pacote encontrado</h3>
+              <p className="text-gray-600 mb-4">Tente ajustar os filtros ou buscar por outros termos.</p>
+              <Button
+                onClick={() => {
+                  setSearchTerm("")
+                  setCategoryFilter("all")
+                  setSortBy("price-asc")
+                }}
+                variant="outline"
+              >
+                Limpar filtros
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredPackages.map((pkg) => (
+                <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <div className="relative h-48">
+                    <Image src={pkg.image || "/placeholder.svg"} alt={pkg.title} fill className="object-cover" />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <Badge className={getCategoryColor(pkg.category)}>{getCategoryLabel(pkg.category)}</Badge>
+                      {pkg.originalPrice && (
+                        <Badge className="bg-red-500 text-white">
+                          {Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100)}% OFF
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  <CardHeader>
+                    <CardTitle className="text-xl">{pkg.title}</CardTitle>
+                    <p className="text-gray-600">{pkg.subtitle}</p>
+                  </CardHeader>
+
+                  <CardContent>
+                    <p className="text-gray-700 mb-4 line-clamp-3">{pkg.description}</p>
+
+                    <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-4 h-4 text-green-600" />
+                        <span>{pkg.duration}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users className="w-4 h-4 text-green-600" />
+                        <span>Até {pkg.maxPeople}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 text-yellow-500" />
+                        <span>{pkg.rating}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        {pkg.originalPrice && (
+                          <div className="text-sm text-gray-500 line-through">
+                            R$ {pkg.originalPrice.toFixed(2).replace(".", ",")}
+                          </div>
+                        )}
+                        <div className="text-2xl font-bold text-green-600">
+                          R$ {pkg.price.toFixed(2).replace(".", ",")}
+                        </div>
+                        <div className="text-sm text-gray-600">por pessoa</div>
+                      </div>
+
+                      <div className="flex flex-col gap-2">
+                        <Link href={`/pacotes/${createSlug(pkg.title)}`}>
+                          <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                            Ver Detalhes
+                          </Button>
+                        </Link>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={openModal}
+                          className="text-green-600 border-green-600 hover:bg-green-50"
+                        >
+                          Reservar
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </SiteLayout>
+  )
+}
