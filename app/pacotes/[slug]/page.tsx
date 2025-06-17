@@ -18,9 +18,9 @@ interface PackageDetailPageProps {
   }
 }
 
-export default function PackageDetailPage({ params: paramsPromise }: PackageDetailPageProps) {
-  const params = use(paramsPromise)
+export default function PackageDetailPage({ params }: PackageDetailPageProps) {
   const slug = params.slug
+
 
   const { openModal } = useContactModal()
   const [packageData, setPackageData] = useState<Package | null>(null)
