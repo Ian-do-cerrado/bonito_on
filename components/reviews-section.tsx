@@ -26,57 +26,57 @@ export function ReviewsSection() {
   const [reviews] = useState<Review[]>([
     {
       id: "1",
-      name: "Maria Santos",
+      name: "Erika Fernanda Nicolini Calazans",
       rating: 5,
       comment:
-        "Excelente atendimento! A equipe da BonitoON organizou nossa viagem de forma perfeita. Os passeios foram incríveis e superaram nossas expectativas. Recomendo muito!",
-      date: "há 2 semanas",
-      avatar: "/placeholder.svg?height=60&width=60",
+        "Agência sensacional Fomos indicados e com certeza indicaremos e a contrataremos novamente. Excelente receptivo, transportes, motoristas e controle de horários e confirmações. Muito Obrigada por dias incríveis!",
+      date: "há 5 meses",
+      avatar: "/erica.webp?height=60&width=60",
     },
     {
       id: "2",
-      name: "João Silva",
+      name: "Kelly Duarte",
       rating: 5,
       comment:
-        "Melhor agência de turismo de Bonito! Profissionais muito atenciosos e conhecedores da região. Fizemos vários passeios e todos foram organizados perfeitamente.",
-      date: "há 1 mês",
-      avatar: "/placeholder.svg?height=60&width=60",
+        "Fui até a agência presencialmente depois de 2 tentativas frustrantes em outras agências da cidade, o Ismael pacientemente me atendeu e explicou todos os passeios detalhadamente, com sugestões, panfletos e vídeos. Ele foi extremamente atencioso e simpático, recomendo!",
+      date: "há 2 semanas",
+      avatar: "/kellyduarte.webp?height=60&width=60",
     },
     {
       id: "3",
-      name: "Ana Costa",
+      name: "Sergio Gomes",
       rating: 5,
       comment:
-        "Experiência incrível! A BonitoON cuidou de todos os detalhes da nossa viagem. Os guias eram muito experientes e os passeios, simplesmente espetaculares!",
-      date: "há 3 semanas",
-      avatar: "/placeholder.svg?height=60&width=60",
+        "Viagem inesquecível, com toda ajuda e suporte Pascoal da Agência que tem muita paciência para oferecer o melhor atendimento!!!! Minha família curtiu demais todas dicas !! Até breve e indicamos fortemente !!!! G🌎 …",
+      date: "há 1 ano",
+      avatar: "/SergioGomes.webp?height=60&width=60",
     },
     {
       id: "4",
-      name: "Carlos Oliveira",
+      name: "Patrícia da Rocha",
       rating: 5,
       comment:
-        "Atendimento excepcional desde o primeiro contato. Conseguiram organizar nossa lua de mel em Bonito de forma perfeita. Cada passeio foi uma descoberta única!",
-      date: "há 1 semana",
-      avatar: "/placeholder.svg?height=60&width=60",
+        "Excelente atendimento. Kathia é atenciosa, responde rápido, tira todas as dúvidas, explica. Compramos o roteiro antes de ir a Bonito com a agência e foi incrível! Tudo 100% organizado.",
+      date: "há 5 meses",
+      avatar: "/patriciadarocha.webp?height=60&width=60",
     },
     {
       id: "5",
-      name: "Fernanda Lima",
+      name: "Day Diniz",
       rating: 5,
       comment:
-        "Equipe muito profissional e prestativa. Nos ajudaram a escolher os melhores passeios para nossa família. As crianças adoraram e nós também! Voltaremos com certeza.",
-      date: "há 2 meses",
-      avatar: "/placeholder.svg?height=60&width=60",
+        "Atendimento excepcional de todos, muito atenciosos e acolhedores, deram todo suporte antes de fechar os passeios e também na pós venda. Tornaram minha viagem bem tranquila e sem contratempo.  Agradeço muito ao trabalho feito com dedicação e o atendimento de excelência que foi essencial na escolha da agência ❤️",
+      date: "há 2 anos",
+      avatar: "/Daydiniz.webp?height=60&width=60",
     },
     {
       id: "6",
-      name: "Roberto Mendes",
+      name: "Petter Almeida",
       rating: 5,
       comment:
-        "Serviço de primeira qualidade! A BonitoON superou todas as expectativas. Organização impecável, pontualidade e passeios inesquecíveis. Nota 10!",
-      date: "há 3 semanas",
-      avatar: "/placeholder.svg?height=60&width=60",
+        "Quero parabenizar a agente Thaynara pelo excelente atendimento prestado, e as escolhas dos passeios nos Balneários, todos personalizados conforme o roteiro escolhidos . estávamos um grupo de amigos e todos ficamos contentes. E pela escolhas de barzinhos e lanches, foi top iremos voltar novamente para a cidade .",
+      date: "há 5 meses",
+      avatar: "/petter.webp?height=60&width=60",
     },
   ])
 

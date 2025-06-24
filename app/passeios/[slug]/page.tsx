@@ -440,7 +440,12 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
 
                   <Link
                     href="https://wa.me/5567991395384?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais"
+<<<<<<< HEAD
                     className="w-full transition-colors duration-300 hover:bg-green-50 bg-white text-gray-900 rounded-md border border-gray-200 py-3 text-center flex items-center justify-center"
+=======
+                    variant="outline"
+                    className="w-full transition-colors duration-300 hover:bg-green-50"
+>>>>>>> 8212296 (ajusta botoes)
                   >
                     Falar com agente especializado
                   </Link>
