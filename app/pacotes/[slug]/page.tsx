@@ -9,8 +9,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { SiteLayout } from "@/components/site-layout"
 import type { Package } from "@/types/package"
-import { useContactModal } from "@/hooks/use-contact-modal"
 import { packageService } from "@/services/supabase-packages"
+import { useContactModal } from "@/contexts/contact-modal-context";
 
 interface PackageDetailPageProps {
   params: {
@@ -21,8 +21,7 @@ interface PackageDetailPageProps {
 export default function PackageDetailPage({ params }: PackageDetailPageProps) {
   const slug = params.slug
 
-
-  const { openModal } = useContactModal()
+  const { openModal } = useContactModal();
   const [packageData, setPackageData] = useState<Package | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -31,10 +30,10 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
     return title
       .toLowerCase()
       .normalize("NFD") // Decompose accented characters
-      .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters except spaces and hyphens
+      .replace(/[\\u0300-\\u036f]/g, "") // Remove diacritics
+      .replace(/[^a-z0-9\\s-]/g, "") // Remove special characters except spaces and hyphens
       .trim()
-      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/\\s+/g, "-") // Replace spaces with hyphens
       .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
   }
 
@@ -373,19 +372,18 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
 
                 <div className="space-y-4 mb-6">
                   <Button
-                    onClick={openModal}
+                    onClick={() => openModal(packageData?.title)}
                     className="w-full bg-green-600 hover:bg-green-700 text-lg py-3 transition-transform duration-300 hover:scale-105"
                   >
                     Reservar Agora
                   </Button>
 
-                  <Button
-                    onClick={openModal}
-                    variant="outline"
-                    className="w-full transition-colors duration-300 hover:bg-green-50"
+                  <Link
+                    href="https://wa.me/5567991395384?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais"
+                    className="w-full transition-colors duration-300 hover:bg-green-50 bg-white text-gray-900 rounded-md border border-gray-200 py-3 text-center flex items-center justify-center"
                   >
                     Falar com especialista
-                  </Button>
+                  </Link>
                 </div>
 
                 <div className="border-t pt-6">
