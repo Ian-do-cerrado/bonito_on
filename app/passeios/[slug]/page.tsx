@@ -12,7 +12,7 @@ import { Tour } from "@/components/tours-section"
 import { ContactModal } from "@/components/contact-modal"
 import { getTourBySlug } from "@/services/supabase-tours"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { useContactModal } from "@/hooks/use-contact-modal";
+import { ContactModalProvider, useContactModal } from "@/contexts/contact-modal-context";
 
 interface TourDetailPageProps {
   params: Promise<{ slug: string }> | { slug: string }
@@ -52,7 +52,7 @@ function formatDescription(text: string) {
             <ul key={index} className="list-disc pl-5 my-4 space-y-2">
               {listItems.map((item, i) => (
                 <li key={i} className="text-gray-700">
-                  {item.replace(/^\* |^- /, "")}
+                  {item.replace(/^\\* |^- /, "")}
                 </li>
               ))}
             </ul>
@@ -60,13 +60,13 @@ function formatDescription(text: string) {
         }
 
         // Verificar se é uma lista numerada
-        if (paragraph.includes("\n1. ") || paragraph.match(/\n\d+\. /)) {
-          const listItems = paragraph.split("\n").filter((item) => /^\d+\. /.test(item))
+        if (paragraph.includes("\n1. ") || paragraph.match(/\n\\d+\\. /)) {
+          const listItems = paragraph.split("\n").filter((item) => /^\\d+\\. /.test(item))
           return (
             <ol key={index} className="list-decimal pl-5 my-4 space-y-2">
               {listItems.map((item, i) => (
                 <li key={i} className="text-gray-700">
-                  {item.replace(/^\d+\. /, "")}
+                  {item.replace(/^\\d+\\. /, "")}
                 </li>
               ))}
             </ol>
@@ -84,8 +84,8 @@ function formatDescription(text: string) {
 
         // Formatar texto com negrito e itálico
         const formattedText = paragraph
-          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-          .replace(/\*(.*?)\*/g, "<em>$1</em>")
+          .replace(/\\*\\*(.*?)\\*\\*/g, "<strong>$1</strong>")
+          .replace(/\\*(.*?)\\*/g, "<em>$1</em>")
 
         // Parágrafo normal
         return (
@@ -108,17 +108,17 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
   const [tour, setTour] = useState<Tour | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
-  const { openModal, isOpen, closeModal } = useContactModal();
+  const { openModal } = useContactModal();
 
   // Function to create URL-friendly slug from tour title
   const createSlug = (title: string) => {
     return title
       .toLowerCase()
       .normalize("NFD") // Decompose accented characters
-      .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters except spaces and hyphens
+      .replace(/[\\u0300-\\u036f]/g, "") // Remove diacritics
+      .replace(/[^a-z0-9\\s-]/g, "") // Remove special characters except spaces and hyphens
       .trim()
-      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/\\s+/g, "-") // Replace spaces with hyphens
       .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
   }
 
@@ -245,9 +245,10 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
   const galleryImages = getGalleryImages(tour)
 
   return (
-    <SiteLayout>
-      {/* Hero Section */}
-      <section className="relative h-96 pt-16">
+    <ContactModalProvider>
+      <SiteLayout>
+        {/* Hero Section */}
+        <section className="relative h-96 pt-16">
         <Image src={tour.image || "/placeholder.svg"} alt={tour.title} fill className="object-cover" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute bottom-8 left-8">
@@ -353,7 +354,8 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
                   ))}
                   <span className="ml-2 text-gray-600">({tour.rating}/5)</span>
                 </div>
-                <div className="text-3xl font-bold text-green-600">R$ {tour.price.toFixed(2).replace(".", ",")}</div>
+                <div className="text-3xl font-bold text-green-600">R$ {tour.price.toFixed(2).replace(".", ",")}
+                </div>
               </div>
             </div>
 
@@ -430,16 +432,15 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
 
                 <div className="space-y-4 mb-6">
                   <Button
-                    onClick={openModal}
+                    onClick={() => openModal(tour?.title)}
                     className="w-full bg-green-600 hover:bg-green-700 text-lg py-3 transition-transform duration-300 hover:scale-105"
                   >
                     Reservar Agora
                   </Button>
 
                   <Link
-                    href="https://wa.me/5567991395384?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado%20para%20ir%20a%20Bonito%20MS"
-                    variant="outline"
-                    className="w-full transition-colors duration-300 hover:bg-green-50"
+                    href="https://wa.me/5567991395384?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais"
+                    className="w-full transition-colors duration-300 hover:bg-green-50 bg-white text-gray-900 rounded-md border border-gray-200 py-3 text-center flex items-center justify-center"
                   >
                     Falar com agente especializado
                   </Link>
@@ -463,7 +464,8 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
           </div>
         </div>
       </div>
-      <ContactModal isOpen={isOpen} closeModal={closeModal} attraction={tour?.title} />
+      <ContactModal attraction={tour?.title} />
     </SiteLayout>
+    </ContactModalProvider>
   )
 }
