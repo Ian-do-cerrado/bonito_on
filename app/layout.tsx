@@ -39,4 +39,21 @@ export default function RootLayout({
             `,
           }}
         />
-        <link rel="icon" href="/
+        <link rel="icon" href="/bonitoon.svg" sizes="any" />
+        <link rel="icon" href="/bonitoon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
+      </head>
+      <body className={`${sora.className} antialiased`} suppressHydrationWarning>
+        <ScrollToTop />
+        <LanguageProvider>
+          <ContactModalProvider>
+            {children}
+            <Toaster />
+            <ContactModal />
+          </ContactModalProvider>
+        </LanguageProvider>
+      </body>
+    </html>
+  );
+}
