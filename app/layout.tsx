@@ -34,7 +34,6 @@ export default function RootLayout({
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-QBXNL437DG');
 </script>
         <link rel="icon" href="/bonitoon.svg" sizes="any" />
