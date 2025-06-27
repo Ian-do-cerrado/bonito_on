@@ -6,16 +6,6 @@ import { useContactModal } from "@/contexts/contact-modal-context"
 import { Footer } from "@/components/footer"
 import { Navigation } from "@/components/navigation"
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QBXNL437DG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-QBXNL437DG');
-</script>
-
 interface SiteLayoutProps {
   children: React.ReactNode
 }
