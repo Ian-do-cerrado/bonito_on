@@ -29,13 +29,13 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
 
       <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QBXNL437DG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-QBXNL437DG');
-</script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QBXNL437DG"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-QBXNL437DG');
+        </script>
         <link rel="icon" href="/bonitoon.svg" sizes="any" />
         <link rel="icon" href="/bonitoon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
