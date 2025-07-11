@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, use } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -20,21 +20,19 @@ interface PackageDetailPageProps {
 
 export default function PackageDetailPage({ params }: PackageDetailPageProps) {
   const slug = params.slug
-
   const { openModal } = useContactModal();
   const [packageData, setPackageData] = useState<Package | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Function to create URL-friendly slug from package title
   const createSlug = (title: string) => {
     return title
       .toLowerCase()
-      .normalize("NFD") // Decompose accented characters
-      .replace(/[\\u0300-\\u036f]/g, "") // Remove diacritics
-      .replace(/[^a-z0-9\\s-]/g, "") // Remove special characters except spaces and hyphens
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
       .trim()
-      .replace(/\\s+/g, "-") // Replace spaces with hyphens
-      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
   }
 
   useEffect(() => {
@@ -44,7 +42,6 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
         setPackageData(packageData)
       } catch (error) {
         console.error("Error loading package:", error)
-        // Fallback to localStorage
         const savedPackages = localStorage.getItem("packages")
         if (savedPackages) {
           const packages: Package[] = JSON.parse(savedPackages)
@@ -61,53 +58,37 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
 
   const getCategoryLabel = (category: string) => {
     switch (category) {
-      case "economico":
-        return "Econômico"
-      case "premium":
-        return "Premium"
-      case "luxo":
-        return "Luxo"
-      default:
-        return "Padrão"
+      case "economico": return "Econômico"
+      case "premium": return "Premium"
+      case "luxo": return "Luxo"
+      default: return "Padrão"
     }
   }
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "economico":
-        return "bg-blue-100 text-blue-800"
-      case "premium":
-        return "bg-purple-100 text-purple-800"
-      case "luxo":
-        return "bg-amber-100 text-amber-800"
-      default:
-        return "bg-gray-100 text-gray-800"
+      case "economico": return "bg-blue-100 text-blue-800"
+      case "premium": return "bg-purple-100 text-purple-800"
+      case "luxo": return "bg-amber-100 text-amber-800"
+      default: return "bg-gray-100 text-gray-800"
     }
   }
 
   const getDifficultyLabel = (difficulty: string) => {
     switch (difficulty) {
-      case "facil":
-        return "Fácil"
-      case "moderado":
-        return "Moderado"
-      case "dificil":
-        return "Difícil"
-      default:
-        return "Não informado"
+      case "facil": return "Fácil"
+      case "moderado": return "Moderado"
+      case "dificil": return "Difícil"
+      default: return "Não informado"
     }
   }
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "facil":
-        return "text-green-600"
-      case "moderado":
-        return "text-yellow-600"
-      case "dificil":
-        return "text-red-600"
-      default:
-        return "text-gray-600"
+      case "facil": return "text-green-600"
+      case "moderado": return "text-yellow-600"
+      case "dificil": return "text-red-600"
+      default: return "text-gray-600"
     }
   }
 
@@ -146,11 +127,19 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
     <SiteLayout>
       {/* Hero Section */}
       <section className="relative h-96 pt-16">
-        <Image src={packageData.image || "/placeholder.svg"} alt={packageData.title} fill className="object-cover" />
+        <Image 
+          src={packageData.image || "/placeholder.svg"} 
+          alt={packageData.title} 
+          fill 
+          className="object-cover" 
+          priority
+        />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute bottom-8 left-8 right-8">
           <div className="flex items-center gap-4 mb-4">
-            <Badge className={getCategoryColor(packageData.category)}>{getCategoryLabel(packageData.category)}</Badge>
+            <Badge className={getCategoryColor(packageData.category)}>
+              {getCategoryLabel(packageData.category)}
+            </Badge>
             <Badge className="bg-black/50 text-white border-0">
               <Clock className="w-3 h-3 mr-1" />
               {packageData.duration}
@@ -180,7 +169,7 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Overview */}
+            {/* Overview Card */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -233,7 +222,7 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
               </CardContent>
             </Card>
 
-            {/* Highlights */}
+            {/* Highlights Card */}
             <Card>
               <CardHeader>
                 <CardTitle>Destaques do Pacote</CardTitle>
@@ -250,7 +239,7 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
               </CardContent>
             </Card>
 
-            {/* What's Included */}
+            {/* Included Card */}
             <Card>
               <CardHeader>
                 <CardTitle>O que está incluído</CardTitle>
@@ -267,7 +256,7 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
               </CardContent>
             </Card>
 
-            {/* Best Season */}
+            {/* Season Card */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -286,7 +275,7 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
               </CardContent>
             </Card>
 
-            {/* Detailed Itinerary */}
+            {/* Itinerary Card */}
             <Card>
               <CardHeader>
                 <CardTitle>Roteiro Detalhado</CardTitle>
@@ -380,16 +369,7 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
 
                   <Link
                     href="https://wa.me/5567991395384?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais"
-<<<<<<< HEAD
-<<<<<<< HEAD
                     className="w-full transition-colors duration-300 hover:bg-green-50 bg-white text-gray-900 rounded-md border border-gray-200 py-3 text-center flex items-center justify-center"
-=======
-                    variant="outline"
-                    className="w-full transition-colors duration-300 hover:bg-green-50"
->>>>>>> 8212296 (ajusta botoes)
-=======
-                    className="w-full transition-colors duration-300 hover:bg-green-50 bg-white text-gray-900 rounded-md border border-gray-200 py-3 text-center flex items-center justify-center"
->>>>>>> 4d221f9 (Review Section)
                   >
                     Falar com especialista
                   </Link>
