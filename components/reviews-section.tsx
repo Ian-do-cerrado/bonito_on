@@ -58,7 +58,7 @@ export function ReviewsSection() {
       comment:
         "Excelente atendimento. Kathia é atenciosa, responde rápido, tira todas as dúvidas, explica. Compramos o roteiro antes de ir a Bonito com a agência e foi incrível! Tudo 100% organizado.",
       date: "há 5 meses",
-      avatar: "/patriciadarocha.webp?height=60&width=60",
+      avatar: "/patriciadarocha.webp",
     },
     {
       id: "5",
@@ -67,7 +67,7 @@ export function ReviewsSection() {
       comment:
         "Atendimento excepcional de todos, muito atenciosos e acolhedores, deram todo suporte antes de fechar os passeios e também na pós venda. Tornaram minha viagem bem tranquila e sem contratempo.  Agradeço muito ao trabalho feito com dedicação e o atendimento de excelência que foi essencial na escolha da agência ❤️",
       date: "há 2 anos",
-      avatar: "/Daydiniz.webp?height=60&width=60",
+      avatar: "/Daydiniz.webp",
     },
     {
       id: "6",
@@ -76,7 +76,7 @@ export function ReviewsSection() {
       comment:
         "Quero parabenizar a agente Thaynara pelo excelente atendimento prestado, e as escolhas dos passeios nos Balneários, todos personalizados conforme o roteiro escolhidos . estávamos um grupo de amigos e todos ficamos contentes. E pela escolhas de barzinhos e lanches, foi top iremos voltar novamente para a cidade .",
       date: "há 5 meses",
-      avatar: "/petter.webp?height=60&width=60",
+      avatar: "/petter.webp",
     },
   ])
 
