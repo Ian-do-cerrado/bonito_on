@@ -1,4 +1,4 @@
-atualize o código original para que eu não cometa erros: "use client"
+"use client"
 
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
