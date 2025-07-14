@@ -9,6 +9,7 @@ import { submitContactForm, SubmitContactFormData } from "@/app/actions/contact"
 import { useToast } from "@/hooks/use-toast"
 import { MessageCircle, Phone, Mail, MapPin, Clock, X } from "lucide-react"
 
+import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { ContactModalContext } from "@/contexts/contact-modal-context";
 
@@ -20,6 +21,7 @@ export function ContactModal({ attraction }: ContactModalProps) {
   const { isOpen, closeModal } = useContext(ContactModalContext) as any;
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
@@ -47,6 +49,18 @@ export function ContactModal({ attraction }: ContactModalProps) {
           description: "Entraremos em contato em breve.",
         })
         closeModal()
+
+        // Criar URL com parâmetros para a página de obrigado
+        const params = new URLSearchParams({
+          name: formData.get("name") as string,
+        })
+
+        if (attraction) {
+          params.set("attraction", attraction)
+        }
+
+        // Redirecionar para página de obrigado
+        router.push(`/obrigado?${params.toString()}`)
       } else {
         toast({
           title: "Erro ao enviar",
