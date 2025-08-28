@@ -197,15 +197,25 @@ export function PackagesSection() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex gap-2 pt-2">
-                        <Link href={`/pacotes/${pkg.slug || createSlug(pkg.title)}`} className="flex-1">
-                          <Button variant="outline" size="sm" className="w-full">
-                            {t("learnMore")}
+                      <div className="flex flex-col gap-2 pt-2">
+                        <div className="flex gap-2">
+                          <Link href={`/pacotes/${pkg.slug || createSlug(pkg.title)}`} className="flex-1">
+                            <Button variant="outline" size="sm" className="w-full">
+                              {t("learnMore")}
+                            </Button>
+                          </Link>
+                          <Button onClick={() => openModal(pkg.title)} size="sm" className="flex-1 bg-green-600 hover:bg-green-700">
+                            {t("bookNow")}
                           </Button>
-                        </Link>
-                        <Button onClick={() => openModal(pkg.title)} size="sm" className="flex-1 bg-green-600 hover:bg-green-700">
-                          {t("bookNow")}
-                        </Button>
+                        </div>
+                        <a
+                          href={`https://wa.me/5567991395384?text=${encodeURIComponent(`Olá! Vim do site Bonito ON e gostaria de mais informações sobre o pacote ${pkg.title}.`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full mt-2 inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                        >
+                          Fale Com um Especialista
+                        </a>
                       </div>
                     </div>
                   </CardContent>

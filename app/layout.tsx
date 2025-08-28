@@ -6,6 +6,7 @@ import { ContactModalProvider } from "@/contexts/contact-modal-context";
 import { ContactModal } from "@/components/contact-modal";
 import "./globals.css";
 import { ScrollToTop } from "@/components/scroll-to-top";
+import WhatsAppButton from "@/components/whatsapp-button";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -59,6 +60,7 @@ export default function RootLayout({
             {children}
             <Toaster />
             <ContactModal />
+            <WhatsAppButton />
           </ContactModalProvider>
         </LanguageProvider>
       </body>
