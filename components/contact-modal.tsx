@@ -236,7 +236,12 @@ export function ContactModal({ attraction }: ContactModalProps) {
 
           {/* Contact cards */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-            <div className="group flex items-center gap-3 p-3 sm:p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 hover:shadow-lg transition-all duration-300 cursor-pointer">
+            <a
+              href={`https://wa.me/5567991395384?text=${encodeURIComponent("Olá! Gostaria de falar com um especialista sobre os pacotes.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 p-3 sm:p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 hover:shadow-lg transition-all duration-300 cursor-pointer"
+            >
               <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-2 rounded-full group-hover:scale-110 transition-transform">
                 <Phone className="w-4 h-4 text-white" />
               </div>
@@ -247,7 +252,7 @@ export function ContactModal({ attraction }: ContactModalProps) {
               <div className="ml-auto">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               </div>
-            </div>
+            </a>
 
             <div className="group flex items-center gap-3 p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer">
               <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-2 rounded-full group-hover:scale-110 transition-transform">
