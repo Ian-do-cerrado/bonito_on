@@ -33,6 +33,9 @@ export default function BlogPostPage() {
       try {
         const blogPost = await getBlogPostBySlug(slug)
         setPost(blogPost)
+        if (blogPost) {
+          console.log("Raw post content from Supabase:", blogPost.content)
+        }
       } catch (error) {
         console.error("Error loading blog post:", error)
         const savedPosts = localStorage.getItem("blogPosts")
@@ -61,14 +64,14 @@ export default function BlogPostPage() {
   }
 
   const nextGalleryImage = () => {
-    if (post?.gallery && post.gallery.length > 0) {
-      setCurrentGalleryIndex((prev) => (prev + 1) % post.gallery.length)
+    if (post?.gallery?.length) {
+      setCurrentGalleryIndex((prev) => (prev + 1) % post.gallery!.length)
     }
   }
 
   const prevGalleryImage = () => {
-    if (post?.gallery && post.gallery.length > 0) {
-      setCurrentGalleryIndex((prev) => (prev - 1 + post.gallery.length) % post.gallery.length)
+    if (post?.gallery?.length) {
+      setCurrentGalleryIndex((prev) => (prev - 1 + post.gallery!.length) % post.gallery!.length)
     }
   }
 
@@ -162,11 +165,10 @@ export default function BlogPostPage() {
             </div>
           </header>
 
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
             <p className="text-xl text-gray-700 mb-8 font-medium">{post.excerpt}</p>
-
-            <div className="text-gray-700 leading-relaxed space-y-6">
-              <p>{post.content || "Conteúdo indisponível."}</p>
+            {/* console.log("Raw post content:", post.content) */}
+            <div dangerouslySetInnerHTML={{ __html: post.content || "Conteúdo indisponível." }} />
 
               {post.gallery && post.gallery.length > 0 && (
                 <div className="my-8">
@@ -233,7 +235,6 @@ export default function BlogPostPage() {
                 <li>At vero eos et accusamus et iusto odio dignissimos</li>
               </ul>
             </div>
-          </div>
         </article>
       </div>
     </div>

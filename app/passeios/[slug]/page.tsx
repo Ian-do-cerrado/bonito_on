@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, use } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,117 +8,234 @@ import { ArrowLeft, Star, MapPin, Clock, Users, Phone, Mail } from "lucide-react
 import Image from "next/image"
 import Link from "next/link"
 import { SiteLayout } from "@/components/site-layout"
-import { Tour } from "@/components/tours-section"
-import { ContactModal } from "@/components/contact-modal"
+import type { Tour } from "@/services/supabase-tours"
+import { useContactModal } from "@/hooks/use-contact-modal"
 import { getTourBySlug } from "@/services/supabase-tours"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import { ContactModalProvider, useContactModal } from "@/contexts/contact-modal-context";
 
 interface TourDetailPageProps {
   params: Promise<{ slug: string }> | { slug: string }
 }
 
-// Função para formatar texto com quebras de linha e formatação básica
+// Função para processar HTML e converter para JSX
 function formatDescription(text: string) {
   if (!text) return null
 
-  // Dividir por linhas
-  const paragraphs = text.split("\n\n")
+  // Primeiro, vamos limpar e processar o HTML
+  const processedText = text
+    // Remover tags HTML desnecessárias e converter para markdown-like
+    .replace(/<p>/g, "\n\n")
+    .replace(/<\/p>/g, "")
+    .replace(/<br\s*\/?>/g, "\n")
+    .replace(/<strong>/g, "**")
+    .replace(/<\/strong>/g, "**")
+    .replace(/<b>/g, "**")
+    .replace(/<\/b>/g, "**")
+    .replace(/<em>/g, "*")
+    .replace(/<\/em>/g, "*")
+    .replace(/<i>/g, "*")
+    .replace(/<\/i>/g, "*")
+    .replace(/<ul>/g, "\n")
+    .replace(/<\/ul>/g, "\n")
+    .replace(/<ol>/g, "\n")
+    .replace(/<\/ol>/g, "\n")
+    .replace(/<li>/g, "• ")
+    .replace(/<\/li>/g, "\n")
+    .replace(/<h1>/g, "\n## ")
+    .replace(/<\/h1>/g, "\n")
+    .replace(/<h2>/g, "\n## ")
+    .replace(/<\/h2>/g, "\n")
+    .replace(/<h3>/g, "\n### ")
+    .replace(/<\/h3>/g, "\n")
+    .replace(/<h4>/g, "\n# ")
+    .replace(/<\/h4>/g, "\n")
+    // Remover outras tags HTML que possam ter sobrado
+    .replace(/<[^>]*>/g, "")
+    // Limpar espaços extras
+    .replace(/\n\s*\n\s*\n/g, "\n\n")
+    .trim()
+
+  // Dividir por parágrafos
+  const sections = processedText.split("\n\n").filter((section) => section.trim())
 
   return (
-    <>
-      {paragraphs.map((paragraph, index) => {
-        // Verificar se é um título (começa com ## ou ###)
-        if (paragraph.startsWith("## ")) {
-          return (
-            <h2 key={index} className="text-2xl font-bold mt-6 mb-3">
-              {paragraph.replace("## ", "")}
-            </h2>
-          )
-        }
+    <div className="space-y-4">
+      {sections.map((section, index) => {
+        const lines = section.split("\n").filter((line) => line.trim())
 
-        if (paragraph.startsWith("### ")) {
-          return (
-            <h3 key={index} className="text-xl font-semibold mt-5 mb-2">
-              {paragraph.replace("### ", "")}
-            </h3>
-          )
-        }
-
-        // Verificar se é uma lista (começa com * ou -)
-        if (paragraph.includes("\n* ") || paragraph.includes("\n- ")) {
-          const listItems = paragraph.split("\n").filter((item) => item.startsWith("* ") || item.startsWith("- "))
-          return (
-            <ul key={index} className="list-disc pl-5 my-4 space-y-2">
-              {listItems.map((item, i) => (
-                <li key={i} className="text-gray-700">
-                  {item.replace(/^\\* |^- /, "")}
-                </li>
-              ))}
-            </ul>
-          )
-        }
-
-        // Verificar se é uma lista numerada
-        if (paragraph.includes("\n1. ") || paragraph.match(/\n\\d+\\. /)) {
-          const listItems = paragraph.split("\n").filter((item) => /^\\d+\\. /.test(item))
-          return (
-            <ol key={index} className="list-decimal pl-5 my-4 space-y-2">
-              {listItems.map((item, i) => (
-                <li key={i} className="text-gray-700">
-                  {item.replace(/^\\d+\\. /, "")}
-                </li>
-              ))}
-            </ol>
-          )
-        }
-
-        // Verificar se é uma citação
-        if (paragraph.startsWith("> ")) {
-          return (
-            <blockquote key={index} className="border-l-4 border-green-500 pl-4 italic my-4 text-gray-600">
-              {paragraph.replace("> ", "")}
-            </blockquote>
-          )
-        }
-
-        // Formatar texto com negrito e itálico
-        const formattedText = paragraph
-          .replace(/\\*\\*(.*?)\\*\\*/g, "<strong>$1</strong>")
-          .replace(/\\*(.*?)\\*/g, "<em>$1</em>")
-
-        // Parágrafo normal
         return (
-          <p
-            key={index}
-            className="my-3 text-gray-700 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: formattedText }}
-          />
+          <div key={index} className="space-y-2">
+            {lines.map((line, lineIndex) => {
+              const trimmedLine = line.trim()
+              if (!trimmedLine) return null
+
+              // Títulos principais (## ou ###)
+              if (trimmedLine.startsWith("### ")) {
+                return (
+                  <h3
+                    key={lineIndex}
+                    className="text-xl font-bold text-gray-900 mt-6 mb-3 border-b border-gray-200 pb-2"
+                  >
+                    {trimmedLine.replace("### ", "")}
+                  </h3>
+                )
+              }
+
+              if (trimmedLine.startsWith("## ")) {
+                return (
+                  <h2
+                    key={lineIndex}
+                    className="text-2xl font-bold text-gray-900 mt-8 mb-4 border-b-2 border-green-500 pb-2"
+                  >
+                    {trimmedLine.replace("## ", "")}
+                  </h2>
+                )
+              }
+
+              // Subtítulos menores
+              if (trimmedLine.startsWith("# ")) {
+                return (
+                  <h4 key={lineIndex} className="text-lg font-semibold text-green-700 mt-4 mb-2">
+                    {trimmedLine.replace("# ", "")}
+                  </h4>
+                )
+              }
+
+              // Listas com bullets
+              if (trimmedLine.startsWith("• ")) {
+                return (
+                  <div key={lineIndex} className="flex items-start gap-3 ml-4">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-gray-700 leading-relaxed">{formatInlineText(trimmedLine.replace("• ", ""))}</p>
+                  </div>
+                )
+              }
+
+              // Listas numeradas
+              if (/^\d+\.\s/.test(trimmedLine)) {
+                const number = trimmedLine.match(/^(\d+)\./)?.[1]
+                const content = trimmedLine.replace(/^\d+\.\s/, "")
+                return (
+                  <div key={lineIndex} className="flex items-start gap-3 ml-4">
+                    <div className="bg-green-100 text-green-700 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold flex-shrink-0 mt-0.5">
+                      {number}
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">{formatInlineText(content)}</p>
+                  </div>
+                )
+              }
+
+              // Texto destacado (linhas que começam com !)
+              if (trimmedLine.startsWith("! ")) {
+                return (
+                  <div key={lineIndex} className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 my-3">
+                    <p className="text-yellow-800 font-semibold">{formatInlineText(trimmedLine.replace("! ", ""))}</p>
+                  </div>
+                )
+              }
+
+              // Texto de destaque importante (linhas que começam com !!)
+              if (trimmedLine.startsWith("!! ")) {
+                return (
+                  <div key={lineIndex} className="bg-red-50 border border-red-200 rounded-lg p-4 my-3">
+                    <p className="text-red-800 font-bold">{formatInlineText(trimmedLine.replace("!! ", ""))}</p>
+                  </div>
+                )
+              }
+
+              // Parágrafos normais
+              return (
+                <p key={lineIndex} className="text-gray-700 leading-relaxed text-base mb-3">
+                  {formatInlineText(trimmedLine)}
+                </p>
+              )
+            })}
+          </div>
         )
       })}
-    </>
+    </div>
   )
+}
+
+// Função auxiliar para formatar texto inline (negrito, itálico, etc.)
+function formatInlineText(text: string) {
+  const parts = []
+  let currentText = text
+  let keyCounter = 0
+
+  // Processar negrito **texto**
+  currentText = currentText.replace(/\*\*(.*?)\*\*/g, (match, content) => {
+    const key = `__BOLD_${keyCounter++}__`
+    parts.push({
+      key,
+      element: (
+        <strong key={key} className="font-bold text-gray-900">
+          {content}
+        </strong>
+      ),
+    })
+    return key
+  })
+
+  // Processar itálico *texto*
+  currentText = currentText.replace(/\*(.*?)\*/g, (match, content) => {
+    const key = `__ITALIC_${keyCounter++}__`
+    parts.push({
+      key,
+      element: (
+        <em key={key} className="italic text-gray-800">
+          {content}
+        </em>
+      ),
+    })
+    return key
+  })
+
+  // Processar código `texto`
+  currentText = currentText.replace(/`(.*?)`/g, (match, content) => {
+    const key = `__CODE_${keyCounter++}__`
+    parts.push({
+      key,
+      element: (
+        <code key={key} className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800">
+          {content}
+        </code>
+      ),
+    })
+    return key
+  })
+
+  // Dividir o texto e reconstruir com os elementos
+  const finalParts = currentText.split(/(__(?:BOLD|ITALIC|CODE)_\d+__)/)
+
+  return finalParts.map((part, index) => {
+    const foundPart = parts.find((p) => p.key === part)
+    if (foundPart) {
+      return foundPart.element
+    }
+    return part
+  })
 }
 
 export default function TourDetailPage({ params }: TourDetailPageProps) {
   // Handle both Promise and direct object params
   const resolvedParams =
-    params && typeof params === "object" && "then" in params ? use(params) : (params as { slug: string })
+    params && typeof params === "object" && "then" in params ? params : (params as { slug: string })
   const slug = resolvedParams.slug
+  const { openModal } = useContactModal()
   const [tour, setTour] = useState<Tour | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
-  const { openModal } = useContactModal();
 
   // Function to create URL-friendly slug from tour title
   const createSlug = (title: string) => {
     return title
       .toLowerCase()
       .normalize("NFD") // Decompose accented characters
-      .replace(/[\\u0300-\\u036f]/g, "") // Remove diacritics
-      .replace(/[^a-z0-9\\s-]/g, "") // Remove special characters except spaces and hyphens
+      .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters except spaces and hyphens
       .trim()
-      .replace(/\\s+/g, "-") // Replace spaces with hyphens
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
       .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
   }
 
@@ -172,30 +289,18 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
     }
   }
 
-  const getCategoryColor = (category: Tour["category"]) => {
+  const getCategoryColor = (category: string) => {
     switch (category) {
-      case "adventure":
+      case "passeios":
+        return "bg-green-100 text-green-800"
+      case "locations":
+        return "bg-blue-100 text-blue-800"
+      case "food":
         return "bg-orange-100 text-orange-800"
-      case "contemplation":
-        return "bg-yellow-200 text-yellow-800"
-      case "cave":
-        return "bg-purple-200 text-purple-800"
-      case "waterfall":
-        return "bg-blue-200 text-blue-800"
-      case "rappelling":
-        return "bg-pink-200 text-pink-800"
-      case "horseback":
-        return "bg-amber-200 text-amber-800"
-      case "biking":
-        return "bg-lime-200 text-lime-800"
-      case "scubaDiving":
-        return "bg-teal-200 text-teal-800"
-      case "resort":
-        return "bg-green-200 text-green-800"
-      case "floating":
-        return "bg-cyan-200 text-cyan-800"
+      case "transportation":
+        return "bg-purple-100 text-purple-800"
       default:
-        return "bg-orange-100 text-orange-800"
+        return "bg-green-100 text-green-800"
     }
   }
 
@@ -245,10 +350,9 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
   const galleryImages = getGalleryImages(tour)
 
   return (
-    <ContactModalProvider>
-      <SiteLayout>
-        {/* Hero Section */}
-        <section className="relative h-96 pt-16">
+    <SiteLayout>
+      {/* Hero Section */}
+      <section className="relative h-96 pt-16">
         <Image src={tour.image || "/placeholder.svg"} alt={tour.title} fill className="object-cover" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute bottom-8 left-8">
@@ -354,39 +458,38 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
                   ))}
                   <span className="ml-2 text-gray-600">({tour.rating}/5)</span>
                 </div>
-                <div className="text-3xl font-bold text-green-600">R$ {tour.price.toFixed(2).replace(".", ",")}
-                </div>
               </div>
             </div>
 
             <Card className="mb-8">
               <CardContent className="p-6">
-                <h2 className="text-2xl font-semibold mb-4">Descrição</h2>
-                <div className="prose prose-green max-w-none text-gray-700">{formatDescription(tour.description)}</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-200 pb-3">Descrição</h2>
+                <div className="prose-custom max-w-none">{formatDescription(tour.description)}</div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                  
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pt-6 border-t border-gray-100">
+                  <div className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-green-600" />
                     <div>
                       <p className="font-semibold">Localização</p>
                       <p className="text-gray-600">Bonito, MS</p>
                     </div>
-                  
-                  
+                  </div>
+
+                  <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-green-600" />
                     <div>
                       <p className="font-semibold">Duração</p>
                       <p className="text-gray-600">Dia inteiro</p>
                     </div>
-                  
+                  </div>
 
-                  
+                  <div className="flex items-center gap-3">
                     <Users className="w-5 h-5 text-green-600" />
                     <div>
                       <p className="font-semibold">Grupo</p>
                       <p className="text-gray-600">Até 15 pessoas</p>
                     </div>
-                  
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -394,21 +497,23 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
             {/* Additional Information */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-2xl font-semibold mb-4">O que está incluído</h2>
-                <ul className="space-y-2 text-gray-700">
-                  <li className="flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-3">
+                  O que está incluído
+                </h2>
+                <ul className="space-y-4 text-gray-700">
+                  <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
                     Transporte ida e volta
                   </li>
-                  <li className="flex items-center gap-2">
+                  <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
                     Guia especializado
                   </li>
-                  <li className="flex items-center gap-2">
+                  <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
                     Equipamentos necessários
                   </li>
-                  <li className="flex items-center gap-2">
+                  <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
                     Seguro de acidentes pessoais
                   </li>
@@ -421,31 +526,101 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Reserve agora</h3>
-
-              <div className="mb-6">
-                  <div className="text-3xl font-bold text-green-600 mb-2">
-                    R$ {tour.price.toFixed(2).replace(".", ",")}
-                  </div>
-                  <p className="text-gray-600">por pessoa</p>
-                </div>
+                <h3 className="text-xl font-semibold mb-6">Valores</h3>
 
                 <div className="space-y-4 mb-6">
-                  <Button
-                    onClick={() => openModal(tour?.title)}
-                    className="w-full bg-green-600 hover:bg-green-700 text-lg py-3 transition-transform duration-300 hover:scale-105"
-                  >
+                  {/* Preço Principal - Baixa Temporada */}
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-sm font-medium text-green-800">Baixa Temporada</p>
+                        <p className="text-xs text-green-600">Adulto</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-green-700">
+                          R$ {tour.price.toFixed(2).replace(".", ",")}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Alta Temporada */}
+                  {tour.hs_price && tour.hs_price > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Alta Temporada</p>
+                          <p className="text-xs text-gray-500">Adulto</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.hs_price.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Criança */}
+                  {tour.chd_price && tour.chd_price > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Criança</p>
+                          <p className="text-xs text-gray-500">Até 12 anos</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.chd_price.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Melhor Idade */}
+                  {tour.senior_price && tour.senior_price > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Melhor Idade</p>
+                          <p className="text-xs text-gray-500">Acima de 60 anos</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.senior_price.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Morador MS */}
+                  {tour.ms_price && tour.ms_price > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Morador MS</p>
+                          <p className="text-xs text-gray-500">Com comprovante</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.ms_price.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3 mb-6">
+                  <Button onClick={openModal} className="w-full bg-green-600 hover:bg-green-700 text-lg py-3">
                     Reservar Agora
                   </Button>
 
-                  <Link
-                    href={`https://wa.me/5567991395384?text=${encodeURIComponent(`Olá! Vim do site Bonito ON e gostaria de mais informações sobre o passeio ${tour.title}.`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-                  >
-                    Fale Com um Especialista
-                  </Link>
+                  <Button onClick={openModal} variant="outline" className="w-full bg-transparent">
+                    Falar com especialista
+                  </Button>
                 </div>
 
                 <div className="border-t pt-6">
@@ -453,7 +628,7 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <Phone className="w-4 h-4 text-green-600" />
-                      <span className="text-sm">(67) 99139-5384</span>
+                      <span className="text-sm">(67) 3255-1000</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 text-green-600" />
@@ -466,8 +641,6 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
           </div>
         </div>
       </div>
-      <ContactModal attraction={tour?.title} />
     </SiteLayout>
-    </ContactModalProvider>
   )
 }

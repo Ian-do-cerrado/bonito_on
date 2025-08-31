@@ -1,5 +1,7 @@
 export interface Tour {
   id: string
+  chd_price?: number;
+  hs_price?: number;
   title: string
   description: string
   price: number

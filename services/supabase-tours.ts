@@ -1,132 +1,159 @@
 import { createClient } from "@/lib/supabase/client"
 
-const supabase = createClient()
-
 export interface Tour {
   id: string
   title: string
   description: string
   price: number
+  chd_price?: number | null
+  hs_price?: number | null
+  senior_price?: number | null
+  ms_price?: number | null
   image: string
-  gallery?: string[] // Array de URLs de imagens para a galeria
-  rating: number
+  gallery?: string[]
   category: string
+  rating: number
   slug?: string
+  created_at?: string
+  updated_at?: string
 }
 
-// Adicionar a função para criar slug consistente
-function createSlug(title: string) {
-  return title
-    .toLowerCase()
-    .normalize("NFD") // Decompose accented characters
-    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-    .replace(/[^a-z0-9\s-]/g, "") // Remove special characters except spaces and hyphens
-    .trim()
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
-}
+const supabase = createClient()
 
 export async function getAllTours(): Promise<Tour[]> {
   try {
-    const { data: tours, error } = await supabase.from("tours").select("*").order("created_at", { ascending: false })
+    console.log("🚀 Carregando tours do Supabase...")
+
+    const { data, error } = await supabase.from("tours").select("*").order("created_at", { ascending: false })
 
     if (error) {
-      console.error("Error fetching tours:", error)
-      return getFallbackTours()
+      console.error("❌ Erro ao buscar tours:", error)
+      return []
     }
 
-    return transformDatabaseTours(tours || [])
+    console.log("📊 Tours carregados:", data?.length || 0)
+
+    if (!data || data.length === 0) {
+      console.log("⚠️ Nenhum tour encontrado no Supabase")
+      return []
+    }
+
+    // Transformar os dados para o formato esperado
+    const tours: Tour[] = data.map((tour: any) => ({
+      id: tour.id,
+      title: tour.title || "",
+      description: tour.description || "",
+      price: Number.parseFloat(tour.price) || 0,
+      chd_price: tour.chd_price ? Number.parseFloat(tour.chd_price) : null,
+      hs_price: tour.hs_price ? Number.parseFloat(tour.hs_price) : null,
+      senior_price: tour.senior_price ? Number.parseFloat(tour.senior_price) : null,
+      ms_price: tour.ms_price ? Number.parseFloat(tour.ms_price) : null,
+      image: tour.image || "/placeholder.svg?height=400&width=600",
+      gallery: tour.gallery || [],
+      category: tour.category || "passeios",
+      rating: tour.rating || 5,
+      slug: tour.slug || createSlug(tour.title || ""),
+      created_at: tour.created_at,
+      updated_at: tour.updated_at,
+    }))
+
+    return tours
   } catch (error) {
-    console.error("Error in getAllTours:", error)
-    return getFallbackTours()
+    console.error("❌ Erro inesperado ao buscar tours:", error)
+    return []
   }
 }
 
-// Modificar a função getTourBySlug para buscar por slug gerado se necessário
 export async function getTourBySlug(slug: string): Promise<Tour | null> {
   try {
-    // Primeiro tenta buscar pelo slug exato
-    let { data: tour, error } = await supabase.from("tours").select("*").eq("slug", slug).single()
+    console.log("🔍 Buscando tour por slug:", slug)
 
-    // Se não encontrar, tenta buscar todos os tours e comparar os slugs gerados
-    if (error || !tour) {
-      const { data: allTours } = await supabase.from("tours").select("*")
-      if (allTours) {
-        // Encontra o tour cujo título gera o slug correspondente
-        tour = allTours.find((t) => createSlug(t.title) === slug)
-      }
-    }
+    const { data, error } = await supabase.from("tours").select("*").eq("slug", slug).single()
 
-    if (!tour) {
-      console.error("Tour not found with slug:", slug)
+    if (error) {
+      console.error("❌ Erro ao buscar tour por slug:", error)
       return null
     }
 
-    return transformDatabaseTour(tour)
+    if (!data) {
+      console.log("⚠️ Tour não encontrado para slug:", slug)
+      return null
+    }
+
+    // Transformar os dados para o formato esperado
+    const tour: Tour = {
+      id: data.id,
+      title: data.title || "",
+      description: data.description || "",
+      price: Number.parseFloat(data.price) || 0,
+      chd_price: data.chd_price ? Number.parseFloat(data.chd_price) : null,
+      hs_price: data.hs_price ? Number.parseFloat(data.hs_price) : null,
+      senior_price: data.senior_price ? Number.parseFloat(data.senior_price) : null,
+      ms_price: data.ms_price ? Number.parseFloat(data.ms_price) : null,
+      image: data.image || "/placeholder.svg?height=400&width=600",
+      gallery: data.gallery || [],
+      category: data.category || "passeios",
+      rating: data.rating || 5,
+      slug: data.slug || createSlug(data.title || ""),
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+    }
+
+    console.log("✅ Tour encontrado:", tour.title)
+    return tour
   } catch (error) {
-    console.error("Error in getTourBySlug:", error)
+    console.error("❌ Erro inesperado ao buscar tour por slug:", error)
     return null
   }
 }
 
-function transformDatabaseTours(dbTours: any[]): Tour[] {
-  return dbTours.map(transformDatabaseTour)
+// Função para criar slug a partir do título
+function createSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
 }
 
-// Modificar a função transformDatabaseTour para incluir gallery
-function transformDatabaseTour(dbTour: any): Tour {
-  return {
-    id: dbTour.id,
-    title: dbTour.title,
-    description: dbTour.description,
-    price: dbTour.price,
-    image: dbTour.image || "/placeholder.svg?height=300&width=400",
-    gallery: dbTour.gallery || [], // Incluir o array de galeria
-    rating: dbTour.rating,
-    category: dbTour.category,
-    // Use o slug do banco de dados se existir, caso contrário, crie um a partir do título
-    slug: dbTour.slug || createSlug(dbTour.title),
+export async function getTourById(id: string): Promise<Tour | null> {
+  try {
+    const { data, error } = await supabase.from("tours").select("*").eq("id", id).single()
+
+    if (error) {
+      console.error("Erro ao buscar tour por ID:", error)
+      return null
+    }
+
+    if (!data) {
+      return null
+    }
+
+    // Transformar os dados para o formato esperado
+    const tour: Tour = {
+      id: data.id,
+      title: data.title || "",
+      description: data.description || "",
+      price: Number.parseFloat(data.price) || 0,
+      chd_price: data.chd_price ? Number.parseFloat(data.chd_price) : null,
+      hs_price: data.hs_price ? Number.parseFloat(data.hs_price) : null,
+      senior_price: data.senior_price ? Number.parseFloat(data.senior_price) : null,
+      ms_price: data.ms_price ? Number.parseFloat(data.ms_price) : null,
+      image: data.image || "/placeholder.svg?height=400&width=600",
+      gallery: data.gallery || [],
+      category: data.category || "passeios",
+      rating: data.rating || 5,
+      slug: data.slug || createSlug(data.title || ""),
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+    }
+
+    return tour
+  } catch (error) {
+    console.error("Erro inesperado ao buscar tour por ID:", error)
+    return null
   }
-}
-
-function getFallbackTours(): Tour[] {
-  return [
-    {
-      id: "1",
-      title: "Gruta do Lago Azul",
-      description: "Explore a famosa gruta com lago de águas cristalinas azuis",
-      price: 85,
-      image: "/placeholder.svg?height=300&width=400",
-      gallery: [
-        "/placeholder.svg?height=600&width=800",
-        "/placeholder.svg?height=600&width=800",
-        "/placeholder.svg?height=600&width=800",
-      ],
-      rating: 4.8,
-      category: "contemplation",
-      slug: "gruta-do-lago-azul",
-    },
-    {
-      id: "2",
-      title: "Aquário Natural",
-      description: "Mergulho com snorkel em águas cristalinas com peixes coloridos",
-      price: 120,
-      image: "/placeholder.svg?height=300&width=400",
-      gallery: [
-        "/placeholder.svg?height=600&width=800",
-        "/placeholder.svg?height=600&width=800",
-        "/placeholder.svg?height=600&width=800",
-      ],
-      rating: 4.9,
-      category: "floating",
-      slug: "aquario-natural",
-    },
-    // Outros tours com o mesmo padrão...
-  ]
-}
-
-// Export as default object for backward compatibility
-export const tourService = {
-  getAllTours,
-  getTourBySlug,
 }
