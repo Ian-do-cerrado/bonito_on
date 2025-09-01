@@ -91,10 +91,10 @@ export function TourCard({ tour }: TourCardProps) {
         </div>
       </div>
       <CardContent className="p-4 flex flex-col flex-grow">
-        <h3 className="font-bold text-lg line-clamp-2 mb-2">{tour.title}</h3>
+        <h3 className="font-bold text-base line-clamp-2 mb-2">{tour.title}</h3>
 
         <div
-          className="text-gray-600 text-sm line-clamp-2 mb-4 min-h-[2.5rem]" // min-h-[2.5rem] for 2 lines of text
+          className="text-gray-600 text-xs line-clamp-3 mb-4"
           dangerouslySetInnerHTML={{ __html: tour.description }}
         />
 
@@ -103,15 +103,15 @@ export function TourCard({ tour }: TourCardProps) {
           <div className="text-xs text-gray-500">{t("perPerson")}</div>
         </div>
 
-        <div className="flex space-x-2 w-full">
-          <Link href={`/passeios/${tour.slug || encodeURIComponent(tour.title.toLowerCase().replace(/\s+/g, "-"))}` || "/"} className="flex-1">
-            <Button variant="outline" size="sm" className="text-xs w-full">
+        <div className="flex flex-col space-y-2 w-full">
+          <Link href={`/passeios/${tour.slug || encodeURIComponent(tour.title.toLowerCase().replace(/\s+/g, "-"))}` || "/"} className="w-full">
+            <Button variant="outline" size="sm" className="text-sm w-full">
               {t("knowMore")}
             </Button>
           </Link>
           <Button
             size="sm"
-            className="bg-green-600 hover:bg-green-700 text-white text-xs flex-1"
+            className="bg-green-600 hover:bg-green-700 text-white text-sm w-full"
             onClick={handleReserveClick}
           >
             {t("reserve")}
@@ -121,7 +121,7 @@ export function TourCard({ tour }: TourCardProps) {
           href={`https://wa.me/5567991395384?text=${encodeURIComponent(`Olá! Vim do site Bonito ON e gostaria de mais informações sobre o passeio ${tour.title}.`)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full mt-4 inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+          className="w-full mt-2 inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
         >
           Fale Com um Especialista
         </a>
