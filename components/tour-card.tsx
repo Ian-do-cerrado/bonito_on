@@ -79,7 +79,7 @@ export function TourCard({ tour }: TourCardProps) {
   }
 
   return (
-    <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
+    <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="relative h-48">
         <Image src={tour.image || "/placeholder.svg"} alt={tour.title} fill className="object-cover" />
         <div
@@ -90,22 +90,22 @@ export function TourCard({ tour }: TourCardProps) {
           {getCategoryLabel(tour.category)}
         </div>
       </div>
-      <CardContent className="p-4">
+      <CardContent className="p-4 flex flex-col flex-grow">
         <h3 className="font-bold text-lg line-clamp-2 mb-2">{tour.title}</h3>
 
         <div
-          className="text-gray-600 text-sm line-clamp-2 mb-4"
+          className="text-gray-600 text-sm line-clamp-2 mb-4 min-h-[2.5rem]" // min-h-[2.5rem] for 2 lines of text
           dangerouslySetInnerHTML={{ __html: tour.description }}
         />
 
-        <div className="mb-3">
+        <div className="mb-3 mt-auto"> {/* mt-auto to push to bottom */}
           <div className="text-2xl font-bold text-green-600">R$ {tour.price.toFixed(2).replace(".", ",")}</div>
           <div className="text-xs text-gray-500">{t("perPerson")}</div>
         </div>
 
-        <div className="flex space-x-2">
-          <Link href={`/passeios/${tour.slug || encodeURIComponent(tour.title.toLowerCase().replace(/\s+/g, "-"))}` || "/"}>
-            <Button variant="outline" size="sm" className="text-xs flex-1">
+        <div className="flex space-x-2 w-full">
+          <Link href={`/passeios/${tour.slug || encodeURIComponent(tour.title.toLowerCase().replace(/\s+/g, "-"))}` || "/"} className="flex-1">
+            <Button variant="outline" size="sm" className="text-xs w-full">
               {t("knowMore")}
             </Button>
           </Link>

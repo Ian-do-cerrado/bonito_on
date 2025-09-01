@@ -25,7 +25,7 @@ export function PackagesSection() {
       setIsLoading(true)
       try {
         const packagesData = await getAllPackages()
-        setPackages(packagesData.slice(0, 4)) // Show only first 4 packages
+        setPackages(packagesData.slice(0, 4))
       } catch (error) {
         console.error("Error loading packages:", error)
         setPackages([])
@@ -33,14 +33,14 @@ export function PackagesSection() {
         setIsLoading(false)
       }
     }
-
     loadPackages()
   }, [])
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
       const scrollAmount = 400
-      const newScrollLeft = scrollRef.current.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount)
+      const newScrollLeft =
+        scrollRef.current.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount)
       scrollRef.current.scrollTo({ left: newScrollLeft, behavior: "smooth" })
     }
   }
@@ -70,7 +70,9 @@ export function PackagesSection() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-12 gap-4">
           <div className="text-center sm:text-left">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight mb-2">{t("packagesTitle")}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight mb-2">
+              {t("packagesTitle")}
+            </h2>
             <p className="text-gray-600 text-lg">{t("packagesSubtitle")}</p>
           </div>
           <Link href="/pacotes" className="self-center sm:self-auto">
@@ -132,52 +134,64 @@ export function PackagesSection() {
               {packages.map((pkg) => (
                 <Card
                   key={pkg.id}
-                  className="flex-shrink-0 w-80 overflow-hidden hover:shadow-xl transition-all duration-300 group"
+                  className="flex-shrink-0 w-80 overflow-hidden hover:shadow-xl transition-all duration-300 group border border-transparent group-hover:border-green-500"
                 >
-                  <div className="relative h-48">
-                    <Image
-                      src={pkg.image || "/placeholder.svg?height=300&width=400&query=tropical%20destination"}
-                      alt={pkg.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  {/* ======= BLOCO DA IMAGEM/OVERLAY CORRIGIDO ======= */}
+                  <div className="relative h-48 overflow-hidden isolate">
+                    {/* Wrapper da imagem (escala aqui) */}
+                    <div className="absolute inset-0 z-0 transition-transform duration-300 will-change-transform group-hover:scale-105">
+                      <Image
+                        src={
+                          pkg.image ||
+                          "/placeholder.svg?height=300&width=400&query=tropical%20destination"
+                        }
+                        alt={pkg.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
 
-                    {/* Category Badge */}
-                    <div className="absolute top-4 left-4">
+                    {/* Overlay acima da imagem */}
+                    <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-colors duration-300 group-hover:from-black/70" />
+
+                    {/* Badge */}
+                    <div className="absolute top-4 left-4 z-20">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           pkg.category === "economico"
                             ? "bg-blue-100 text-blue-800"
                             : pkg.category === "premium"
-                              ? "bg-purple-100 text-purple-800"
-                              : pkg.category === "luxo"
-                                ? "bg-amber-100 text-amber-800"
-                                : "bg-gray-100 text-gray-800"
+                            ? "bg-purple-100 text-purple-800"
+                            : pkg.category === "luxo"
+                            ? "bg-amber-100 text-amber-800"
+                            : "bg-gray-100 text-gray-800"
                         }`}
                       >
                         {pkg.category === "economico"
                           ? "Econômico"
                           : pkg.category === "premium"
-                            ? "Premium"
-                            : pkg.category === "luxo"
-                              ? "Luxo"
-                              : "Padrão"}
+                          ? "Premium"
+                          : pkg.category === "luxo"
+                          ? "Luxo"
+                          : "Padrão"}
                       </span>
                     </div>
 
-                    {/* Title overlay */}
-                    <div className="absolute bottom-4 left-4 right-4">
+                    {/* Título/Subtítulo */}
+                    <div className="absolute bottom-4 left-4 right-4 z-20">
                       <h3 className="text-white font-bold text-lg mb-1">{pkg.title}</h3>
                       <p className="text-green-200 text-sm font-medium">{pkg.subtitle}</p>
                     </div>
                   </div>
+                  {/* ======= FIM DO BLOCO CORRIGIDO ======= */}
 
                   <CardContent className="p-6">
                     <div className="space-y-4">
                       {/* Price */}
                       <div className="flex items-baseline gap-2">
-                        <div className="text-2xl font-bold text-green-600">R$ {pkg.price.toLocaleString("pt-BR")}</div>
+                        <div className="text-2xl font-bold text-green-600">
+                          R$ {pkg.price.toLocaleString("pt-BR")}
+                        </div>
                         {pkg.originalPrice && (
                           <div className="text-sm text-gray-500 line-through">
                             R$ {pkg.originalPrice.toLocaleString("pt-BR")}
@@ -199,17 +213,26 @@ export function PackagesSection() {
                       {/* Actions */}
                       <div className="flex flex-col gap-2 pt-2">
                         <div className="flex gap-2">
-                          <Link href={`/pacotes/${pkg.slug || createSlug(pkg.title)}`} className="flex-1">
+                          <Link
+                            href={`/pacotes/${pkg.slug || createSlug(pkg.title)}`}
+                            className="flex-1"
+                          >
                             <Button variant="outline" size="sm" className="w-full">
                               {t("learnMore")}
                             </Button>
                           </Link>
-                          <Button onClick={() => openModal(pkg.title)} size="sm" className="flex-1 bg-green-600 hover:bg-green-700">
+                          <Button
+                            onClick={() => openModal(pkg.title)}
+                            size="sm"
+                            className="flex-1 bg-green-600 hover:bg-green-700"
+                          >
                             {t("bookNow")}
                           </Button>
                         </div>
                         <a
-                          href={`https://wa.me/5567991395384?text=${encodeURIComponent(`Olá! Vim do site Bonito ON e gostaria de mais informações sobre o pacote ${pkg.title}.`)}`}
+                          href={`https://wa.me/5567991395384?text=${encodeURIComponent(
+                            `Olá! Vim do site Bonito ON e gostaria de mais informações sobre o pacote ${pkg.title}.`,
+                          )}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full mt-2 inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"

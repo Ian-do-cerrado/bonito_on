@@ -233,8 +233,13 @@ export default function PackagesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPackages.map((pkg) => (
                 <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  <div className="relative h-48">
-                    <Image src={pkg.image || "/placeholder.svg"} alt={pkg.title} fill className="object-cover" />
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={pkg.image || "/placeholder.svg"}
+                      alt={pkg.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                    />
                     <div className="absolute top-4 left-4 flex gap-2">
                       <Badge className={getCategoryColor(pkg.category)}>{getCategoryLabel(pkg.category)}</Badge>
                       {pkg.originalPrice && (

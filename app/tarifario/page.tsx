@@ -3,37 +3,20 @@
 import { useState, useEffect, useRef } from "react"
 import { TourCard } from "@/components/tour-card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { getAllTours } from "@/services/supabase-tours"
+import { getAllTours, Tour as SupabaseTour } from "@/services/supabase-tours"
 
-export interface Tour {
-  id: string
-  title: string
-  description: string
-  price: number
-  image: string
-  rating: number
-  category:
-    | "all"
-    | "resort"
-    | "floating"
-    | "adventure"
-    | "waterfall"
-    | "contemplation"
-    | "biking"
-    | "pantanal"
-    | "scubaDiving"
-    | "rappelling"
-    | "cave"
-}
+export type Tour = SupabaseTour
 
 export default function ToursPage() {
   const { t } = useLanguage()
   const [tours, setTours] = useState<Tour[]>([])
   const [activeCategory, setActiveCategory] = useState<Tour["category"]>("all")
+  const [searchTerm, setSearchTerm] = useState("")
   const tabsRef = useRef<HTMLDivElement>(null)
   const [showLeftArrow, setShowLeftArrow] = useState(false)
   const [showRightArrow, setShowRightArrow] = useState(true)
@@ -99,9 +82,12 @@ export default function ToursPage() {
     }
   }, [])
 
-  const filteredTours = activeCategory === "all"
-    ? tours
-    : tours.filter((tour) => tour.category === activeCategory)
+  const filteredTours = tours
+    .filter((tour) => {
+      const matchesCategory = activeCategory === "all" || tour.category === activeCategory
+      const matchesSearch = tour.title.toLowerCase().includes(searchTerm.toLowerCase())
+      return matchesCategory && matchesSearch
+    })
 
   const getCategoryTitle = (category: Tour["category"]) => {
     switch (category) {
@@ -127,14 +113,23 @@ export default function ToursPage() {
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight animate-slide-in-left text-center sm:text-left">
             Passeios em Bonito
           </h2>
-          <Link href="/tarifario-2o-semestre" className="self-center sm:self-auto">
-            <Button
-              variant="outline"
-              className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white font-medium animate-slide-in-right hover:scale-105 transition-transform duration-200 w-full sm:w-auto"
-            >
-              {t("Ver Preços do Proximo Semestre")}
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <Input
+              type="text"
+              placeholder={t("searchTours")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full sm:w-64"
+            />
+            <Link href="/tarifario-2o-semestre" className="self-center sm:self-auto">
+              <Button
+                variant="outline"
+                className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white font-medium animate-slide-in-right hover:scale-105 transition-transform duration-200 w-full sm:w-auto"
+              >
+                {t("Ver Preços do Proximo Semestre")}
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="relative mb-6 sm:mb-8">
