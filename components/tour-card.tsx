@@ -91,10 +91,10 @@ export function TourCard({ tour }: TourCardProps) {
         </div>
       </div>
       <CardContent className="p-4 flex flex-col flex-grow">
-        <h3 className="font-bold text-base line-clamp-2 mb-2">{tour.title}</h3>
+        <h3 className="font-bold text-lg line-clamp-2 mb-2">{tour.title}</h3>
 
         <div
-          className="text-gray-600 text-xs line-clamp-3 mb-4"
+          className="text-gray-600 text-sm line-clamp-4 mb-4 min-h-[2.5rem]"
           dangerouslySetInnerHTML={{ __html: tour.description }}
         />
 
