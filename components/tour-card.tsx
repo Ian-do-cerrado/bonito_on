@@ -94,7 +94,7 @@ export function TourCard({ tour }: TourCardProps) {
         <h3 className="font-bold text-lg line-clamp-2 mb-2">{tour.title}</h3>
 
         <div
-          className="text-gray-600 text-sm line-clamp-4 mb-4 min-h-[2.5rem]"
+          className="text-gray-600 text-sm line-clamp-4 mb-4"
           dangerouslySetInnerHTML={{ __html: tour.description }}
         />
 
