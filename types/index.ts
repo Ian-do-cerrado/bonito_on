@@ -45,6 +45,10 @@ export interface BlogPost {
   tags: string[]
   slug: string
   readTime: number
+  seoTitle?: string
+  seoDescription?: string
+  seoKeywords?: string[]
+  gallery?: string[]
 }
 
 export interface Package {

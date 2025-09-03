@@ -15,7 +15,7 @@ import { Plus, ArrowLeft, LogOut, BarChart3, Users, MapPin, Calendar, RefreshCw 
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
 import { Tour } from "@/components/tours-section"
-import type { BlogPost } from "@/components/blog-section"
+import type { BlogPost } from "@/types/index"
 import type { Package } from "@/types/package"
 import { Attraction } from "@/services/supabase-attractions"
 import { createClient } from "@/lib/supabase/client"
@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation"
 import { getAllTours } from "@/services/supabase-tours"
 import { getAllPackages } from "@/services/supabase-packages"
 import { getAllAttractions } from "@/services/supabase-attractions"
+import { getAllBlogPosts } from "@/services/supabase-blog"
 import {
   createTour,
   updateTour,
@@ -33,6 +34,9 @@ import {
   createAttraction,
   updateAttraction,
   deleteAttraction,
+  createBlogPost,
+  updateBlogPost,
+  deleteBlogPost,
 } from "@/services/admin-supabase"
 import { useToast } from "@/hooks/use-toast"
 
@@ -99,11 +103,8 @@ export default function AdminPage() {
       setPackages(packagesData)
       setAttractions(attractionsData)
 
-      // Load blog posts from localStorage
-      const savedBlogPosts = localStorage.getItem("blogPosts")
-      if (savedBlogPosts) {
-        setBlogPosts(JSON.parse(savedBlogPosts))
-      }
+      const blogPostsData = await getAllBlogPosts()
+      setBlogPosts(blogPostsData)
     } catch (error) {
       console.error("Error loading data:", error)
       toast({
@@ -287,42 +288,57 @@ export default function AdminPage() {
     }
   }
 
-  // Blog handlers - usando localStorage
-  const saveBlogPosts = (updatedPosts: BlogPost[]) => {
-    setBlogPosts(updatedPosts)
-    localStorage.setItem("blogPosts", JSON.stringify(updatedPosts))
+  // Blog handlers
+  const handleUpdateBlogPost = async (updatedPost: BlogPost) => {
+    const success = await updateBlogPost(updatedPost)
+    if (success) {
+      setBlogPosts(blogPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post)))
+      toast({
+        title: "Sucesso",
+        description: "Post atualizado com sucesso!",
+      })
+    } else {
+      toast({
+        title: "Erro",
+        description: "Erro ao atualizar post",
+        variant: "destructive",
+      })
+    }
   }
 
-  const handleUpdateBlogPost = (updatedPost: BlogPost) => {
-    const updatedPosts = blogPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
-    saveBlogPosts(updatedPosts)
-    toast({
-      title: "Sucesso",
-      description: "Post atualizado com sucesso!",
-    })
-  }
-
-  const handleDeleteBlogPost = (postId: string) => {
-    const updatedPosts = blogPosts.filter((post) => post.id !== postId)
-    saveBlogPosts(updatedPosts)
-    toast({
-      title: "Sucesso",
-      description: "Post excluído com sucesso!",
-    })
+  const handleDeleteBlogPost = async (postId: string) => {
+    const success = await deleteBlogPost(postId)
+    if (success) {
+      setBlogPosts(blogPosts.filter((post) => post.id !== postId))
+      toast({
+        title: "Sucesso",
+        description: "Post excluído com sucesso!",
+      })
+    } else {
+      toast({
+        title: "Erro",
+        description: "Erro ao excluir post",
+        variant: "destructive",
+      })
+    }
   }
 
   const handleAddBlogPost = async (newPost: Omit<BlogPost, "id">) => {
-    const post: BlogPost = {
-      ...newPost,
-      id: Date.now().toString(),
+    const createdPost = await createBlogPost(newPost)
+    if (createdPost) {
+      setBlogPosts([...blogPosts, createdPost])
+      setIsAddBlogDialogOpen(false)
+      toast({
+        title: "Sucesso",
+        description: "Post criado com sucesso!",
+      })
+    } else {
+      toast({
+        title: "Erro",
+        description: "Erro ao criar post",
+        variant: "destructive",
+      })
     }
-    const updatedPosts = [...blogPosts, post]
-    saveBlogPosts(updatedPosts)
-    setIsAddBlogDialogOpen(false)
-    toast({
-      title: "Sucesso",
-      description: "Post criado com sucesso!",
-    })
   }
 
   const filteredTours = tours.filter((tour) => tour.category === activeCategory)

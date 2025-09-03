@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Plus, Minus } from "lucide-react"
-import type { BlogPost } from "@/components/blog-section"
+import type { BlogPost } from "@/types/index"
 
 interface AddBlogDialogProps {
   open: boolean
@@ -28,6 +28,7 @@ export function AddBlogDialog({ open, onOpenChange, onAdd }: AddBlogDialogProps)
     publishedAt: new Date().toISOString().split("T")[0],
     readTime: 5,
     tags: [],
+    slug: "", // Add slug here
     seoTitle: "",
     seoDescription: "",
     seoKeywords: [],
@@ -47,6 +48,7 @@ export function AddBlogDialog({ open, onOpenChange, onAdd }: AddBlogDialogProps)
         publishedAt: new Date().toISOString().split("T")[0],
         readTime: 5,
         tags: [],
+        slug: "", // Add slug here
         seoTitle: "",
         seoDescription: "",
         seoKeywords: [],

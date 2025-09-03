@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Edit, Trash2, Save, X, Calendar, Clock, User, Plus, Minus, ImageIcon } from "lucide-react"
 import Image from "next/image"
-import type { BlogPost } from "@/components/blog-section"
+import type { BlogPost } from "@/types/index"
 
 interface AdminBlogCardProps {
   post: BlogPost

@@ -61,6 +61,8 @@ const translations: Translations = {
   transportation: { pt: "Transporte", en: "Transportation", es: "Transporte" },
   events: { pt: "Eventos", en: "Events", es: "Eventos" },
   reserve: { pt: "Reservar", en: "Reserve", es: "Reservar" },
+  searchTours: { pt: "🔍 Procurar Passeio", en: "🔍 Search Tour", es: "🔍 Buscar Paseo" },
+  verPrecosProximoSemestre: { pt: "Ver Preços do Proximo Semestre", en: "See Next Semester Prices", es: "Ver Precios del Próximo Semestre" },
 
   // Attractions Section
   attractionsTitle: { pt: "Atrações", en: "Attractions", es: "Atracciones" },
@@ -91,6 +93,18 @@ const translations: Translations = {
     es: "Consulta todos nuestros paseos y actividades organizados por categoría",
   },
   backToHome: { pt: "Voltar ao Início", en: "Back to Home", es: "Volver al Inicio" },
+
+  blogPageTitle: { pt: "Blog", en: "Blog", es: "Blog" },
+  blogPageSubtitle: {
+    pt: "Descubra dicas, guias e histórias sobre Bonito e região",
+    en: "Discover tips, guides and stories about Bonito and the region",
+    es: "Descubre consejos, guías e historias sobre Bonito y la región",
+  },
+  searchPosts: { pt: "Buscar posts...", en: "Search posts...", es: "Buscar publicaciones..." },
+  allPosts: { pt: "Todos", en: "All", es: "Todos" },
+  noPostsFound: { pt: "Nenhum post encontrado", en: "No posts found", es: "No se encontraron publicaciones" },
+  tryDifferentSearch: { pt: "Tente uma busca diferente ou remova os filtros", en: "Try a different search or remove filters", es: "Intenta una búsqueda diferente o elimina los filtros" },
+  viewAllPosts: { pt: "Ver Blog", en: "View Blog", es: "Ver Blog" },
 
   // Blog Section
   blogTitle: { pt: "Blog", en: "Blog", es: "Blog" },
@@ -166,11 +180,9 @@ const translations: Translations = {
   // Footer translations
   quickLinks: { pt: "Links Rápidos", en: "Quick Links", es: "Enlaces Rápidos" },
   completePackages: { pt: "Pacotes Completos", en: "Complete Packages", es: "Paquetes Completos" },
-  toursInBonito: { pt: "Passeios em Bonito", en: "Tours in Bonito", es: "Paseos en Bonito" },
   localGastronomy: { pt: "Gastronomia Local", en: "Local Gastronomy", es: "Gastronomía Local" },
   blogAndTips: { pt: "Blog e Dicas", en: "Blog & Tips", es: "Blog y Consejos" },
   popularTours: { pt: "Passeios Populares", en: "Popular Tours", es: "Paseos Populares" },
-  contact: { pt: "Contato", en: "Contact", es: "Contacto" },
   address: { pt: "Endereço", en: "Address", es: "Dirección" },
   phones: { pt: "Telefones", en: "Phones", es: "Teléfonos" },
   email: { pt: "E-mail", en: "E-mail", es: "E-mail" },
@@ -255,7 +267,9 @@ const translations: Translations = {
   easterHoliday: { pt: "Semana Santa/Páscoa", en: "Easter Holiday", es: "Semana Santa/Pascua" },
   laborDay: { pt: "Dia do Trabalho", en: "Labor Day", es: "Día del Trabajo" },
   corpusChristi: { pt: "Corpus Christi", en: "Corpus Christi", es: "Corpus Christi" },
-  closeCalendar: { pt: "Fechar Calendário", en: "Close Calendar", es: "Cerrar Calendario" },
+  closeCalendar: { pt: "Fechar Calendário", en: "Close Calendar", es: "Cerrar Calendário" },
+  firstSemester: { pt: "Primeiro Semestre", en: "First Semester", es: "Primer Semestre" },
+  secondSemester: { pt: "Segundo Semestre", en: "Second Semester", es: "Segundo Semestre" },
 }
 
 interface LanguageContextType {

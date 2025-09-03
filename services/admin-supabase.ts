@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/client"
 import type { Tour } from "@/components/tours-section"
 import type { Package } from "@/types/package"
 import type { Attraction } from "@/components/attractions-section"
-import type { BlogPost } from "@/types/blog-post" // Declare BlogPost variable
+import type { BlogPost } from "@/types/index" // Declare BlogPost variable
 
 const supabase = createClient()
 
@@ -191,6 +191,7 @@ export async function createPackage(pkg: Omit<Package, "id">): Promise<Package |
       included: pkg.included,
       bestSeason: pkg.bestSeason,
       itinerary: pkg.itinerary,
+      slug: packageData.slug,
     }
   } catch (error) {
     console.error("Error in createPackage:", error)
@@ -487,6 +488,7 @@ export async function createBlogPost(post: Omit<BlogPost, "id">): Promise<BlogPo
       publishedAt: blogData.published_at,
       readTime: blogData.read_time,
       tags: post.tags || [],
+      slug: blogData.slug,
       seoTitle: blogData.seo_title,
       seoDescription: blogData.seo_description,
       seoKeywords: post.seoKeywords || [],

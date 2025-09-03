@@ -144,7 +144,7 @@ export function ToursSection() {
   }
 
   return (
-    <section id="tours" className="py-12 sm:py-16 bg-gray-50">
+    <section id="tours" className="py-12 sm:py-16 bg-green-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 sm:mb-12 animate-fade-in-up gap-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight animate-slide-in-left text-center sm:text-left">

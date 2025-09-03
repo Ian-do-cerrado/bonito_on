@@ -499,7 +499,7 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
                 <ul className="space-y-4 text-gray-700">
                   <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                    Transporte ida e volta
+                    Disponível a contratação de transfer
                   </li>
                   <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
