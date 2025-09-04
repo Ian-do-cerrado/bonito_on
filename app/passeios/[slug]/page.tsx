@@ -159,7 +159,7 @@ function formatDescription(text: string) {
 
 // Função auxiliar para formatar texto inline (negrito, itálico, etc.)
 function formatInlineText(text: string) {
-  const parts = []
+  const parts: { key: string; element: JSX.Element }[] = []
   let currentText = text
   let keyCounter = 0
 
@@ -219,9 +219,7 @@ function formatInlineText(text: string) {
 
 export default function TourDetailPage({ params }: TourDetailPageProps) {
   // Handle both Promise and direct object params
-  const resolvedParams =
-    params && typeof params === "object" && "then" in params ? params : (params as { slug: string })
-  const slug = resolvedParams.slug
+  const slug = (params as { slug: string }).slug
   const { openModal } = useContactModal()
   const [tour, setTour] = useState<Tour | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -483,9 +481,6 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-green-600" />
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -523,6 +518,9 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
             <Card className="sticky top-24">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-6">Valores</h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  Os preços podem sofrer alterações, fale com o agente.
+                </p>
 
                 <div className="space-y-4 mb-6">
                   {/* Preço Principal - Baixa Temporada */}

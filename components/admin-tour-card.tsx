@@ -1,16 +1,19 @@
 "use client"
 
 import { useState } from "react"
+import dynamic from "next/dynamic"
+import "react-quill/dist/quill.snow.css" // Import Quill styles
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Edit, Trash2, Save, X } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import Image from "next/image"
 import type { Tour } from "@/components/tours-section"
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 
 interface AdminTourCardProps {
   tour: Tour
@@ -53,6 +56,10 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
         return t("scubaDiving")
       case "resort":
         return t("resort")
+      case "floating":
+        return t("floating")
+      case "pantanal":
+        return t("pantanal")
       default:
         return t("adventure")
     }
@@ -79,7 +86,9 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
       case "resort":
         return "bg-green-100 text-green-800"
       case "floating":
-        return "bg-green-100 text-green-800"
+        return "bg-blue-100 text-blue-800"
+      case "pantanal":
+        return "bg-yellow-100 text-yellow-800"
       default:
         return "bg-green-100 text-green-800"
     }
@@ -140,11 +149,11 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
           <>
             <div>
               <Label htmlFor="description">{t("description")}</Label>
-              <Textarea
-                id="description"
+              <ReactQuill
+                theme="snow"
                 value={editedTour.description}
-                onChange={(e) => setEditedTour({ ...editedTour, description: e.target.value })}
-                rows={3}
+                onChange={(value) => setEditedTour({ ...editedTour, description: value })}
+                className="h-32 mb-10"
               />
             </div>
 
@@ -196,6 +205,8 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                   <SelectItem value="biking">{t("biking")}</SelectItem>
                   <SelectItem value="scubaDiving">{t("scubaDiving")}</SelectItem>
                   <SelectItem value="resort">{t("resort")}</SelectItem>
+                  <SelectItem value="floating">{t("floating")}</SelectItem>
+                  <SelectItem value="pantanal">{t("pantanal")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -212,7 +223,10 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
           </>
         ) : (
           <>
-            <p className="text-gray-600 text-sm line-clamp-3">{tour.description}</p>
+            <div
+              className="text-gray-600 text-sm line-clamp-3"
+              dangerouslySetInnerHTML={{ __html: tour.description }}
+            ></div>
             <div className="flex justify-between items-center">
               <div className="text-2xl font-bold text-green-600">R$ {tour.price.toFixed(2).replace(".", ",")}</div>
               <div className="text-sm text-gray-500">{tour.rating} ⭐</div>

@@ -144,10 +144,12 @@ export function ToursSection() {
   }
 
   return (
-    <section id="tours" className="py-12 sm:py-16 bg-green-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="tours" className="py-12 sm:py-16 relative overflow-hidden bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29]">
+      <div className="absolute inset-0 bg-gradient-to-tr from-emerald-900/30 to-transparent opacity-60"></div>
+      <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200&query=abstract+pattern')] opacity-5 mix-blend-overlay"></div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 sm:mb-12 animate-fade-in-up gap-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight animate-slide-in-left text-center sm:text-left">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight animate-slide-in-left text-center sm:text-left">
             Passeios em Bonito
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -156,7 +158,7 @@ export function ToursSection() {
               placeholder={t("searchTours")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-64"
+              className="w-full sm:w-64 bg-white/10 text-white placeholder:text-white/70 border-white/30 focus:border-white focus:ring-white"
             />
             <Link href="/tarifario" className="self-center sm:self-auto">
               <Button
@@ -189,67 +191,67 @@ export function ToursSection() {
               <TabsList ref={tabsRef} className="flex overflow-x-auto scrollbar-hide p-1 bg-gray-100 rounded-md w-full">
                 <TabsTrigger
                   value="all"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("all")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="resort"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("resort")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="floating"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("floating")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="adventure"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("adventure")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="waterfall"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("waterfall")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="contemplation"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("contemplation")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="biking"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("biking")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="pantanal"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("pantanal")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="scubaDiving"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("scubaDiving")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="rappelling"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("rappelling")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="cave"
-                  className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("cave")}
                 </TabsTrigger>

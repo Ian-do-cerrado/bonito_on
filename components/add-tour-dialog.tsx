@@ -3,14 +3,17 @@
 import type React from "react"
 
 import { useState } from "react"
+import dynamic from "next/dynamic"
+import "react-quill/dist/quill.snow.css" // Import Quill styles
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useLanguage } from "@/contexts/language-context"
 import type { Tour } from "@/components/tours-section"
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 
 interface AddTourDialogProps {
   open: boolean
@@ -65,13 +68,11 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
 
           <div>
             <Label htmlFor="description">{t("description")}</Label>
-            <Textarea
-              id="description"
+            <ReactQuill
+              theme="snow"
               value={newTour.description}
-              onChange={(e) => setNewTour({ ...newTour, description: e.target.value })}
-              placeholder="Descrição do item"
-              rows={3}
-              required
+              onChange={(value) => setNewTour({ ...newTour, description: value })}
+              className="h-32 mb-10"
             />
           </div>
 
@@ -127,6 +128,8 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
                 <SelectItem value="biking">{t("biking")}</SelectItem>
                 <SelectItem value="scubaDiving">{t("scubaDiving")}</SelectItem>
                 <SelectItem value="resort">{t("resort")}</SelectItem>
+                <SelectItem value="floating">{t("floating")}</SelectItem>
+                <SelectItem value="pantanal">{t("pantanal")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
