@@ -8,8 +8,9 @@ import { ArrowLeft, Clock, User, Calendar, Share2, ChevronLeft, ChevronRight } f
 import Image from "next/image"
 import Link from "next/link"
 import { Navigation } from "@/components/navigation"
-import type { BlogPost } from "@/components/blog-section"
+import type { BlogPost } from "@/types/index"
 import { getBlogPostBySlug } from "@/services/supabase-blog"
+import { marked } from "marked"
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -157,7 +158,7 @@ export default function BlogPostPage() {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
+              {post.tags.map((tag: string) => (
                 <Badge key={tag} variant="outline">
                   {tag}
                 </Badge>
@@ -165,75 +166,66 @@ export default function BlogPostPage() {
             </div>
           </header>
 
-          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
-            <p className="text-xl text-gray-700 mb-8 font-medium">{post.excerpt}</p>
-            {/* console.log("Raw post content:", post.content) */}
-            <div dangerouslySetInnerHTML={{ __html: post.content || "Conteúdo indisponível." }} />
+          {post.gallery && post.gallery.length > 0 && (
+            <div className="my-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Galeria de Imagens</h2>
 
-              {post.gallery && post.gallery.length > 0 && (
-                <div className="my-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Galeria de Imagens</h2>
+              <div className="relative h-96 mb-4 rounded-lg overflow-hidden">
+                <Image
+                  src={post.gallery[currentGalleryIndex] || "/placeholder.svg"}
+                  alt={`Galeria ${currentGalleryIndex + 1}`}
+                  fill
+                  className="object-cover"
+                />
 
-                  <div className="relative h-96 mb-4 rounded-lg overflow-hidden">
+                {post.gallery.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevGalleryImage}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                      onClick={nextGalleryImage}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                      {currentGalleryIndex + 1} / {post.gallery.length}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {post.gallery.map((imageUrl: string, index: number) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentGalleryIndex(index)}
+                    className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
+                      index === currentGalleryIndex ? "border-green-600" : "border-gray-300"
+                    }`}
+                  >
                     <Image
-                      src={post.gallery[currentGalleryIndex] || "/placeholder.svg"}
-                      alt={`Galeria ${currentGalleryIndex + 1}`}
+                      src={imageUrl || "/placeholder.svg"}
+                      alt={`Thumbnail ${index + 1}`}
                       fill
                       className="object-cover"
                     />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
-                    {post.gallery.length > 1 && (
-                      <>
-                        <button
-                          onClick={prevGalleryImage}
-                          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
-                        >
-                          <ChevronLeft className="w-6 h-6" />
-                        </button>
-                        <button
-                          onClick={nextGalleryImage}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
-                        >
-                          <ChevronRight className="w-6 h-6" />
-                        </button>
-                        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-                          {currentGalleryIndex + 1} / {post.gallery.length}
-                        </div>
-                      </>
-                    )}
-                  </div>
+          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
+            <div className="text-xl text-gray-700 mb-8 font-medium" dangerouslySetInnerHTML={{ __html: marked.parse(post.excerpt || "") as string }} />
+            {/* console.log("Raw post content:", post.content) */}
+            <div dangerouslySetInnerHTML={{ __html: marked.parse(post.content || "Conteúdo indisponível.") as string }} />
 
-                  <div className="flex gap-2 overflow-x-auto pb-2">
-                    {post.gallery.map((imageUrl, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentGalleryIndex(index)}
-                        className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
-                          index === currentGalleryIndex ? "border-green-600" : "border-gray-300"
-                        }`}
-                      >
-                        <Image
-                          src={imageUrl || "/placeholder.svg"}
-                          alt={`Thumbnail ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
 
-              <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Principais Atrações</h2>
-              <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
-
-              <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">Dicas Importantes</h3>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Nemo enim ipsam voluptatem quia voluptas sit aspernatur</li>
-                <li>Neque porro quisquam est, qui dolorem ipsum</li>
-                <li>Ut enim ad minima veniam, quis nostrum exercitationem</li>
-                <li>At vero eos et accusamus et iusto odio dignissimos</li>
-              </ul>
             </div>
         </article>
       </div>

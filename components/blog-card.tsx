@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Clock, User, Calendar } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import type { BlogPost } from "@/components/blog-section"
+import type { BlogPost } from "@/types/index"
 import { useLanguage } from "@/contexts/language-context"
 
 interface BlogCardProps {
