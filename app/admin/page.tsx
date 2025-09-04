@@ -501,40 +501,76 @@ export default function AdminPage() {
               className="mb-8"
             >
               <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 gap-1 bg-white shadow-md rounded-xl p-2">
-                <TabsTrigger value="all" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="all"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("all")} ({tours.filter((t) => t.category === "all").length})
                 </TabsTrigger>
-                <TabsTrigger value="adventure" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="adventure"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("adventure")} ({tours.filter((t) => t.category === "adventure").length})
                 </TabsTrigger>
-                <TabsTrigger value="contemplation" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="contemplation"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("contemplation")} ({tours.filter((t) => t.category === "contemplation").length})
                 </TabsTrigger>
-                <TabsTrigger value="cave" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="cave"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("cave")} ({tours.filter((t) => t.category === "cave").length})
                 </TabsTrigger>
-                <TabsTrigger value="waterfall" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="waterfall"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("waterfall")} ({tours.filter((t) => t.category === "waterfall").length})
                 </TabsTrigger>
-                <TabsTrigger value="rappelling" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="rappelling"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("rappelling")} ({tours.filter((t) => t.category === "rappelling").length})
                 </TabsTrigger>
-                <TabsTrigger value="horseback" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="horseback"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("horseback")} ({tours.filter((t) => t.category === "horseback").length})
                 </TabsTrigger>
-                <TabsTrigger value="biking" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="biking"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("biking")} ({tours.filter((t) => t.category === "biking").length})
                 </TabsTrigger>
-                <TabsTrigger value="scubaDiving" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="scubaDiving"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("scubaDiving")} ({tours.filter((t) => t.category === "scubaDiving").length})
                 </TabsTrigger>
-                <TabsTrigger value="resort" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="resort"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("resort")} ({tours.filter((t) => t.category === "resort").length})
                 </TabsTrigger>
-                <TabsTrigger value="floating" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="floating"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("floating")} ({tours.filter((t) => t.category === "floating").length})
                 </TabsTrigger>
-                <TabsTrigger value="pantanal" className="text-xs lg:text-sm rounded-lg">
+                <TabsTrigger
+                  value="pantanal"
+                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                >
                   {t("pantanal")} ({tours.filter((t) => t.category === "pantanal").length})
                 </TabsTrigger>
               </TabsList>

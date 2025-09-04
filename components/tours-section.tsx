@@ -191,67 +191,67 @@ export function ToursSection() {
               <TabsList ref={tabsRef} className="flex overflow-x-auto scrollbar-hide p-1 bg-gray-100 rounded-md w-full">
                 <TabsTrigger
                   value="all"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("all")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="resort"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("resort")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="floating"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("floating")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="adventure"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("adventure")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="waterfall"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("waterfall")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="contemplation"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("contemplation")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="biking"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("biking")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="pantanal"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("pantanal")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="scubaDiving"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("scubaDiving")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="rappelling"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("rappelling")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="cave"
-                  className="flex-shrink-0 font-medium text-white/80 data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
+                  className="flex-shrink-0 font-medium text-black data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
                 >
                   {t("cave")}
                 </TabsTrigger>

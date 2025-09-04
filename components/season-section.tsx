@@ -82,12 +82,12 @@ export function SeasonSection() {
   }
 
   return (
-    <section className="py-16 bg-gradient-to-br from-blue-50 to-green-50">
+    <section className="py-16 relative overflow-hidden bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Calendar className="h-8 w-8 text-blue-600" />
-            <h2 className="text-3xl font-bold text-gray-900">{t("seasonTitle")}</h2>
+            <Calendar className="h-8 w-8 text-white" />
+            <h2 className="text-3xl font-bold text-white">{t("seasonTitle")}</h2>
           </div>
         </div>
 
