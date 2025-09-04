@@ -10,14 +10,7 @@ import Link from "next/link"
 import { Navigation } from "@/components/navigation"
 import type { BlogPost } from "@/types/index"
 import { getBlogPostBySlug } from "@/services/supabase-blog"
-import { marked } from "marked"
 import he from "he"
-
-marked.setOptions({
-  gfm: true, // Use GitHub Flavored Markdown
-  breaks: true, // Add <br /> tags for soft line breaks
-  // sanitize: false, // WARNING: Only set to false if you trust the input HTML
-});
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -228,9 +221,9 @@ export default function BlogPostPage() {
           )}
 
           <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-6">
-            <div className="text-xl text-gray-700 mb-8 font-medium" dangerouslySetInnerHTML={{ __html: marked.parse(he.decode(post.excerpt || "")) as string }} />
+            <div className="text-xl text-gray-700 mb-8 font-medium" dangerouslySetInnerHTML={{ __html: he.decode(post.excerpt || "") }} />
             {/* console.log("Raw post content:", post.content) */}
-            <div dangerouslySetInnerHTML={{ __html: marked.parse(he.decode(post.content || "Conteúdo indisponível.")) as string }} />
+            <div dangerouslySetInnerHTML={{ __html: he.decode(post.content || "Conteúdo indisponível.") }} />
 
 
             </div>
