@@ -10,6 +10,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  assetPrefix: '/passeiosembonito',
 }
 
 export default nextConfig

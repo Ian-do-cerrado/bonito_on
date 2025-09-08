@@ -18,6 +18,14 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/passeiosembonito/:path*',
+        destination: 'http://localhost:3001/:path*', // Proxy to the passeiosembonito project
+      },
+    ]
+  },
 }
 
 export default nextConfig
