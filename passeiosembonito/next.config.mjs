@@ -6,11 +6,9 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  basePath: '/passeiosembonito',
   images: {
     unoptimized: true,
   },
-  assetPrefix: '/passeiosembonito',
 }
 
 export default nextConfig

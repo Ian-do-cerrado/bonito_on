@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/passeiosembonito/:path*",
-      "destination": "https://passeiosembonito.vercel.app/:path*"
+      "destination": "/passeiosembonito/:path*"
     }
   ]
 }
