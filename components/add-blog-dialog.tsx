@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -34,9 +34,20 @@ export function AddBlogDialog({ open, onOpenChange, onAdd }: AddBlogDialogProps)
     seoKeywords: [],
     gallery: [],
   })
+  const [tagsInput, setTagsInput] = useState(newPost.tags.join(", "))
+  const [seoKeywordsInput, setSeoKeywordsInput] = useState(newPost.seoKeywords?.join(", ") || "")
+
+  useEffect(() => {
+    setTagsInput(newPost.tags.join(", "))
+    setSeoKeywordsInput(newPost.seoKeywords?.join(", ") || "")
+  }, [newPost.tags, newPost.seoKeywords])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    // Ensure tags and keywords are parsed on submit as well
+    handleTagsBlur()
+    handleKeywordsBlur()
+
     if (newPost.title && newPost.excerpt && newPost.content && newPost.author) {
       onAdd(newPost)
       setNewPost({
@@ -54,19 +65,29 @@ export function AddBlogDialog({ open, onOpenChange, onAdd }: AddBlogDialogProps)
         seoKeywords: [],
         gallery: [],
       })
+      setTagsInput("")
+      setSeoKeywordsInput("")
     }
   }
 
-  const handleTagsChange = (tagsString: string) => {
-    const tags = tagsString
+  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTagsInput(e.target.value)
+  }
+
+  const handleTagsBlur = () => {
+    const tags = tagsInput
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean)
     setNewPost({ ...newPost, tags })
   }
 
-  const handleKeywordsChange = (keywordsString: string) => {
-    const keywords = keywordsString
+  const handleKeywordsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSeoKeywordsInput(e.target.value)
+  }
+
+  const handleKeywordsBlur = () => {
+    const keywords = seoKeywordsInput
       .split(",")
       .map((keyword) => keyword.trim())
       .filter(Boolean)
@@ -169,8 +190,9 @@ export function AddBlogDialog({ open, onOpenChange, onAdd }: AddBlogDialogProps)
                 <Label htmlFor="tags">Tags (separadas por vírgula)</Label>
                 <Input
                   id="tags"
-                  value={newPost.tags.join(", ")}
-                  onChange={(e) => handleTagsChange(e.target.value)}
+                  value={tagsInput}
+                  onChange={handleTagsChange}
+                  onBlur={handleTagsBlur}
                   placeholder="passeios, bonito, turismo, dicas"
                 />
               </div>
@@ -294,8 +316,9 @@ export function AddBlogDialog({ open, onOpenChange, onAdd }: AddBlogDialogProps)
                 <Label htmlFor="seoKeywords">Palavras-chave (separadas por vírgula)</Label>
                 <Input
                   id="seoKeywords"
-                  value={newPost.seoKeywords?.join(", ") || ""}
-                  onChange={(e) => handleKeywordsChange(e.target.value)}
+                  value={seoKeywordsInput}
+                  onChange={handleKeywordsChange}
+                  onBlur={handleKeywordsBlur}
                   placeholder="bonito ms, turismo, passeios aquáticos, ecoturismo"
                 />
                 <p className="text-xs text-gray-500 mt-1">Use 3-5 palavras-chave relevantes para o conteúdo</p>

@@ -73,13 +73,13 @@ export default function BlogPostPage() {
 
   const nextGalleryImage = () => {
     if (post?.gallery?.length) {
-      setCurrentGalleryIndex((prev) => (prev + 1) % post.gallery.length)
+      setCurrentGalleryIndex((prev) => (prev + 1) % (post.gallery?.length || 1))
     }
   }
 
   const prevGalleryImage = () => {
     if (post?.gallery?.length) {
-      setCurrentGalleryIndex((prev) => (prev - 1 + post.gallery.length) % post.gallery.length)
+      setCurrentGalleryIndex((prev) => (prev - 1 + (post.gallery?.length || 1)) % (post.gallery?.length || 1))
     }
   }
 
@@ -123,22 +123,6 @@ export default function BlogPostPage() {
     <div className="min-h-screen bg-gray-50">
       <Navigation />
 
-      <section className="relative h-96 pt-16">
-        <Image
-          src={post.image || "/placeholder.svg"}
-          alt={coverAlt}
-          fill
-          sizes="100vw"
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
-        {mainTag && (
-          <div className="absolute bottom-8 left-8">
-            <Badge className="bg-green-600 text-white mb-4">{mainTag}</Badge>
-          </div>
-        )}
-      </section>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
@@ -152,6 +136,17 @@ export default function BlogPostPage() {
 
         <article className="bg-white rounded-lg shadow-sm p-8">
           <header className="mb-8">
+            {post.image && (
+              <div className="relative w-full h-64 sm:h-80 md:h-96 mb-8 rounded-lg overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={coverAlt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 50vw"
+                  className="object-cover"
+                />
+              </div>
+            )}
             <h1 className="text-4xl font-bold text-gray-900 mb-6">{post.title}</h1>
 
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-6">
