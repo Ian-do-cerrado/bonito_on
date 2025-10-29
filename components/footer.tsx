@@ -235,7 +235,7 @@ export function Footer() {
             {/* Copyright */}
             <div className="text-center md:text-left">
               <p className="text-sm text-gray-300">{t("copyright")}</p>
-              <p className="text-xs text-gray-400 mt-1">CNPJ: 12.345.678/0001-90 | Cadastur: 12.345678.90.0001-1</p>
+              <p className="text-xs text-gray-400 mt-1">CNPJ: 47.950.064/0001-17 | Cadastur: 47.950.064/0001-17</p>
               <p className="text-xs text-gray-500 mt-1">Site feito por Ian Yamaguchi</p>
             </div>
 

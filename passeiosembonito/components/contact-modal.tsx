@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,8 @@ interface ContactModalProps {
 }
 
 export function ContactModal({ isOpen, setIsOpen }: ContactModalProps) {
+  console.log("ContactModal rendered, isOpen:", isOpen);
+  const router = useRouter(); // Initialize useRouter
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,8 +28,27 @@ export function ContactModal({ isOpen, setIsOpen }: ContactModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setMessage("");
+
+    // Basic validation
+    if (!name.trim()) {
+      setMessage("Por favor, insira seu nome.");
+      return;
+    }
+    if (!/^[a-zA-Z\s]+$/.test(name)) {
+      setMessage("O nome deve conter apenas caracteres alfabéticos.");
+      return;
+    }
+    if (!whatsapp.trim()) {
+      setMessage("Por favor, insira seu número de WhatsApp.");
+      return;
+    }
+    if (!/^\d+$/.test(whatsapp)) {
+      setMessage("O número de WhatsApp deve conter apenas dígitos.");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/contact", {
@@ -40,10 +62,9 @@ export function ContactModal({ isOpen, setIsOpen }: ContactModalProps) {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage("Obrigado pelo seu interesse! Entraremos em contato em breve.");
         setName("");
         setWhatsapp("");
-        setIsOpen(false); // Close modal on success
+        router.push("/obrigado"); // Redirect to /obrigado page
       } else {
         setMessage(data.error || "Algo deu errado. Por favor, tente novamente.");
       }
@@ -56,7 +77,7 @@ export function ContactModal({ isOpen, setIsOpen }: ContactModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[90vw] max-w-md">
         <DialogHeader>
           <DialogTitle>Entre em Contato!</DialogTitle>
           <DialogDescription>

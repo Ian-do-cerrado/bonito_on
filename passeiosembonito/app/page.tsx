@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -10,6 +10,14 @@ import { ContactModal } from "@/components/contact-modal"
 
 export default function BonitoONLanding() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsContactModalOpen(true);
+    }, 3000); // 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,9 +42,9 @@ export default function BonitoONLanding() {
           </p>
           <Button
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
+            className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
             onClick={() =>
-              window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de montar um roteiro para Bonito.", "_blank")
+              window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de montar um roteiro para Bonito.", "_blank")
             }
           >
             <MessageCircle className="mr-2 h-5 w-5" />
@@ -59,11 +67,11 @@ export default function BonitoONLanding() {
           <div className="text-center mb-12">
             <Button
               size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
+              className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg min-h-[72px] md:min-h-0 flex items-center justify-center"
               onClick={() => setIsContactModalOpen(true)}
             >
               <CalendarDays className="mr-2 h-5 w-5" />
-              Receber Tarifário Descritivo com Todos os Passeios
+              Receber Tarifário Descritivo <br className="md:hidden" /> com Todos os Passeios
             </Button>
           </div>
 
@@ -91,7 +99,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de falar com um especialista sobre cachoeiras.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de falar com um especialista sobre cachoeiras.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -123,7 +131,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de falar com um especialista sobre flutuação.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de falar com um especialista sobre flutuação.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -155,7 +163,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de falar com um especialista sobre grutas.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de falar com um especialista sobre grutas.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -187,7 +195,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de falar com um especialista sobre o Pantanal.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de falar com um especialista sobre o Pantanal.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -402,9 +410,9 @@ export default function BonitoONLanding() {
           <div className="text-center mt-12">
             <Button
               size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
+              className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
               onClick={() =>
-                window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de tirar mais dúvidas com um especialista.", "_blank")
+                window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de tirar mais dúvidas com um especialista.", "_blank")
               }
             >
               <MessageCircle className="mr-2 h-5 w-5" />
@@ -490,9 +498,9 @@ export default function BonitoONLanding() {
           </p>
           <Button
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
+            className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
             onClick={() =>
-              window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de atendimento personalizado.", "_blank")
+              window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de atendimento personalizado.", "_blank")
             }
           >
             <MessageCircle className="mr-2 h-5 w-5" />
@@ -529,7 +537,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre o Hotel Águas de Bonito.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre o Hotel Águas de Bonito.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -558,7 +566,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre o Zagaia Eco Resort.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre o Zagaia Eco Resort.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -587,7 +595,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre o Hotel Cabanas.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre o Hotel Cabanas.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -616,7 +624,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre a Pousada Boyrá.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre a Pousada Boyrá.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -659,7 +667,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre locação de carros em Bonito.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre locação de carros em Bonito.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -690,7 +698,7 @@ export default function BonitoONLanding() {
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
                   variant="default"
                   onClick={() =>
-                    window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre grupos rodoviários em Bonito.", "_blank")
+                    window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre grupos rodoviários em Bonito.", "_blank")
                   }
                 >
                   <MessageCircle className="mr-2 h-4 w-4" />
@@ -734,7 +742,7 @@ export default function BonitoONLanding() {
                     variant="default"
                     size="sm"
                     className="bg-green-500 hover:bg-green-600 text-white"
-                    onClick={() => window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre o Pacote Aventura.", "_blank")}
+                    onClick={() => window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre o Pacote Aventura.", "_blank")}
                   >
                     Ver Detalhes
                   </Button>
@@ -765,7 +773,7 @@ export default function BonitoONLanding() {
                     variant="default"
                     size="sm"
                     className="bg-green-500 hover:bg-green-600 text-white"
-                    onClick={() => window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre o Pacote Ecoturismo.", "_blank")}
+                    onClick={() => window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre o Pacote Ecoturismo.", "_blank")}
                   >
                     Ver Detalhes
                   </Button>
@@ -796,7 +804,7 @@ export default function BonitoONLanding() {
                     variant="default"
                     size="sm"
                     className="bg-green-500 hover:bg-green-600 text-white"
-                    onClick={() => window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre o Pacote Premium.", "_blank")}
+                    onClick={() => window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre o Pacote Premium.", "_blank")}
                   >
                     Ver Detalhes
                   </Button>
@@ -827,7 +835,7 @@ export default function BonitoONLanding() {
                     variant="default"
                     size="sm"
                     className="bg-green-500 hover:bg-green-600 text-white"
-                    onClick={() => window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre o Pacote Família.", "_blank")}
+                    onClick={() => window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre o Pacote Família.", "_blank")}
                   >
                     Ver Detalhes
                   </Button>
@@ -837,9 +845,9 @@ export default function BonitoONLanding() {
           </div>
           <Button
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
+            className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg"
             onClick={() =>
-              window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de informações sobre pacotes para Bonito.", "_blank")
+              window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de informações sobre pacotes para Bonito.", "_blank")
             }
           >
             <MessageCircle className="mr-2 h-5 w-5" />
@@ -859,9 +867,9 @@ export default function BonitoONLanding() {
           <Button
             size="lg"
             variant="secondary"
-            className="px-8 py-4 text-lg"
+            className="w-full md:w-auto px-8 py-4 text-lg"
             onClick={() =>
-              window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de montar um roteiro para Bonito.", "_blank")
+              window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de montar um roteiro para Bonito.", "_blank")
             }
           >
             <MessageCircle className="mr-2 h-5 w-5" />
@@ -953,13 +961,13 @@ export default function BonitoONLanding() {
 
       <div className="fixed bottom-6 right-6 z-50">
         <Button
-          size="lg"
-          className="bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
+          size="icon"
+          className="bg-green-500 hover:bg-green-600 text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse md:p-4"
           onClick={() =>
-            window.open("https://wa.me/5567991395384?text=Olá! Vim do site. Gostaria de montar um roteiro para Bonito.", "_blank")
+            window.open("https://wa.me/5567996209978?text=Olá! Vim do site. Gostaria de montar um roteiro para Bonito.", "_blank")
           }
         >
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="h-5 w-5 md:h-6 md:w-6" />
         </Button>
       </div>
 

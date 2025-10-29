@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     try {
       emailData = await resend.emails.send({
         from: 'contato@bonitoon.com.br', // TODO: Replace with your verified Resend email, e.g., 'your-email@your-domain.com'
-        to: 'contato@bonitoon.com.br', // TODO: Replace with your recipient email, e.g., 'recipient@example.com'
+        to: 'bonitoon945@gmail.com', // TODO: Replace with your recipient email, e.g., 'recipient@example.com'
         subject: 'Novo Lead',
         html: `
           <p>Name: ${name}</p>
