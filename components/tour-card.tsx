@@ -123,7 +123,7 @@ function getCategoryLabel(category: Tour["category"]) {
     horseback: "Cavalgada",
     biking: "Biking",
     scubaDiving: "Mergulho",
-    resort: "Resort",
+    resort: "Balneário",
     floating: "Flutuação",
     pantanal: "Pantanal",
   }

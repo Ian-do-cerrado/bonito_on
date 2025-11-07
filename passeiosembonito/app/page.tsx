@@ -560,7 +560,7 @@ export default function BonitoONLanding() {
               </CardHeader>
               <CardContent className="space-y-4 flex-1 flex flex-col">
                 <CardDescription className="text-justify flex-1">
-                  Um resort completo com diversas opções de lazer e contato direto com a natureza.
+                  Um balneário completo com diversas opções de lazer e contato direto com a natureza.
                 </CardDescription>
                 <Button
                   className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white"
