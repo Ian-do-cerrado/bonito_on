@@ -230,26 +230,26 @@ export function Navigation() {
                   className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {t(label)}
+                  {t(label).toUpperCase()}
                 </Link>
               ))}
               <button
                 onClick={() => scrollToSection("attractions", "gastronomy")}
                 className="block w-full text-left px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                {t("gastronomy")}
+                {t("gastronomy").toUpperCase()}
               </button>
               <button
                 onClick={() => scrollToSection("attractions", "accommodation")}
                 className="block w-full text-left px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                {t("accommodations")}
+                {t("accommodations").toUpperCase()}
               </button>
               <button
                 onClick={() => scrollToSection("blog")}
                 className="block w-full text-left px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                {t("blog")}
+                {t("blog").toUpperCase()}
               </button>
             </div>
 
