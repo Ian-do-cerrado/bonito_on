@@ -271,7 +271,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-gray-600">
                     <Phone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                    <span className="text-sm sm:text-base">(67) 99139-5384</span>
+                    <span className="text-sm sm:text-base">(67) 9620-9978</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
                     <Globe className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />

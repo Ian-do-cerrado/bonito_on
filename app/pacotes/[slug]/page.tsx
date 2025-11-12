@@ -368,7 +368,7 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
                   </Button>
 
                   <Link
-                    href={`https://wa.me/5567991395384?text=${encodeURIComponent(`Olá! Vim do site Bonito ON e gostaria de mais informações sobre o pacote ${packageData.title}.`)}`}
+                    href={`https://wa.me/556796209978?text=${encodeURIComponent(`Olá! Vim do site Bonito ON e gostaria de mais informações sobre o pacote ${packageData.title}.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
@@ -382,7 +382,7 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <Phone className="w-4 h-4 text-green-600" />
-                      <span className="text-sm">(67) 99139-5384</span>
+                      <span className="text-sm">(67) 9620-9978</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 text-green-600" />

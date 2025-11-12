@@ -147,7 +147,7 @@ export function ContactModal({ attraction }: ContactModalProps) {
                   name="phone"
                   type="tel"
                   required
-                  placeholder="(67) 99139-5384"
+                  placeholder="(67) 9620-9978"
                   className="h-10 sm:h-11 border-2 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 bg-green-50"
                 />
               </div>
@@ -237,7 +237,7 @@ export function ContactModal({ attraction }: ContactModalProps) {
           {/* Contact cards */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             <a
-              href={`https://wa.me/5567991395384?text=${encodeURIComponent("Olá! Gostaria de falar com um especialista sobre os pacotes.")}`}
+              href={`https://wa.me/556796209978?text=${encodeURIComponent("Olá! Gostaria de falar com um especialista sobre os pacotes.")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-3 p-3 sm:p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 hover:shadow-lg transition-all duration-300 cursor-pointer"

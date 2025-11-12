@@ -622,7 +622,7 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <Phone className="w-4 h-4 text-green-600" />
-                      <span className="text-sm">(67) 99139-5384</span>
+                      <span className="text-sm">(67) 9620-9978</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 text-green-600" />

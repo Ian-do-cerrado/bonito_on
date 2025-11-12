@@ -35,7 +35,7 @@ export async function submitContactForm(data: SubmitContactFormData) {
 
     // Generate WhatsApp link
     const whatsappLink = `https://wa.me/55${formattedWhatsApp}`
-    const phoneLink = `tel:+55${formattedWhatsApp}`
+    const phoneLink = `tel:+556796209978`
 
     // Send email using Resend
     const emailResult = await resend.emails.send({
