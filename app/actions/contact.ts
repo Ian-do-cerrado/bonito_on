@@ -39,7 +39,7 @@ export async function submitContactForm(data: SubmitContactFormData) {
 
     // Send email using Resend
     const emailResult = await resend.emails.send({
-      from: "BonitoON Website <noreply@resend.dev>", // Using Resend's domain initially
+      from: `BonitoON Website <${process.env.CONTACT_EMAIL}>`, // Using verified domain
       to: [process.env.CONTACT_EMAIL],
       subject: `🌿 Novo Lead - ${data.name} interessado em Bonito`,
       html: `
