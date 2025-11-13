@@ -341,7 +341,7 @@ export default function AdminPage() {
     }
   }
 
-  const filteredTours = tours.filter((tour) => tour.category === activeCategory)
+  const filteredTours = activeCategory === "all" ? tours : tours.filter((tour) => tour.category === activeCategory)
   const filteredAttractions = attractions.filter((attraction) => attraction.category === activeAttractionCategory)
 
   if (isLoading) {
@@ -505,7 +505,7 @@ export default function AdminPage() {
                   value="all"
                   className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
                 >
-                  {t("all")} ({tours.filter((t) => t.category === "all").length})
+                  {t("all")} ({tours.length})
                 </TabsTrigger>
                 <TabsTrigger
                   value="adventure"
