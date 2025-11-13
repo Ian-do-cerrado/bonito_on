@@ -4,7 +4,6 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react']
   },
   images: {
-    domains: ['placeholder.svg'],
     remotePatterns: [
       {
         protocol: 'https',
