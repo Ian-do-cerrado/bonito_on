@@ -1,29 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   experimental: {
     optimizePackageImports: ['lucide-react']
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+    unoptimized: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/passeiosembonito/:path*',
-        destination: 'http://localhost:3001/:path*', // Proxy to the passeiosembonito project
-      },
-    ]
   },
 }
 

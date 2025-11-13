@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client"
 import type { BlogPost } from "@/types/index"
+export type { BlogPost } from "@/types/index"
 import { v4 as uuidv4 } from "uuid"
 
 const supabase = createClient()

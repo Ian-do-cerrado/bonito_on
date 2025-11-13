@@ -1,12 +1,20 @@
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
-import { getAttractionBySlug } from "@/services/supabase-attractions"
+import { getAttractionBySlug, getAllAttractions, Attraction } from "@/services/supabase-attractions"
 import { AttractionDetailPage } from "@/components/attraction-detail-page"
 
 interface AttractionPageProps {
   params: {
     slug: string
   }
+}
+
+export async function generateStaticParams() {
+  const attractions = await getAllAttractions()
+
+  return attractions.map((attraction: Attraction) => ({
+    slug: attraction.slug,
+  }))
 }
 
 export async function generateMetadata({ params }: AttractionPageProps): Promise<Metadata> {

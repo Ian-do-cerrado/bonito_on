@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/client"
 
-export interface Tour {
+interface Tour {
   id: string
   title: string
   description: string
@@ -17,6 +17,10 @@ export interface Tour {
   created_at?: string
   updated_at?: string
 }
+
+
+
+export type { Tour }
 
 const supabase = createClient()
 

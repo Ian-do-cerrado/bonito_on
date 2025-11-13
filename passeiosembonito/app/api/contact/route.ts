@@ -10,17 +10,21 @@ export async function POST(request: Request) {
 
     const resend = new Resend(process.env.RESEND_API_KEY); // Moved inside the function
 
+    console.log('Received request to /api/contact');
     const { name, whatsapp } = await request.json();
+    console.log('Parsed request body:', { name, whatsapp });
 
     if (!name || !whatsapp) {
+      console.error('Validation error: Name or WhatsApp is missing.');
       return NextResponse.json({ error: 'Name and WhatsApp are required.' }, { status: 400 });
     }
 
     let emailData;
     try {
+      console.log('Attempting to send email with Resend...');
       emailData = await resend.emails.send({
-        from: 'contato@bonitoon.com.br', // TODO: Replace with your verified Resend email, e.g., 'your-email@your-domain.com'
-        to: 'bonitoon945@gmail.com', // TODO: Replace with your recipient email, e.g., 'recipient@example.com'
+        from: 'contato@bon.com.br', // Updated to the correct sending email
+        to: 'contato@bonitoon.com.br', // Updated to the correct recipient email
         subject: 'Novo Lead',
         html: `
           <p>Name: ${name}</p>
@@ -42,7 +46,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: resendErrorMessage }, { status: 500 });
     }
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('General error in /api/contact:', error);
     let errorMessage = 'Failed to send email.';
     if (error instanceof Error) {
       errorMessage = `Failed to send email: ${error.message}`;

@@ -67,7 +67,7 @@ export default function BonitoONLanding() {
           <div className="text-center mb-12">
             <Button
               size="lg"
-              className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg min-h-[72px] md:min-h-0 flex items-center justify-center"
+              className="md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg min-h-[72px] md:min-h-0 flex items-center justify-center mx-auto"
               onClick={() => setIsContactModalOpen(true)}
             >
               <CalendarDays className="mr-2 h-5 w-5" />

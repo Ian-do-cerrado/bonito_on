@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client"
 import type { Package } from "@/types/package"
+export type { Package } from "@/types/package"
 
 const supabase = createClient()
 
@@ -85,6 +86,7 @@ function transformDatabasePackage(dbPackage: any): Package {
     reviewsCount: dbPackage.reviews_count,
     maxPeople: dbPackage.max_people,
     difficulty: dbPackage.difficulty,
+    slug: dbPackage.slug,
     highlights: dbPackage.package_highlights?.map((h: any) => h.highlight) || [],
     included: dbPackage.package_included?.map((i: any) => i.item) || [],
     bestSeason: dbPackage.package_best_seasons?.map((s: any) => s.season) || [],
@@ -156,6 +158,7 @@ function getFallbackPackages(): Package[] {
       maxPeople: 15,
       difficulty: "facil",
       bestSeason: ["Maio", "Junho", "Julho", "Agosto", "Setembro"],
+      slug: "bonito-essencial",
     },
   ]
 }
