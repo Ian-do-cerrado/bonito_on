@@ -55,7 +55,7 @@ export default function AdminPage() {
   const [isAddBlogDialogOpen, setIsAddBlogDialogOpen] = useState(false)
   const [isAddPackageDialogOpen, setIsAddPackageDialogOpen] = useState(false)
   const [isAddAttractionDialogOpen, setIsAddAttractionDialogOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<"tours" | "blog" | "packages" | "attractions">("tours")
+  const [activeTab, setActiveTab] = useState<"tours" | "blog" | "packages" | "attractions" | "next-semester">("tours")
   const [activeCategory, setActiveCategory] = useState<Tour["category"]>("all")
   const [activeAttractionCategory, setActiveAttractionCategory] = useState<Attraction["category"]>("gastronomy")
 
@@ -100,6 +100,7 @@ export default function AdminPage() {
       ])
 
       setTours(toursData)
+      console.log("Tours carregados no AdminPage (raw):", toursData)
       setPackages(packagesData)
       setAttractions(attractionsData)
 
@@ -465,7 +466,7 @@ export default function AdminPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="mb-8">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-white shadow-lg rounded-xl p-2">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 bg-white shadow-lg rounded-xl p-2">
             <TabsTrigger
               value="tours"
               className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
@@ -489,6 +490,13 @@ export default function AdminPage() {
               className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
             >
               Gerenciar Blog
+            </TabsTrigger>
+            <TabsTrigger
+              value="next-semester"
+              className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
+              asChild
+            >
+              <Link href="/admin/passeios-2o-semestre">Editar para o próximo semestre</Link>
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -698,6 +706,7 @@ export default function AdminPage() {
             )}
           </>
         )}
+
       </div>
 
       {/* Dialogs */}
@@ -713,6 +722,7 @@ export default function AdminPage() {
         onOpenChange={setIsAddAttractionDialogOpen}
         onAdd={handleAddAttraction}
       />
+
     </div>
   )
 }

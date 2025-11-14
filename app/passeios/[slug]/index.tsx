@@ -241,8 +241,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
       setIsLoading(true)
       const fetchTour = async () => {
         try {
-          const params = new URLSearchParams(window.location.search);
-          const slug = params.get('slug'); // Assuming slug is passed as a query param for client-side navigation
+          const slug = window.location.pathname.split('/').pop();
           if (!slug) return;
 
           // Tenta buscar do Supabase primeiro
@@ -255,7 +254,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
             const savedTours = localStorage.getItem("tours")
             if (savedTours) {
               const tours: Tour[] = JSON.parse(savedTours)
-              const foundTour = tours.find((t) => createSlug(t.title) === slug)
+              const foundTour = tours.find((t) => createSlug(t.title) === window.location.pathname.split("/").pop())
               setTour(foundTour || null)
             }
           }
@@ -265,7 +264,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
           const savedTours = localStorage.getItem("tours")
           if (savedTours) {
             const tours: Tour[] = JSON.parse(savedTours)
-            const foundTour = tours.find((t) => createSlug(t.title) === slug)
+            const foundTour = tours.find((t) => createSlug(t.title) === window.location.pathname.split("/").pop())
             setTour(foundTour || null)
           }
         } finally {
@@ -544,7 +543,8 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                   </div>
 
                   {/* Alta Temporada */}
-                  {tour.hs_price && tour.hs_price > 0 && (
+                  {/* Alta Temporada */}
+                  {tour.price_high_season && tour.price_high_season > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
@@ -553,7 +553,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.hs_price.toFixed(2).replace(".", ",")}
+                            R$ {tour.price_high_season.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>
@@ -561,7 +561,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                   )}
 
                   {/* Criança */}
-                  {tour.chd_price && tour.chd_price > 0 && (
+                  {tour.price_child && tour.price_child > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
@@ -570,7 +570,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.chd_price.toFixed(2).replace(".", ",")}
+                            R$ {tour.price_child.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>
@@ -578,7 +578,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                   )}
 
                   {/* Melhor Idade */}
-                  {tour.senior_price && tour.senior_price > 0 && (
+                  {tour.price_senior && tour.price_senior > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
@@ -587,7 +587,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.senior_price.toFixed(2).replace(".", ",")}
+                            R$ {tour.price_senior.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>
@@ -595,7 +595,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                   )}
 
                   {/* Morador MS */}
-                  {tour.ms_price && tour.ms_price > 0 && (
+                  {tour.price_ms && tour.price_ms > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
@@ -604,7 +604,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.ms_price.toFixed(2).replace(".", ",")}
+                            R$ {tour.price_ms.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>

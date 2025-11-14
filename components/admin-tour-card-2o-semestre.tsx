@@ -11,20 +11,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Edit, Trash2, Save, X } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import Image from "next/image"
-import type { Tour } from "@/components/tours-section"
+import { DatabaseTourSegundoSemestre } from "@/lib/supabase/types"
+import { Switch } from "@/components/ui/switch"
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 
-interface AdminTourCardProps {
-  tour: Tour
-  onUpdate: (tour: Tour) => void
+interface AdminTourCard2oSemestreProps {
+  tour: DatabaseTourSegundoSemestre
+  onUpdate: (tour: DatabaseTourSegundoSemestre) => void
   onDelete: (tourId: string) => void
 }
 
-export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) {
+export function AdminTourCard2oSemestre({ tour, onUpdate, onDelete }: AdminTourCard2oSemestreProps) {
   const { t } = useLanguage()
   const [isEditing, setIsEditing] = useState(false)
-  const [editedTour, setEditedTour] = useState<Tour>(tour)
+  const [editedTour, setEditedTour] = useState<DatabaseTourSegundoSemestre>(tour)
 
   const handleSave = () => {
     onUpdate(editedTour)
@@ -36,7 +37,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
     setIsEditing(false)
   }
 
-  const getCategoryLabel = (category: Tour["category"]) => {
+  const getCategoryLabel = (category: DatabaseTourSegundoSemestre["category"]) => {
     switch (category) {
       case "adventure":
         return t("adventure")
@@ -65,7 +66,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
     }
   }
 
-  const getCategoryColor = (category: Tour["category"]) => {
+  const getCategoryColor = (category: DatabaseTourSegundoSemestre["category"]) => {
     switch (category) {
       case "adventure":
         return "bg-red-100 text-red-800"
@@ -233,7 +234,9 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
               <Label htmlFor="category">{t("category")}</Label>
               <Select
                 value={editedTour.category}
-                onValueChange={(value) => setEditedTour({ ...editedTour, category: value as Tour["category"] })}
+                onValueChange={(value) =>
+                  setEditedTour({ ...editedTour, category: value as DatabaseTourSegundoSemestre["category"] })
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -261,6 +264,17 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                 onChange={(e) => setEditedTour({ ...editedTour, image: e.target.value })}
                 placeholder="https://exemplo.com/imagem.jpg"
               />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="visivel"
+                checked={editedTour.visivel_no_tarifario_2o_semestre}
+                onCheckedChange={(checked) =>
+                  setEditedTour({ ...editedTour, visivel_no_tarifario_2o_semestre: checked })
+                }
+              />
+              <Label htmlFor="visivel">Visível no tarifário do 2º semestre</Label>
             </div>
           </>
         ) : (
@@ -294,6 +308,10 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                   <strong>Melhor Idade:</strong> R$ {tour.price_senior.toFixed(2).replace(".", ",")}
                 </div>
               )}
+            </div>
+            <div className="flex items-center space-x-2 mt-2">
+              <Switch id="visivel-static" checked={tour.visivel_no_tarifario_2o_semestre} disabled />
+              <Label htmlFor="visivel-static">Visível no tarifário do 2º semestre</Label>
             </div>
           </>
         )}

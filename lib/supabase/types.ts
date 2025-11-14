@@ -3,6 +3,10 @@ export interface DatabaseTour {
   title: string
   description: string
   price: number
+  price_ms?: number | null
+  price_child?: number | null
+  price_high_season?: number | null
+  price_senior?: number | null
   image: string | null
   rating: number
   category: string
@@ -88,4 +92,22 @@ export interface AttractionHighlight {
   id: string
   attraction_id: string
   highlight: string
+}
+
+export interface DatabaseTourSegundoSemestre {
+  id: string
+  title: string
+  description: string
+  price: number
+  price_ms?: number | null
+  price_child?: number | null
+  price_high_season?: number | null
+  price_senior?: number | null
+  image: string | null
+  rating: number
+  category: string
+  slug: string | null
+  created_at: string
+  updated_at: string
+  visivel_no_tarifario_2o_semestre: boolean
 }

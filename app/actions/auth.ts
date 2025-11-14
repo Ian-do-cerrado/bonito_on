@@ -34,7 +34,7 @@ export async function signIn(email: string, password: string) {
   const { data: adminUser, error: adminError } = await supabase
     .from("admin_users")
     .select("*")
-    .eq("email", email)
+    .eq("id", data.user.id) // Usar o ID do usuário para a verificação
     .eq("is_active", true)
     .single()
 
@@ -53,7 +53,7 @@ export async function signIn(email: string, password: string) {
     .update({
       last_login: new Date().toISOString(),
     })
-    .eq("email", email)
+    .eq("id", data.user.id)
 
   console.log("Login successful, redirecting to admin")
   revalidatePath("/admin")
@@ -96,7 +96,7 @@ export async function getCurrentUser() {
     const { data: adminUser } = await supabase
       .from("admin_users")
       .select("*")
-      .eq("email", user.email)
+      .eq("id", user.id)
       .eq("is_active", true)
       .single()
 

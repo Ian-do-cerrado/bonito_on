@@ -2,11 +2,6 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
-  // Não aplicar middleware para a página de login
-  if (request.nextUrl.pathname === "/admin/login") {
-    return NextResponse.next()
-  }
-
   const supabaseResponse = NextResponse.next({
     request,
   })
@@ -47,7 +42,7 @@ export async function middleware(request: NextRequest) {
     },
   )
 
-  // Verificar se a rota é protegida
+  // Verificar se a rota é protegida (todas as rotas /admin exceto /admin/login)
   if (request.nextUrl.pathname.startsWith("/admin") && request.nextUrl.pathname !== "/admin/login") {
     try {
       const {
@@ -67,29 +62,31 @@ export async function middleware(request: NextRequest) {
       const { data: adminUser, error: adminError } = await supabase
         .from("admin_users")
         .select("*")
-        .eq("email", user.email)
+        .eq("id", user.id) // Usar o ID do usuário para a verificação
         .eq("is_active", true)
         .single()
 
       if (adminError || !adminUser) {
-        console.log("User is not admin, redirecting to login")
-        // Fazer logout e redirecionar para login
+        console.log("User is not an authorized admin, redirecting to login")
+        // Fazer logout para limpar a sessão inválida e redirecionar
         await supabase.auth.signOut()
         const url = request.nextUrl.clone()
         url.pathname = "/admin/login"
         return NextResponse.redirect(url)
       }
 
-      console.log("User is authenticated admin, allowing access")
+      // Se o usuário for um admin autenticado, permitir o acesso
       return supabaseResponse
     } catch (error) {
       console.error("Error in middleware:", error)
+      // Em caso de erro, redirecionar para a página de login como fallback
       const url = request.nextUrl.clone()
       url.pathname = "/admin/login"
       return NextResponse.redirect(url)
     }
   }
 
+  // Para rotas não protegidas ou a página de login, apenas continuar
   return supabaseResponse
 }
 

@@ -5,12 +5,20 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { Tour } from "@/components/tours-section"
+import { DatabaseTourSegundoSemestre } from "@/lib/supabase/types"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { PencilIcon, TrashIcon } from "lucide-react"
 
 interface TourCardProps {
-  tour: Tour
+  tour: Tour | DatabaseTourSegundoSemestre
+  semestre?: "atual" | "2o"
+  onVisibilityChange?: (id: string, visible: boolean) => void
+  onEdit?: (tour: Tour | DatabaseTourSegundoSemestre) => void
+  onDelete?: (id: string) => void
 }
 
-export function TourCard({ tour }: TourCardProps) {
+export function TourCard({ tour, semestre, onVisibilityChange, onEdit, onDelete }: TourCardProps) {
   const price =
     typeof tour.price === "number"
       ? `R$ ${tour.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
@@ -33,10 +41,15 @@ export function TourCard({ tour }: TourCardProps) {
           />
         </div>
         <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        <div className="absolute top-2 left-2 z-20">
+        <div className="absolute top-2 left-2 z-20 flex gap-2">
           <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getCategoryColor(tour.category)}`}>
             {getCategoryLabel(tour.category)}
           </span>
+          {semestre === "2o" && (
+            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+              2º Semestre
+            </span>
+          )}
         </div>
         <div className="absolute bottom-3 left-3 right-3 z-20">
           <h3 className="text-white font-bold text-lg leading-tight line-clamp-2">{tour.title}</h3>
@@ -83,6 +96,27 @@ export function TourCard({ tour }: TourCardProps) {
           Fale Com um Especialista
         </a>
       </CardContent>
+
+      {semestre === "2o" && (
+        <div className="p-4 border-t flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <Label htmlFor={`visivel-${tour.id}`}>Mostrar no tarifário 2º semestre</Label>
+            <Switch
+              id={`visivel-${tour.id}`}
+              checked={(tour as DatabaseTourSegundoSemestre).visivel_no_tarifario_2o_semestre}
+              onCheckedChange={(checked) => onVisibilityChange?.(tour.id, checked)}
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" className="flex-1" onClick={() => onEdit?.(tour)}>
+              <PencilIcon className="h-4 w-4 mr-2" /> Editar
+            </Button>
+            <Button variant="destructive" size="sm" className="flex-1" onClick={() => onDelete?.(tour.id)}>
+              <TrashIcon className="h-4 w-4 mr-2" /> Apagar
+            </Button>
+          </div>
+        </div>
+      )}
     </Card>
   )
 }

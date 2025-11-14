@@ -8,11 +8,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { getAllTours, Tour as SupabaseTour } from "@/services/supabase-tours"
+import { getPasseiosSegundoSemestrePublic } from "@/lib/supabase/passeios-2o-semestre"
+import { DatabaseTourSegundoSemestre } from "@/lib/supabase/types"
 
-export type Tour = SupabaseTour
+export type Tour = DatabaseTourSegundoSemestre
 
-export default function ToursPage() {
+export default function ToursPage2oSemestre() {
   const { t } = useLanguage()
   const [tours, setTours] = useState<Tour[]>([])
   const [activeCategory, setActiveCategory] = useState<Tour["category"]>("all")
@@ -24,14 +25,11 @@ export default function ToursPage() {
   useEffect(() => {
     const loadTours = async () => {
       try {
-        const toursData = await getAllTours()
-        setTours(toursData)
+        const { data: toursData, error } = await getPasseiosSegundoSemestrePublic()
+        if (error) throw error
+        setTours(toursData || [])
       } catch (error) {
         console.error("Error loading tours:", error)
-        const savedTours = localStorage.getItem("tours")
-        if (savedTours) {
-          setTours(JSON.parse(savedTours))
-        }
       }
     }
 
@@ -111,7 +109,7 @@ export default function ToursPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 sm:mb-12 animate-fade-in-up gap-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight animate-slide-in-left text-center sm:text-left">
-            Passeios em Bonito
+            Valores dos Passeios em Bonito 1º Semestre 2026
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <Input
@@ -121,14 +119,6 @@ export default function ToursPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full sm:w-64"
             />
-            <Link href="/valor-futuro" className="self-center sm:self-auto">
-              <Button
-                variant="outline"
-                className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white font-medium animate-slide-in-right hover:scale-105 transition-transform duration-200 w-full sm:w-auto"
-              >
-                {t("Ver Preços do Proximo Semestre")}
-              </Button>
-            </Link>
           </div>
         </div>
 
@@ -184,17 +174,6 @@ export default function ToursPage() {
               <TourCard tour={tour} />
             </div>
           ))}
-        </div>
-
-        <div className="flex justify-center mt-6 sm:mt-8">
-          <Link href="/tarifario">
-            <Button
-              size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full sm:w-auto max-w-xs"
-            >
-              {t("seeAllAttractions")}
-            </Button>
-          </Link>
         </div>
       </div>
     </section>

@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       console.log('Attempting to send email with Resend...');
       emailData = await resend.emails.send({
         from: 'contato@bon.com.br', // Updated to the correct sending email
-        to: 'contato@bonitoon.com.br', // Updated to the correct recipient email
+        to: 'bonitoon945@gmail.com', // Updated to the correct recipient email
         subject: 'Novo Lead',
         html: `
           <p>Name: ${name}</p>

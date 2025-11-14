@@ -1,0 +1,2 @@
+ALTER TABLE tours_2o_semestre
+ADD COLUMN visivel_no_tarifario_2o_semestre BOOLEAN DEFAULT FALSE;

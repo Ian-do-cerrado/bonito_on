@@ -5,10 +5,10 @@ interface Tour {
   title: string
   description: string
   price: number
-  chd_price?: number | null
-  hs_price?: number | null
-  senior_price?: number | null
-  ms_price?: number | null
+  price_child?: number | null
+  price_high_season?: number | null
+  price_senior?: number | null
+  price_ms?: number | null
   image: string
   gallery?: string[]
   category: string
@@ -48,10 +48,10 @@ export async function getAllTours(): Promise<Tour[]> {
       title: tour.title || "",
       description: tour.description || "",
       price: Number.parseFloat(tour.price) || 0,
-      chd_price: tour.chd_price ? Number.parseFloat(tour.chd_price) : null,
-      hs_price: tour.hs_price ? Number.parseFloat(tour.hs_price) : null,
-      senior_price: tour.senior_price ? Number.parseFloat(tour.senior_price) : null,
-      ms_price: tour.ms_price ? Number.parseFloat(tour.ms_price) : null,
+      price_child: tour.price_child ? Number.parseFloat(tour.price_child) : null,
+      price_high_season: tour.price_high_season ? Number.parseFloat(tour.price_high_season) : null,
+      price_senior: tour.price_senior ? Number.parseFloat(tour.price_senior) : null,
+      price_ms: tour.price_ms ? Number.parseFloat(tour.price_ms) : null,
       image: tour.image || "/placeholder.svg?height=400&width=600",
       gallery: tour.gallery || [],
       category: tour.category || "passeios",
@@ -90,10 +90,10 @@ export async function getTourBySlug(slug: string): Promise<Tour | null> {
       title: data.title || "",
       description: data.description || "",
       price: Number.parseFloat(data.price) || 0,
-      chd_price: data.chd_price ? Number.parseFloat(data.chd_price) : null,
-      hs_price: data.hs_price ? Number.parseFloat(data.hs_price) : null,
-      senior_price: data.senior_price ? Number.parseFloat(data.senior_price) : null,
-      ms_price: data.ms_price ? Number.parseFloat(data.ms_price) : null,
+      price_child: data.price_child ? Number.parseFloat(data.price_child) : null,
+      price_high_season: data.price_high_season ? Number.parseFloat(data.price_high_season) : null,
+      price_senior: data.price_senior ? Number.parseFloat(data.price_senior) : null,
+      price_ms: data.price_ms ? Number.parseFloat(data.price_ms) : null,
       image: data.image || "/placeholder.svg?height=400&width=600",
       gallery: data.gallery || [],
       category: data.category || "passeios",
@@ -142,10 +142,10 @@ export async function getTourById(id: string): Promise<Tour | null> {
       title: data.title || "",
       description: data.description || "",
       price: Number.parseFloat(data.price) || 0,
-      chd_price: data.chd_price ? Number.parseFloat(data.chd_price) : null,
-      hs_price: data.hs_price ? Number.parseFloat(data.hs_price) : null,
-      senior_price: data.senior_price ? Number.parseFloat(data.senior_price) : null,
-      ms_price: data.ms_price ? Number.parseFloat(data.ms_price) : null,
+      price_child: data.price_child ? Number.parseFloat(data.price_child) : null,
+      price_high_season: data.price_high_season ? Number.parseFloat(data.price_high_season) : null,
+      price_senior: data.price_senior ? Number.parseFloat(data.price_senior) : null,
+      price_ms: data.price_ms ? Number.parseFloat(data.price_ms) : null,
       image: data.image || "/placeholder.svg?height=400&width=600",
       gallery: data.gallery || [],
       category: data.category || "passeios",
