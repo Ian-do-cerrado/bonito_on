@@ -4,13 +4,13 @@ import { DatabaseTourSegundoSemestre } from '@/lib/supabase/types';
 const supabase = createClient();
 
 // Define a type for new tours, excluding auto-generated fields
-export type NewDatabaseTourSegundoSemestre = Omit<DatabaseTourSegundoSemestre, 'id' | 'created_at' | 'updated_at'>;
+export type NewDatabaseTourValorFuturo = Omit<DatabaseTourSegundoSemestre, 'id' | 'created_at' | 'updated_at'>;
 
 /**
- * Fetches all tours for the second semester for admin purposes.
+ * Fetches all tours for valor-futuro for admin purposes.
  * @returns An object containing data (list of tours) or an error.
  */
-export async function getPasseiosSegundoSemestreAdmin(): Promise<{ data: DatabaseTourSegundoSemestre[] | null; error: any }> {
+export async function getPasseiosValorFuturoAdmin(): Promise<{ data: DatabaseTourSegundoSemestre[] | null; error: any }> {
   const { data, error } = await supabase
     .from('tours_2o_semestre')
     .select('*');
@@ -18,10 +18,10 @@ export async function getPasseiosSegundoSemestreAdmin(): Promise<{ data: Databas
 }
 
 /**
- * Fetches tours for the second semester that are visible on the public website.
+ * Fetches tours for valor-futuro that are visible on the public website.
  * @returns An object containing data (list of visible tours) or an error.
  */
-export async function getPasseiosSegundoSemestrePublic(): Promise<{ data: DatabaseTourSegundoSemestre[] | null; error: any }> {
+export async function getPasseiosValorFuturoPublic(): Promise<{ data: DatabaseTourSegundoSemestre[] | null; error: any }> {
   const { data, error } = await supabase
     .from('tours_2o_semestre')
     .select('*')
@@ -30,14 +30,14 @@ export async function getPasseiosSegundoSemestrePublic(): Promise<{ data: Databa
 }
 
 /**
- * Updates a specific second semester tour.
+ * Updates a specific valor-futuro tour.
  * @param id The ID of the tour to update.
  * @param data The partial data to update the tour with.
  * @returns An object containing data (updated tour) or an error.
  */
-export async function updatePasseioSegundoSemestre(
+export async function updatePasseioValorFuturo(
   id: string,
-  data: Partial<NewDatabaseTourSegundoSemestre>
+  data: Partial<NewDatabaseTourValorFuturo>
 ): Promise<{ data: DatabaseTourSegundoSemestre | null; error: any }> {
   const { data: updatedData, error } = await supabase
     .from('tours_2o_semestre')
@@ -48,12 +48,12 @@ export async function updatePasseioSegundoSemestre(
 }
 
 /**
- * Creates a new second semester tour.
+ * Creates a new valor-futuro tour.
  * @param data The data for the new tour.
  * @returns An object containing data (newly created tour) or an error.
  */
-export async function createPasseioSegundoSemestre(
-  data: NewDatabaseTourSegundoSemestre
+export async function createPasseioValorFuturo(
+  data: NewDatabaseTourValorFuturo
 ): Promise<{ data: DatabaseTourSegundoSemestre | null; error: any }> {
   const { data: newData, error } = await supabase
     .from('tours_2o_semestre')
@@ -63,11 +63,11 @@ export async function createPasseioSegundoSemestre(
 }
 
 /**
- * Deletes a second semester tour.
+ * Deletes a valor-futuro tour.
  * @param id The ID of the tour to delete.
  * @returns An object containing data (null if successful) or an error.
  */
-export async function deletePasseioSegundoSemestre(
+export async function deletePasseioValorFuturo(
   id: string
 ): Promise<{ data: null; error: any }> {
   const { error } = await supabase

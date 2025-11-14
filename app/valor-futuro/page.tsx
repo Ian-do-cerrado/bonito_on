@@ -8,12 +8,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { getPasseiosSegundoSemestrePublic } from "@/lib/supabase/passeios-2o-semestre"
+import { getPasseiosValorFuturoPublic } from "@/lib/supabase/valor-futuro"
 import { DatabaseTourSegundoSemestre } from "@/lib/supabase/types"
 
 export type Tour = DatabaseTourSegundoSemestre
 
-export default function ToursPage2oSemestre() {
+export default function ValorFuturoPage() {
   const { t } = useLanguage()
   const [tours, setTours] = useState<Tour[]>([])
   const [activeCategory, setActiveCategory] = useState<Tour["category"]>("all")
@@ -25,7 +25,7 @@ export default function ToursPage2oSemestre() {
   useEffect(() => {
     const loadTours = async () => {
       try {
-        const { data: toursData, error } = await getPasseiosSegundoSemestrePublic()
+        const { data: toursData, error } = await getPasseiosValorFuturoPublic()
         if (error) throw error
         setTours(toursData || [])
       } catch (error) {
