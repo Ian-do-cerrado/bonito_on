@@ -12,14 +12,14 @@ import { DatabaseTourSegundoSemestre } from "@/lib/supabase/types"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import {
-  getPasseiosSegundoSemestreAdmin,
-  updatePasseioSegundoSemestre,
-  deletePasseioSegundoSemestre,
-  createPasseioSegundoSemestre,
-} from "@/lib/supabase/passeios-2o-semestre"
+  getPasseiosValorFuturoAdmin,
+  updatePasseioValorFuturo,
+  deletePasseioValorFuturo,
+  createPasseioValorFuturo,
+} from "@/lib/supabase/valor-futuro"
 import { useToast } from "@/hooks/use-toast"
 
-export default function AdminPasseios2oSemestrePage() {
+export default function AdminValorFuturoPage() {
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -68,7 +68,7 @@ export default function AdminPasseios2oSemestrePage() {
   const loadData = async () => {
     setIsRefreshing(true)
     try {
-      const { data: toursData, error } = await getPasseiosSegundoSemestreAdmin()
+      const { data: toursData, error } = await getPasseiosValorFuturoAdmin()
       if (error) throw error
       setTours(toursData || [])
     } catch (error) {
@@ -95,7 +95,7 @@ export default function AdminPasseios2oSemestrePage() {
 
   // Tour handlers
   const handleUpdateTour = async (updatedTour: DatabaseTourSegundoSemestre) => {
-    const { error } = await updatePasseioSegundoSemestre(updatedTour.id, updatedTour)
+    const { error } = await updatePasseioValorFuturo(updatedTour.id, updatedTour)
     if (!error) {
       setTours(tours.map((tour) => (tour.id === updatedTour.id ? updatedTour : tour)))
       toast({
@@ -112,7 +112,7 @@ export default function AdminPasseios2oSemestrePage() {
   }
 
   const handleDeleteTour = async (tourId: string) => {
-    const { error } = await deletePasseioSegundoSemestre(tourId)
+    const { error } = await deletePasseioValorFuturo(tourId)
     if (!error) {
       setTours(tours.filter((tour) => tour.id !== tourId))
       toast({
@@ -129,7 +129,7 @@ export default function AdminPasseios2oSemestrePage() {
   }
 
   const handleAddTour = async (newTour: Omit<DatabaseTourSegundoSemestre, "id" | "created_at" | "updated_at">) => {
-    const { data: createdTour, error } = await createPasseioSegundoSemestre(newTour)
+    const { data: createdTour, error } = await createPasseioValorFuturo(newTour)
     if (createdTour && !error) {
       setTours((prevTours) => [...prevTours, createdTour])
       setIsAddTourDialogOpen(false)
@@ -177,7 +177,7 @@ export default function AdminPasseios2oSemestrePage() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo - 2º Semestre</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo - Valor Futuro</h1>
                 <p className="text-gray-600">Gerencie os passeios para o próximo semestre</p>
               </div>
             </div>
