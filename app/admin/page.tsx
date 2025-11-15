@@ -496,7 +496,7 @@ export default function AdminPage() {
               className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
               asChild
             >
-              <Link href="/admin/passeios-2o-semestre">Editar para o próximo semestre</Link>
+              <Link href="/admin/valor-futuro">Editar para o próximo semestre</Link>
             </TabsTrigger>
           </TabsList>
         </Tabs>
