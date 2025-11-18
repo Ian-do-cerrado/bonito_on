@@ -12,7 +12,7 @@ interface TourPageProps {
 export async function generateStaticParams() {
   const tours = await getAllTours()
 
-  return tours.map((tour: Tour) => ({
+  return tours.filter((tour) => tour.slug).map((tour: Tour) => ({
     slug: tour.slug,
   }))
 }
