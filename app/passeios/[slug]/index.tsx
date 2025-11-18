@@ -560,51 +560,102 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                     </div>
                   )}
 
-                  {/* Criança */}
-                  {tour.price_child && tour.price_child > 0 && (
+                  {/* Criança (Baixa Temporada) */}
+                  {tour.price_child_low_season && tour.price_child_low_season > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">Criança</p>
-                          <p className="text-xs text-gray-500">Até 12 anos</p>
+                          <p className="text-sm font-medium text-gray-900">Criança (Baixa Temporada)</p>
+                          {tour.min_child_age && (
+                            <p className="text-xs text-gray-500">A partir de {tour.min_child_age} anos</p>
+                          )}
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.price_child.toFixed(2).replace(".", ",")}
+                            R$ {tour.price_child_low_season.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* Melhor Idade */}
-                  {tour.price_senior && tour.price_senior > 0 && (
+                  {/* Criança (Alta Temporada) */}
+                  {tour.price_child_high_season && tour.price_child_high_season > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">Melhor Idade</p>
-                          <p className="text-xs text-gray-500">Acima de 60 anos</p>
+                          <p className="text-sm font-medium text-gray-900">Criança (Alta Temporada)</p>
+                          {tour.min_child_age && (
+                            <p className="text-xs text-gray-500">A partir de {tour.min_child_age} anos</p>
+                          )}
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.price_senior.toFixed(2).replace(".", ",")}
+                            R$ {tour.price_child_high_season.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* Morador MS */}
-                  {tour.price_ms && tour.price_ms > 0 && (
+                  {/* Melhor Idade (Baixa Temporada) */}
+                  {tour.price_senior_low_season && tour.price_senior_low_season > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">Morador MS</p>
-                          <p className="text-xs text-gray-500">Com comprovante</p>
+                          <p className="text-sm font-medium text-gray-900">Melhor Idade (Baixa Temporada)</p>
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.price_ms.toFixed(2).replace(".", ",")}
+                            R$ {tour.price_senior_low_season.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Melhor Idade (Alta Temporada) */}
+                  {tour.price_senior_high_season && tour.price_senior_high_season > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Melhor Idade (Alta Temporada)</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.price_senior_high_season.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Morador MS (Baixa Temporada) */}
+                  {tour.price_ms_low_season && tour.price_ms_low_season > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Morador MS (Baixa Temporada)</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.price_ms_low_season.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Morador MS (Alta Temporada) */}
+                  {tour.price_ms_high_season && tour.price_ms_high_season > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Morador MS (Alta Temporada)</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.price_ms_high_season.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>

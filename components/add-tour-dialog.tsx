@@ -110,6 +110,92 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="price_child_low_season">Preço Criança (Baixa Temporada)</Label>
+              <Input
+                id="price_child_low_season"
+                type="number"
+                onChange={(e) => setNewTour({ ...newTour, price_child_low_season: Number(e.target.value) || null })}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <Label htmlFor="price_child_high_season">Preço Criança (Alta Temporada)</Label>
+              <Input
+                id="price_child_high_season"
+                type="number"
+                onChange={(e) => setNewTour({ ...newTour, price_child_high_season: Number(e.target.value) || null })}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="price_senior_low_season">Preço Melhor Idade (Baixa Temporada)</Label>
+              <Input
+                id="price_senior_low_season"
+                type="number"
+                onChange={(e) => setNewTour({ ...newTour, price_senior_low_season: Number(e.target.value) || null })}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <Label htmlFor="price_senior_high_season">Preço Melhor Idade (Alta Temporada)</Label>
+              <Input
+                id="price_senior_high_season"
+                type="number"
+                onChange={(e) => setNewTour({ ...newTour, price_senior_high_season: Number(e.target.value) || null })}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="price_ms_low_season">Preço MS (Baixa Temporada)</Label>
+              <Input
+                id="price_ms_low_season"
+                type="number"
+                onChange={(e) => setNewTour({ ...newTour, price_ms_low_season: Number(e.target.value) || null })}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <Label htmlFor="price_ms_high_season">Preço MS (Alta Temporada)</Label>
+              <Input
+                id="price_ms_high_season"
+                type="number"
+                onChange={(e) => setNewTour({ ...newTour, price_ms_high_season: Number(e.target.value) || null })}
+                placeholder="0"
+                min="0"
+                step="0.01"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="min_child_age">Idade Mínima Criança Pagante</Label>
+            <Input
+              id="min_child_age"
+              type="number"
+              onChange={(e) => setNewTour({ ...newTour, min_child_age: Number(e.target.value) || null })}
+              placeholder="0"
+              min="0"
+            />
+          </div>
+
           <div>
             <Label htmlFor="category">{t("category")}</Label>
             <Select
