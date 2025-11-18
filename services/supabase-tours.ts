@@ -50,38 +50,50 @@ export async function getAllTours(): Promise<Tour[]> {
     }
 
     // Transformar os dados para o formato esperado
-    const tours: Tour[] = data.map((tour: any) => ({
-      id: tour.id,
-      title: tour.title || "",
-      description: tour.description || "",
-      price: !isNaN(parseFloat(tour.price)) ? parseFloat(tour.price) : 0,
-      price_child: !isNaN(parseFloat(tour.price_child)) ? parseFloat(tour.price_child) : null,
-      price_high_season: !isNaN(parseFloat(tour.price_high_season)) ? parseFloat(tour.price_high_season) : null,
-      price_senior: !isNaN(parseFloat(tour.price_senior)) ? parseFloat(tour.price_senior) : null,
-      price_ms: !isNaN(parseFloat(tour.price_ms)) ? parseFloat(tour.price_ms) : null,
-      price_child_high_season: !isNaN(parseFloat(tour.price_child_high_season))
-        ? parseFloat(tour.price_child_high_season)
-        : null,
-      price_child_low_season: !isNaN(parseFloat(tour.price_child_low_season))
-        ? parseFloat(tour.price_child_low_season)
-        : null,
-      price_senior_high_season: !isNaN(parseFloat(tour.price_senior_high_season))
-        ? parseFloat(tour.price_senior_high_season)
-        : null,
-      price_senior_low_season: !isNaN(parseFloat(tour.price_senior_low_season))
-        ? parseFloat(tour.price_senior_low_season)
-        : null,
-      price_ms_high_season: !isNaN(parseFloat(tour.price_ms_high_season)) ? parseFloat(tour.price_ms_high_season) : null,
-      price_ms_low_season: !isNaN(parseFloat(tour.price_ms_low_season)) ? parseFloat(tour.price_ms_low_season) : null,
-      min_child_age: !isNaN(parseInt(tour.min_child_age)) ? parseInt(tour.min_child_age) : null,
-      image: tour.image || "/placeholder.svg?height=400&width=600",
-      gallery: tour.gallery || [],
-      category: tour.category || "passeios",
-      rating: tour.rating || 5,
-      slug: tour.slug || createSlug(tour.title || ""),
-      created_at: tour.created_at,
-      updated_at: tour.updated_at,
-    }))
+    const tours: Tour[] = data.reduce((acc: Tour[], tour: any) => {
+      try {
+        const mappedTour: Tour = {
+          id: tour.id,
+          title: tour.title || "",
+          description: tour.description || "",
+          price: !isNaN(parseFloat(tour.price)) ? parseFloat(tour.price) : 0,
+          price_child: !isNaN(parseFloat(tour.price_child)) ? parseFloat(tour.price_child) : null,
+          price_high_season: !isNaN(parseFloat(tour.price_high_season)) ? parseFloat(tour.price_high_season) : null,
+          price_senior: !isNaN(parseFloat(tour.price_senior)) ? parseFloat(tour.price_senior) : null,
+          price_ms: !isNaN(parseFloat(tour.price_ms)) ? parseFloat(tour.price_ms) : null,
+          price_child_high_season: !isNaN(parseFloat(tour.price_child_high_season))
+            ? parseFloat(tour.price_child_high_season)
+            : null,
+          price_child_low_season: !isNaN(parseFloat(tour.price_child_low_season))
+            ? parseFloat(tour.price_child_low_season)
+            : null,
+          price_senior_high_season: !isNaN(parseFloat(tour.price_senior_high_season))
+            ? parseFloat(tour.price_senior_high_season)
+            : null,
+          price_senior_low_season: !isNaN(parseFloat(tour.price_senior_low_season))
+            ? parseFloat(tour.price_senior_low_season)
+            : null,
+          price_ms_high_season: !isNaN(parseFloat(tour.price_ms_high_season))
+            ? parseFloat(tour.price_ms_high_season)
+            : null,
+          price_ms_low_season: !isNaN(parseFloat(tour.price_ms_low_season))
+            ? parseFloat(tour.price_ms_low_season)
+            : null,
+          min_child_age: !isNaN(parseInt(tour.min_child_age)) ? parseInt(tour.min_child_age) : null,
+          image: tour.image || "/placeholder.svg?height=400&width=600",
+          gallery: tour.gallery || [],
+          category: tour.category || "passeios",
+          rating: tour.rating || 5,
+          slug: tour.slug || createSlug(tour.title || ""),
+          created_at: tour.created_at,
+          updated_at: tour.updated_at,
+        }
+        acc.push(mappedTour)
+      } catch (e) {
+        console.error("❌ Erro ao processar o tour:", tour.id, e)
+      }
+      return acc
+    }, [])
 
     return tours
   } catch (error) {
