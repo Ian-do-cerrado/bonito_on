@@ -27,14 +27,13 @@
     "@supabase/supabase-js": "^2.50.0",
     "@tailwindcss/typography": "^0.5.16",
     "@types/uuid": "^10.0.0",
-    "bonito-travel-agency": "link:",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "embla-carousel-react": "^8.6.0",
     "he": "^1.2.0",
     "lucide-react": "^0.294.0",
     "marked": "^16.2.1",
-    "next": "14.0.4",
+    "next": "14.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
@@ -46,17 +45,17 @@
   },
   "devDependencies": {
     "@types/he": "^1.2.3",
-    "@types/node": "^20.9.0",
-    "@types/react": "^18.2.37",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.6",
     "@types/react-dom": "^18.2.15",
     "autoprefixer": "^10.4.16",
     "dotenv": "^17.2.3",
     "eslint": "^8.54.0",
-    "eslint-config-next": "14.0.4",
+    "eslint-config-next": "14.0.3",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "tsx": "^4.20.6",
-    "typescript": "^5.2.2"
+    "typescript": "5.9.3"
   },
   "engines": {
     "node": ">=18.17.0"

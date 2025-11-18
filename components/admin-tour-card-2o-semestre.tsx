@@ -160,7 +160,7 @@ export function AdminTourCard2oSemestre({ tour, onUpdate, onDelete }: AdminTourC
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price">{t("price")}</Label>
+                <Label htmlFor="price">Preço baixa Temporada</Label>
                 <Input
                   id="price"
                   type="number"
@@ -190,21 +190,44 @@ export function AdminTourCard2oSemestre({ tour, onUpdate, onDelete }: AdminTourC
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price_ms">Preço MS</Label>
+                <Label htmlFor="price_ms_low_season">Preço MS Baixa temporada</Label>
                 <Input
-                  id="price_ms"
+                  id="price_ms_low_season"
                   type="number"
-                  value={editedTour.price_ms ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_ms: Number(e.target.value) || null })}
+                  value={editedTour.price_ms_low_season ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_ms_low_season: Number(e.target.value) || null })}
                 />
               </div>
               <div>
-                <Label htmlFor="price_child">Preço Criança</Label>
+                <Label htmlFor="price_ms_high_season">Preço MS Alta temporada</Label>
+                <Input
+                  id="price_ms_high_season"
+                  type="number"
+                  value={editedTour.price_ms_high_season ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_ms_high_season: Number(e.target.value) || null })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="price_child">Preço Criança Baixa temporada</Label>
                 <Input
                   id="price_child"
                   type="number"
                   value={editedTour.price_child ?? ""}
                   onChange={(e) => setEditedTour({ ...editedTour, price_child: Number(e.target.value) || null })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="price_child_high_season">Preço Criança Alta temporada</Label>
+                <Input
+                  id="price_child_high_season"
+                  type="number"
+                  value={editedTour.price_child_high_season ?? ""}
+                  onChange={(e) =>
+                    setEditedTour({ ...editedTour, price_child_high_season: Number(e.target.value) || null })
+                  }
                 />
               </div>
             </div>
@@ -220,12 +243,25 @@ export function AdminTourCard2oSemestre({ tour, onUpdate, onDelete }: AdminTourC
                 />
               </div>
               <div>
-                <Label htmlFor="price_senior">Preço Melhor Idade</Label>
+                <Label htmlFor="price_senior">Preço melhor idade Baixa temporada</Label>
                 <Input
                   id="price_senior"
                   type="number"
                   value={editedTour.price_senior ?? ""}
                   onChange={(e) => setEditedTour({ ...editedTour, price_senior: Number(e.target.value) || null })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="price_senior_high_season">Preço melhor idade Alta temporada</Label>
+                <Input
+                  id="price_senior_high_season"
+                  type="number"
+                  value={editedTour.price_senior_high_season ?? ""}
+                  onChange={(e) =>
+                    setEditedTour({ ...editedTour, price_senior_high_season: Number(e.target.value) || null })
+                  }
                 />
               </div>
             </div>
@@ -288,14 +324,24 @@ export function AdminTourCard2oSemestre({ tour, onUpdate, onDelete }: AdminTourC
               <div className="text-sm text-gray-500">{tour.rating} ⭐</div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm mt-2">
-              {tour.price_ms && (
+              {tour.price_ms_low_season && (
                 <div>
-                  <strong>Preço MS:</strong> R$ {tour.price_ms.toFixed(2).replace(".", ",")}
+                  <strong>Preço MS Baixa Temp.:</strong> R$ {tour.price_ms_low_season.toFixed(2).replace(".", ",")}
+                </div>
+              )}
+              {tour.price_ms_high_season && (
+                <div>
+                  <strong>Preço MS Alta Temp.:</strong> R$ {tour.price_ms_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
               {tour.price_child && (
                 <div>
-                  <strong>Criança:</strong> R$ {tour.price_child.toFixed(2).replace(".", ",")}
+                  <strong>Criança Baixa Temp.:</strong> R$ {tour.price_child.toFixed(2).replace(".", ",")}
+                </div>
+              )}
+              {tour.price_child_high_season && (
+                <div>
+                  <strong>Criança Alta Temp.:</strong> R$ {tour.price_child_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
               {tour.price_high_season && (
@@ -305,7 +351,12 @@ export function AdminTourCard2oSemestre({ tour, onUpdate, onDelete }: AdminTourC
               )}
               {tour.price_senior && (
                 <div>
-                  <strong>Melhor Idade:</strong> R$ {tour.price_senior.toFixed(2).replace(".", ",")}
+                  <strong>Melhor Idade Baixa Temp.:</strong> R$ {tour.price_senior.toFixed(2).replace(".", ",")}
+                </div>
+              )}
+              {tour.price_senior_high_season && (
+                <div>
+                  <strong>Melhor Idade Alta Temp.:</strong> R$ {tour.price_senior_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
             </div>

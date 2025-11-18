@@ -27,6 +27,13 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
     title: "",
     description: "",
     price: 0,
+    price_ms_low_season: null,
+    price_ms_high_season: null,
+    price_child_low_season: null,
+    price_child_high_season: null,
+    price_senior_low_season: null,
+    price_senior_high_season: null,
+    min_child_age: null,
     image: "/placeholder.svg?height=300&width=400",
     rating: 5,
     category: "adventure",
@@ -40,6 +47,13 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
         title: "",
         description: "",
         price: 0,
+        price_ms_low_season: null,
+        price_ms_high_season: null,
+        price_child_low_season: null,
+        price_child_high_season: null,
+        price_senior_low_season: null,
+        price_senior_high_season: null,
+        min_child_age: null,
         image: "/placeholder.svg?height=300&width=400",
         rating: 5,
         category: "adventure",
@@ -78,7 +92,7 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="price">{t("price")}</Label>
+              <Label htmlFor="price">Preço baixa Temporada</Label>
               <Input
                 id="price"
                 type="number"
@@ -112,7 +126,7 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="price_child_low_season">Preço Criança (Baixa Temporada)</Label>
+              <Label htmlFor="price_child_low_season">Preço Criança Baixa temporada</Label>
               <Input
                 id="price_child_low_season"
                 type="number"
@@ -123,7 +137,7 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
               />
             </div>
             <div>
-              <Label htmlFor="price_child_high_season">Preço Criança (Alta Temporada)</Label>
+              <Label htmlFor="price_child_high_season">Preço Criança Alta temporada</Label>
               <Input
                 id="price_child_high_season"
                 type="number"
@@ -137,7 +151,7 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="price_senior_low_season">Preço Melhor Idade (Baixa Temporada)</Label>
+              <Label htmlFor="price_senior_low_season">Preço melhor idade Baixa temporada</Label>
               <Input
                 id="price_senior_low_season"
                 type="number"
@@ -148,7 +162,7 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
               />
             </div>
             <div>
-              <Label htmlFor="price_senior_high_season">Preço Melhor Idade (Alta Temporada)</Label>
+              <Label htmlFor="price_senior_high_season">Preço melhor idade Alta temporada</Label>
               <Input
                 id="price_senior_high_season"
                 type="number"
@@ -162,7 +176,7 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="price_ms_low_season">Preço MS (Baixa Temporada)</Label>
+              <Label htmlFor="price_ms_low_season">Preço MS Baixa temporada</Label>
               <Input
                 id="price_ms_low_season"
                 type="number"
@@ -173,7 +187,7 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
               />
             </div>
             <div>
-              <Label htmlFor="price_ms_high_season">Preço MS (Alta Temporada)</Label>
+              <Label htmlFor="price_ms_high_season">Preço MS Alta temporada</Label>
               <Input
                 id="price_ms_high_season"
                 type="number"

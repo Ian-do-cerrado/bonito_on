@@ -3,7 +3,8 @@ export interface DatabaseTour {
   title: string
   description: string
   price: number
-  price_ms?: number | null
+  price_ms_low_season?: number | null
+  price_ms_high_season?: number | null
   price_child?: number | null
   price_high_season?: number | null
   price_senior?: number | null
@@ -99,10 +100,13 @@ export interface DatabaseTourSegundoSemestre {
   title: string
   description: string
   price: number
-  price_ms?: number | null
+  price_ms_low_season?: number | null
+  price_ms_high_season?: number | null
   price_child?: number | null
   price_high_season?: number | null
   price_senior?: number | null
+  price_child_high_season?: number | null
+  price_senior_high_season?: number | null
   image: string | null
   rating: number
   category: string

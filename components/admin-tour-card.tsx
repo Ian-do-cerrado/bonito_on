@@ -159,7 +159,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price">{t("price")}</Label>
+                <Label htmlFor="price">Preço baixa Temporada</Label>
                 <Input
                   id="price"
                   type="number"
@@ -189,21 +189,42 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price_ms">Preço MS</Label>
+                <Label htmlFor="price_ms_low_season">Preço MS Baixa temporada</Label>
                 <Input
-                  id="price_ms"
+                  id="price_ms_low_season"
                   type="number"
-                  value={editedTour.price_ms ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_ms: Number(e.target.value) || null })}
+                  value={editedTour.price_ms_low_season ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_ms_low_season: Number(e.target.value) || null })}
                 />
               </div>
               <div>
-                <Label htmlFor="price_child">Preço Criança</Label>
+                <Label htmlFor="price_ms_high_season">Preço MS Alta temporada</Label>
                 <Input
-                  id="price_child"
+                  id="price_ms_high_season"
                   type="number"
-                  value={editedTour.price_child ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_child: Number(e.target.value) || null })}
+                  value={editedTour.price_ms_high_season ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_ms_high_season: Number(e.target.value) || null })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="price_child_low_season">Preço Criança Baixa temporada</Label>
+                <Input
+                  id="price_child_low_season"
+                  type="number"
+                  value={editedTour.price_child_low_season ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_child_low_season: Number(e.target.value) || null })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="price_child_high_season">Preço Criança Alta temporada</Label>
+                <Input
+                  id="price_child_high_season"
+                  type="number"
+                  value={editedTour.price_child_high_season ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_child_high_season: Number(e.target.value) || null })}
                 />
               </div>
             </div>
@@ -219,55 +240,18 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                 />
               </div>
               <div>
-                <Label htmlFor="price_senior">Preço Melhor Idade</Label>
-                <Input
-                  id="price_senior"
-                  type="number"
-                  value={editedTour.price_senior ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_senior: Number(e.target.value) || null })}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="price_child_low_season">Preço Criança (Baixa Temporada)</Label>
-                <Input
-                  id="price_child_low_season"
-                  type="number"
-                  value={editedTour.price_child_low_season ?? ""}
-                  onChange={(e) =>
-                    setEditedTour({ ...editedTour, price_child_low_season: Number(e.target.value) || null })
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="price_child_high_season">Preço Criança (Alta Temporada)</Label>
-                <Input
-                  id="price_child_high_season"
-                  type="number"
-                  value={editedTour.price_child_high_season ?? ""}
-                  onChange={(e) =>
-                    setEditedTour({ ...editedTour, price_child_high_season: Number(e.target.value) || null })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="price_senior_low_season">Preço Melhor Idade (Baixa Temporada)</Label>
+                <Label htmlFor="price_senior_low_season">Preço melhor idade Baixa temporada</Label>
                 <Input
                   id="price_senior_low_season"
                   type="number"
                   value={editedTour.price_senior_low_season ?? ""}
-                  onChange={(e) =>
-                    setEditedTour({ ...editedTour, price_senior_low_season: Number(e.target.value) || null })
-                  }
+                  onChange={(e) => setEditedTour({ ...editedTour, price_senior_low_season: Number(e.target.value) || null })}
                 />
               </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price_senior_high_season">Preço Melhor Idade (Alta Temporada)</Label>
+                <Label htmlFor="price_senior_high_season">Preço melhor idade Alta temporada</Label>
                 <Input
                   id="price_senior_high_season"
                   type="number"
@@ -275,27 +259,6 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                   onChange={(e) =>
                     setEditedTour({ ...editedTour, price_senior_high_season: Number(e.target.value) || null })
                   }
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="price_ms_low_season">Preço MS (Baixa Temporada)</Label>
-                <Input
-                  id="price_ms_low_season"
-                  type="number"
-                  value={editedTour.price_ms_low_season ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_ms_low_season: Number(e.target.value) || null })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="price_ms_high_season">Preço MS (Alta Temporada)</Label>
-                <Input
-                  id="price_ms_high_season"
-                  type="number"
-                  value={editedTour.price_ms_high_season ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_ms_high_season: Number(e.target.value) || null })}
                 />
               </div>
             </div>
@@ -308,7 +271,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                 onChange={(e) => setEditedTour({ ...editedTour, min_child_age: Number(e.target.value) || null })}
               />
             </div>
-
+            
             <div>
               <Label htmlFor="category">{t("category")}</Label>
               <Select
@@ -354,14 +317,24 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
               <div className="text-sm text-gray-500">{tour.rating} ⭐</div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm mt-2">
-              {tour.price_ms && (
+              {tour.price_ms_low_season && (
                 <div>
-                  <strong>Preço MS:</strong> R$ {tour.price_ms.toFixed(2).replace(".", ",")}
+                  <strong>Preço MS Baixa Temp.:</strong> R$ {tour.price_ms_low_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_child && (
+              {tour.price_ms_high_season && (
                 <div>
-                  <strong>Criança:</strong> R$ {tour.price_child.toFixed(2).replace(".", ",")}
+                  <strong>Preço MS Alta Temp.:</strong> R$ {tour.price_ms_high_season.toFixed(2).replace(".", ",")}
+                </div>
+              )}
+              {tour.price_child_low_season && (
+                <div>
+                  <strong>Criança Baixa Temp.:</strong> R$ {tour.price_child_low_season.toFixed(2).replace(".", ",")}
+                </div>
+              )}
+              {tour.price_child_high_season && (
+                <div>
+                  <strong>Criança Alta Temp.:</strong> R$ {tour.price_child_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
               {tour.price_high_season && (
@@ -369,9 +342,14 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                   <strong>Alta Temp.:</strong> R$ {tour.price_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_senior && (
+              {tour.price_senior_low_season && (
                 <div>
-                  <strong>Melhor Idade:</strong> R$ {tour.price_senior.toFixed(2).replace(".", ",")}
+                  <strong>Melhor Idade Baixa Temp.:</strong> R$ {tour.price_senior_low_season.toFixed(2).replace(".", ",")}
+                </div>
+              )}
+              {tour.price_senior_high_season && (
+                <div>
+                  <strong>Melhor Idade Alta Temp.:</strong> R$ {tour.price_senior_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
             </div>

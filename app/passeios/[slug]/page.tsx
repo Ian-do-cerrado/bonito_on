@@ -9,13 +9,15 @@ interface TourPageProps {
   }
 }
 
-export async function generateStaticParams() {
-  const tours = await getAllTours()
+// export async function generateStaticParams() {
+//   const tours = await getAllTours()
 
-  return tours.filter((tour) => tour.slug).map((tour: Tour) => ({
-    slug: tour.slug,
-  }))
-}
+//   const paths = tours.filter((tour) => tour.slug).map((tour: Tour) => ({
+//     slug: tour.slug,
+//   }))
+//   console.log("Generated paths for tours:", JSON.stringify(paths, null, 2))
+//   return paths
+// }
 
 export async function generateMetadata({ params }: TourPageProps): Promise<Metadata> {
   const tour = await getTourBySlug(params.slug)
