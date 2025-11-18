@@ -54,18 +54,26 @@ export async function getAllTours(): Promise<Tour[]> {
       id: tour.id,
       title: tour.title || "",
       description: tour.description || "",
-      price: Number.parseFloat(tour.price) || 0,
-      price_child: tour.price_child ? Number.parseFloat(tour.price_child) : null,
-      price_high_season: tour.price_high_season ? Number.parseFloat(tour.price_high_season) : null,
-      price_senior: tour.price_senior ? Number.parseFloat(tour.price_senior) : null,
-      price_ms: tour.price_ms ? Number.parseFloat(tour.price_ms) : null,
-      price_child_high_season: tour.price_child_high_season ? Number.parseFloat(tour.price_child_high_season) : null,
-      price_child_low_season: tour.price_child_low_season ? Number.parseFloat(tour.price_child_low_season) : null,
-      price_senior_high_season: tour.price_senior_high_season ? Number.parseFloat(tour.price_senior_high_season) : null,
-      price_senior_low_season: tour.price_senior_low_season ? Number.parseFloat(tour.price_senior_low_season) : null,
-      price_ms_high_season: tour.price_ms_high_season ? Number.parseFloat(tour.price_ms_high_season) : null,
-      price_ms_low_season: tour.price_ms_low_season ? Number.parseFloat(tour.price_ms_low_season) : null,
-      min_child_age: tour.min_child_age ? Number.parseInt(tour.min_child_age) : null,
+      price: !isNaN(parseFloat(tour.price)) ? parseFloat(tour.price) : 0,
+      price_child: !isNaN(parseFloat(tour.price_child)) ? parseFloat(tour.price_child) : null,
+      price_high_season: !isNaN(parseFloat(tour.price_high_season)) ? parseFloat(tour.price_high_season) : null,
+      price_senior: !isNaN(parseFloat(tour.price_senior)) ? parseFloat(tour.price_senior) : null,
+      price_ms: !isNaN(parseFloat(tour.price_ms)) ? parseFloat(tour.price_ms) : null,
+      price_child_high_season: !isNaN(parseFloat(tour.price_child_high_season))
+        ? parseFloat(tour.price_child_high_season)
+        : null,
+      price_child_low_season: !isNaN(parseFloat(tour.price_child_low_season))
+        ? parseFloat(tour.price_child_low_season)
+        : null,
+      price_senior_high_season: !isNaN(parseFloat(tour.price_senior_high_season))
+        ? parseFloat(tour.price_senior_high_season)
+        : null,
+      price_senior_low_season: !isNaN(parseFloat(tour.price_senior_low_season))
+        ? parseFloat(tour.price_senior_low_season)
+        : null,
+      price_ms_high_season: !isNaN(parseFloat(tour.price_ms_high_season)) ? parseFloat(tour.price_ms_high_season) : null,
+      price_ms_low_season: !isNaN(parseFloat(tour.price_ms_low_season)) ? parseFloat(tour.price_ms_low_season) : null,
+      min_child_age: !isNaN(parseInt(tour.min_child_age)) ? parseInt(tour.min_child_age) : null,
       image: tour.image || "/placeholder.svg?height=400&width=600",
       gallery: tour.gallery || [],
       category: tour.category || "passeios",
@@ -103,18 +111,26 @@ export async function getTourBySlug(slug: string): Promise<Tour | null> {
       id: data.id,
       title: data.title || "",
       description: data.description || "",
-      price: Number.parseFloat(data.price) || 0,
-      price_child: data.price_child ? Number.parseFloat(data.price_child) : null,
-      price_high_season: data.price_high_season ? Number.parseFloat(data.price_high_season) : null,
-      price_senior: data.price_senior ? Number.parseFloat(data.price_senior) : null,
-      price_ms: data.price_ms ? Number.parseFloat(data.price_ms) : null,
-      price_child_high_season: data.price_child_high_season ? Number.parseFloat(data.price_child_high_season) : null,
-      price_child_low_season: data.price_child_low_season ? Number.parseFloat(data.price_child_low_season) : null,
-      price_senior_high_season: data.price_senior_high_season ? Number.parseFloat(data.price_senior_high_season) : null,
-      price_senior_low_season: data.price_senior_low_season ? Number.parseFloat(data.price_senior_low_season) : null,
-      price_ms_high_season: data.price_ms_high_season ? Number.parseFloat(data.price_ms_high_season) : null,
-      price_ms_low_season: data.price_ms_low_season ? Number.parseFloat(data.price_ms_low_season) : null,
-      min_child_age: data.min_child_age ? Number.parseInt(data.min_child_age) : null,
+      price: !isNaN(parseFloat(data.price)) ? parseFloat(data.price) : 0,
+      price_child: !isNaN(parseFloat(data.price_child)) ? parseFloat(data.price_child) : null,
+      price_high_season: !isNaN(parseFloat(data.price_high_season)) ? parseFloat(data.price_high_season) : null,
+      price_senior: !isNaN(parseFloat(data.price_senior)) ? parseFloat(data.price_senior) : null,
+      price_ms: !isNaN(parseFloat(data.price_ms)) ? parseFloat(data.price_ms) : null,
+      price_child_high_season: !isNaN(parseFloat(data.price_child_high_season))
+        ? parseFloat(data.price_child_high_season)
+        : null,
+      price_child_low_season: !isNaN(parseFloat(data.price_child_low_season))
+        ? parseFloat(data.price_child_low_season)
+        : null,
+      price_senior_high_season: !isNaN(parseFloat(data.price_senior_high_season))
+        ? parseFloat(data.price_senior_high_season)
+        : null,
+      price_senior_low_season: !isNaN(parseFloat(data.price_senior_low_season))
+        ? parseFloat(data.price_senior_low_season)
+        : null,
+      price_ms_high_season: !isNaN(parseFloat(data.price_ms_high_season)) ? parseFloat(data.price_ms_high_season) : null,
+      price_ms_low_season: !isNaN(parseFloat(data.price_ms_low_season)) ? parseFloat(data.price_ms_low_season) : null,
+      min_child_age: !isNaN(parseInt(data.min_child_age)) ? parseInt(data.min_child_age) : null,
       image: data.image || "/placeholder.svg?height=400&width=600",
       gallery: data.gallery || [],
       category: data.category || "passeios",
@@ -162,18 +178,26 @@ export async function getTourById(id: string): Promise<Tour | null> {
       id: data.id,
       title: data.title || "",
       description: data.description || "",
-      price: Number.parseFloat(data.price) || 0,
-      price_child: data.price_child ? Number.parseFloat(data.price_child) : null,
-      price_high_season: data.price_high_season ? Number.parseFloat(data.price_high_season) : null,
-      price_senior: data.price_senior ? Number.parseFloat(data.price_senior) : null,
-      price_ms: data.price_ms ? Number.parseFloat(data.price_ms) : null,
-      price_child_high_season: data.price_child_high_season ? Number.parseFloat(data.price_child_high_season) : null,
-      price_child_low_season: data.price_child_low_season ? Number.parseFloat(data.price_child_low_season) : null,
-      price_senior_high_season: data.price_senior_high_season ? Number.parseFloat(data.price_senior_high_season) : null,
-      price_senior_low_season: data.price_senior_low_season ? Number.parseFloat(data.price_senior_low_season) : null,
-      price_ms_high_season: data.price_ms_high_season ? Number.parseFloat(data.price_ms_high_season) : null,
-      price_ms_low_season: data.price_ms_low_season ? Number.parseFloat(data.price_ms_low_season) : null,
-      min_child_age: data.min_child_age ? Number.parseInt(data.min_child_age) : null,
+      price: !isNaN(parseFloat(data.price)) ? parseFloat(data.price) : 0,
+      price_child: !isNaN(parseFloat(data.price_child)) ? parseFloat(data.price_child) : null,
+      price_high_season: !isNaN(parseFloat(data.price_high_season)) ? parseFloat(data.price_high_season) : null,
+      price_senior: !isNaN(parseFloat(data.price_senior)) ? parseFloat(data.price_senior) : null,
+      price_ms: !isNaN(parseFloat(data.price_ms)) ? parseFloat(data.price_ms) : null,
+      price_child_high_season: !isNaN(parseFloat(data.price_child_high_season))
+        ? parseFloat(data.price_child_high_season)
+        : null,
+      price_child_low_season: !isNaN(parseFloat(data.price_child_low_season))
+        ? parseFloat(data.price_child_low_season)
+        : null,
+      price_senior_high_season: !isNaN(parseFloat(data.price_senior_high_season))
+        ? parseFloat(data.price_senior_high_season)
+        : null,
+      price_senior_low_season: !isNaN(parseFloat(data.price_senior_low_season))
+        ? parseFloat(data.price_senior_low_season)
+        : null,
+      price_ms_high_season: !isNaN(parseFloat(data.price_ms_high_season)) ? parseFloat(data.price_ms_high_season) : null,
+      price_ms_low_season: !isNaN(parseFloat(data.price_ms_low_season)) ? parseFloat(data.price_ms_low_season) : null,
+      min_child_age: !isNaN(parseInt(data.min_child_age)) ? parseInt(data.min_child_age) : null,
       image: data.image || "/placeholder.svg?height=400&width=600",
       gallery: data.gallery || [],
       category: data.category || "passeios",
