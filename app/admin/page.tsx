@@ -1,11 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { AdminTourCard } from "@/components/admin-tour-card"
 import { AdminBlogCard } from "@/components/admin-blog-card"
 import { AdminPackageCard } from "@/components/admin-package-card"
 import { AdminAttractionCard } from "@/components/admin-attraction-card"
-import { AddTourDialog } from "@/components/add-tour-dialog"
 import { AddBlogDialog } from "@/components/add-blog-dialog"
 import { AddPackageDialog } from "@/components/add-package-dialog"
 import { AddAttractionDialog } from "@/components/add-attraction-dialog"
@@ -14,7 +12,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plus, ArrowLeft, LogOut, BarChart3, Users, MapPin, Calendar, RefreshCw } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
-import { Tour } from "@/components/tours-section"
 import type { BlogPost } from "@/types/index"
 import type { Package } from "@/types/package"
 import { Attraction } from "@/services/supabase-attractions"
@@ -23,6 +20,7 @@ import { useRouter } from "next/navigation"
 import { getAllTours } from "@/services/supabase-tours"
 import { getAllPackages } from "@/services/supabase-packages"
 import { getAllAttractions } from "@/services/supabase-attractions"
+import { DatabaseTour } from "@/lib/supabase/types" // Correctly imported DatabaseTour
 import { getAllBlogPosts } from "@/services/supabase-blog"
 import {
   createTour,
@@ -39,6 +37,8 @@ import {
   deleteBlogPost,
 } from "@/services/admin-supabase"
 import { useToast } from "@/hooks/use-toast"
+import { AdminTourCard } from "@/components/admin-tour-card" // Ensure AdminTourCard is imported
+import { AddTourDialog } from "@/components/add-tour-dialog" // Ensure AddTourDialog is imported
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null)
@@ -47,7 +47,7 @@ export default function AdminPage() {
   const router = useRouter()
   const { t } = useLanguage()
   const { toast } = useToast()
-  const [tours, setTours] = useState<Tour[]>([])
+  const [tours, setTours] = useState<DatabaseTour[]>([]) // State now uses DatabaseTour
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
   const [packages, setPackages] = useState<Package[]>([])
   const [attractions, setAttractions] = useState<Attraction[]>([])
@@ -56,7 +56,7 @@ export default function AdminPage() {
   const [isAddPackageDialogOpen, setIsAddPackageDialogOpen] = useState(false)
   const [isAddAttractionDialogOpen, setIsAddAttractionDialogOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<"tours" | "blog" | "packages" | "attractions" | "next-semester">("tours")
-  const [activeCategory, setActiveCategory] = useState<Tour["category"]>("all")
+  const [activeCategory, setActiveCategory] = useState<DatabaseTour["category"]>("all") // Category type also updated
   const [activeAttractionCategory, setActiveAttractionCategory] = useState<Attraction["category"]>("gastronomy")
 
   useEffect(() => {
@@ -93,13 +93,14 @@ export default function AdminPage() {
   const loadData = async () => {
     setIsRefreshing(true)
     try {
+      // getAllTours should now return DatabaseTour[] directly from supabase-tours.ts
       const [toursData, packagesData, attractionsData] = await Promise.all([
         getAllTours(),
         getAllPackages(),
         getAllAttractions(),
       ])
 
-      setTours(toursData)
+      setTours(toursData as DatabaseTour[]) // Cast to DatabaseTour[] to be safe after changes in supabase-tours.ts
       console.log("Tours carregados no AdminPage (raw):", toursData)
       setPackages(packagesData)
       setAttractions(attractionsData)
@@ -128,8 +129,8 @@ export default function AdminPage() {
     }
   }
 
-  // Tour handlers
-  const handleUpdateTour = async (updatedTour: Tour) => {
+  // Tour handlers using DatabaseTour
+  const handleUpdateTour = async (updatedTour: DatabaseTour) => {
     const success = await updateTour(updatedTour)
     if (success) {
       setTours(tours.map((tour) => (tour.id === updatedTour.id ? updatedTour : tour)))
@@ -163,7 +164,7 @@ export default function AdminPage() {
     }
   }
 
-  const handleAddTour = async (newTour: Omit<Tour, "id">) => {
+  const handleAddTour = async (newTour: Omit<DatabaseTour, "id" | "created_at" | "updated_at" | "slug">) => {
     const createdTour = await createTour(newTour)
     if (createdTour) {
       setTours([...tours, createdTour])
@@ -494,7 +495,6 @@ export default function AdminPage() {
             <TabsTrigger
               value="next-semester"
               className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
-              asChild
             >
               <Link href="/admin/valor-futuro">Editar para o próximo semestre</Link>
             </TabsTrigger>
@@ -505,7 +505,7 @@ export default function AdminPage() {
           <>
             <Tabs
               value={activeCategory}
-              onValueChange={(value) => setActiveCategory(value as Tour["category"])}
+              onValueChange={(value) => setActiveCategory(value as DatabaseTour["category"])}
               className="mb-8"
             >
               <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 gap-1 bg-white shadow-md rounded-xl p-2">

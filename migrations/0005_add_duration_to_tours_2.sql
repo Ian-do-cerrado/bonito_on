@@ -1,0 +1,2 @@
+ALTER TABLE tours_2
+ADD COLUMN duration TEXT;

@@ -1,41 +1,44 @@
 import { createClient } from "@/lib/supabase/client"
+import { DatabaseTour, TourData } from "@/lib/supabase/types"
+import { createSlug, mapDatabaseTourToTourData } from "@/lib/supabase/server-utils"
 
-interface Tour {
-  id: string
-  title: string
-  description: string
-  price: number
-  price_child?: number | null
-  price_high_season?: number | null
-  price_senior?: number | null
-  price_ms?: number | null
-  price_child_high_season?: number | null
-  price_child_low_season?: number | null
-  price_senior_high_season?: number | null
-  price_senior_low_season?: number | null
-  price_ms_high_season?: number | null
-  price_ms_low_season?: number | null
-  min_child_age?: number | null
-  image: string
-  gallery?: string[]
-  category: string
-  rating: number
-  slug?: string
-  created_at?: string
-  updated_at?: string
-}
-
-
-
-export type { Tour }
+export type Tour = TourData
 
 const supabase = createClient()
 
-export async function getAllTours(): Promise<Tour[]> {
+export function mapTourDataToDatabaseTour(data: TourData): DatabaseTour {
+  // Ensure slug is not undefined, fall back to null if necessary for DatabaseTour
+  const slugValue = data.slug === undefined ? null : data.slug;
+  const imageValue = data.image === undefined ? null : data.image;
+
+  return {
+    id: data.id,
+    title: data.title,
+    description: data.description,
+    price: data.price,
+    price_child: data.price_child || null,
+    price_high_season: data.price_high_season || null,
+    price_senior: data.price_senior || null,
+    price_ms_low_season: data.price_ms_low_season || null,
+    price_ms_high_season: data.price_ms_high_season || null,
+    min_child_age: data.min_child_age || null,
+    gallery: data.gallery || null, // Assuming gallery is optional and can be null
+    duration: data.duration || null,
+    image: imageValue,
+    category: data.category,
+    rating: data.rating,
+    slug: slugValue,
+    created_at: data.created_at || new Date().toISOString(), // Fallback for created_at
+    updated_at: data.updated_at || new Date().toISOString(), // Fallback for updated_at
+  };
+}
+
+
+export async function getAllTours(): Promise<TourData[]> {
   try {
     console.log("🚀 Carregando tours do Supabase...")
 
-    const { data, error } = await supabase.from("tours").select("*").order("created_at", { ascending: false })
+    const { data, error } = await supabase.from("tours").select("*, duration").order("created_at", { ascending: false })
 
     if (error) {
       console.error("❌ Erro ao buscar tours:", error)
@@ -50,44 +53,9 @@ export async function getAllTours(): Promise<Tour[]> {
     }
 
     // Transformar os dados para o formato esperado
-    const tours: Tour[] = data.reduce((acc: Tour[], tour: any) => {
+    const tours: TourData[] = data.reduce((acc: TourData[], tour: DatabaseTour) => {
       try {
-        const mappedTour: Tour = {
-          id: tour.id,
-          title: tour.title || "",
-          description: tour.description || "",
-          price: !isNaN(parseFloat(tour.price)) ? parseFloat(tour.price) : 0,
-          price_child: !isNaN(parseFloat(tour.price_child)) ? parseFloat(tour.price_child) : null,
-          price_high_season: !isNaN(parseFloat(tour.price_high_season)) ? parseFloat(tour.price_high_season) : null,
-          price_senior: !isNaN(parseFloat(tour.price_senior)) ? parseFloat(tour.price_senior) : null,
-          price_ms: !isNaN(parseFloat(tour.price_ms)) ? parseFloat(tour.price_ms) : null,
-          price_child_high_season: !isNaN(parseFloat(tour.price_child_high_season))
-            ? parseFloat(tour.price_child_high_season)
-            : null,
-          price_child_low_season: !isNaN(parseFloat(tour.price_child_low_season))
-            ? parseFloat(tour.price_child_low_season)
-            : null,
-          price_senior_high_season: !isNaN(parseFloat(tour.price_senior_high_season))
-            ? parseFloat(tour.price_senior_high_season)
-            : null,
-          price_senior_low_season: !isNaN(parseFloat(tour.price_senior_low_season))
-            ? parseFloat(tour.price_senior_low_season)
-            : null,
-          price_ms_high_season: !isNaN(parseFloat(tour.price_ms_high_season))
-            ? parseFloat(tour.price_ms_high_season)
-            : null,
-          price_ms_low_season: !isNaN(parseFloat(tour.price_ms_low_season))
-            ? parseFloat(tour.price_ms_low_season)
-            : null,
-          min_child_age: !isNaN(parseInt(tour.min_child_age)) ? parseInt(tour.min_child_age) : null,
-          image: tour.image || "/placeholder.svg?height=400&width=600",
-          gallery: tour.gallery || [],
-          category: tour.category || "passeios",
-          rating: tour.rating || 5,
-          slug: tour.slug || createSlug(tour.title || ""),
-          created_at: tour.created_at,
-          updated_at: tour.updated_at,
-        }
+        const mappedTour: TourData = mapDatabaseTourToTourData(tour)
         acc.push(mappedTour)
       } catch (e) {
         console.error("❌ Erro ao processar o tour:", tour.id, e)
@@ -102,11 +70,11 @@ export async function getAllTours(): Promise<Tour[]> {
   }
 }
 
-export async function getTourBySlug(slug: string): Promise<Tour | null> {
+export async function getTourBySlug(slug: string): Promise<TourData | null> {
   try {
     console.log("🔍 Buscando tour por slug:", slug)
 
-    const { data, error } = await supabase.from("tours").select("*").eq("slug", slug).single()
+    const { data, error } = await supabase.from("tours").select("*, duration").eq("slug", slug).single()
 
     if (error) {
       console.error("❌ Erro ao buscar tour por slug:", error)
@@ -119,38 +87,7 @@ export async function getTourBySlug(slug: string): Promise<Tour | null> {
     }
 
     // Transformar os dados para o formato esperado
-    const tour: Tour = {
-      id: data.id,
-      title: data.title || "",
-      description: data.description || "",
-      price: !isNaN(parseFloat(data.price)) ? parseFloat(data.price) : 0,
-      price_child: !isNaN(parseFloat(data.price_child)) ? parseFloat(data.price_child) : null,
-      price_high_season: !isNaN(parseFloat(data.price_high_season)) ? parseFloat(data.price_high_season) : null,
-      price_senior: !isNaN(parseFloat(data.price_senior)) ? parseFloat(data.price_senior) : null,
-      price_ms: !isNaN(parseFloat(data.price_ms)) ? parseFloat(data.price_ms) : null,
-      price_child_high_season: !isNaN(parseFloat(data.price_child_high_season))
-        ? parseFloat(data.price_child_high_season)
-        : null,
-      price_child_low_season: !isNaN(parseFloat(data.price_child_low_season))
-        ? parseFloat(data.price_child_low_season)
-        : null,
-      price_senior_high_season: !isNaN(parseFloat(data.price_senior_high_season))
-        ? parseFloat(data.price_senior_high_season)
-        : null,
-      price_senior_low_season: !isNaN(parseFloat(data.price_senior_low_season))
-        ? parseFloat(data.price_senior_low_season)
-        : null,
-      price_ms_high_season: !isNaN(parseFloat(data.price_ms_high_season)) ? parseFloat(data.price_ms_high_season) : null,
-      price_ms_low_season: !isNaN(parseFloat(data.price_ms_low_season)) ? parseFloat(data.price_ms_low_season) : null,
-      min_child_age: !isNaN(parseInt(data.min_child_age)) ? parseInt(data.min_child_age) : null,
-      image: data.image || "/placeholder.svg?height=400&width=600",
-      gallery: data.gallery || [],
-      category: data.category || "passeios",
-      rating: data.rating || 5,
-      slug: data.slug || createSlug(data.title || ""),
-      created_at: data.created_at,
-      updated_at: data.updated_at,
-    }
+    const tour: TourData = mapDatabaseTourToTourData(data)
 
     console.log("✅ Tour encontrado:", tour.title)
     return tour
@@ -160,21 +97,10 @@ export async function getTourBySlug(slug: string): Promise<Tour | null> {
   }
 }
 
-// Função para criar slug a partir do título
-function createSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-}
 
-export async function getTourById(id: string): Promise<Tour | null> {
+export async function getTourById(id: string): Promise<TourData | null> {
   try {
-    const { data, error } = await supabase.from("tours").select("*").eq("id", id).single()
+    const { data, error } = await supabase.from("tours").select("*, duration").eq("id", id).single()
 
     if (error) {
       console.error("Erro ao buscar tour por ID:", error)
@@ -186,38 +112,7 @@ export async function getTourById(id: string): Promise<Tour | null> {
     }
 
     // Transformar os dados para o formato esperado
-    const tour: Tour = {
-      id: data.id,
-      title: data.title || "",
-      description: data.description || "",
-      price: !isNaN(parseFloat(data.price)) ? parseFloat(data.price) : 0,
-      price_child: !isNaN(parseFloat(data.price_child)) ? parseFloat(data.price_child) : null,
-      price_high_season: !isNaN(parseFloat(data.price_high_season)) ? parseFloat(data.price_high_season) : null,
-      price_senior: !isNaN(parseFloat(data.price_senior)) ? parseFloat(data.price_senior) : null,
-      price_ms: !isNaN(parseFloat(data.price_ms)) ? parseFloat(data.price_ms) : null,
-      price_child_high_season: !isNaN(parseFloat(data.price_child_high_season))
-        ? parseFloat(data.price_child_high_season)
-        : null,
-      price_child_low_season: !isNaN(parseFloat(data.price_child_low_season))
-        ? parseFloat(data.price_child_low_season)
-        : null,
-      price_senior_high_season: !isNaN(parseFloat(data.price_senior_high_season))
-        ? parseFloat(data.price_senior_high_season)
-        : null,
-      price_senior_low_season: !isNaN(parseFloat(data.price_senior_low_season))
-        ? parseFloat(data.price_senior_low_season)
-        : null,
-      price_ms_high_season: !isNaN(parseFloat(data.price_ms_high_season)) ? parseFloat(data.price_ms_high_season) : null,
-      price_ms_low_season: !isNaN(parseFloat(data.price_ms_low_season)) ? parseFloat(data.price_ms_low_season) : null,
-      min_child_age: !isNaN(parseInt(data.min_child_age)) ? parseInt(data.min_child_age) : null,
-      image: data.image || "/placeholder.svg?height=400&width=600",
-      gallery: data.gallery || [],
-      category: data.category || "passeios",
-      rating: data.rating || 5,
-      slug: data.slug || createSlug(data.title || ""),
-      created_at: data.created_at,
-      updated_at: data.updated_at,
-    }
+    const tour: TourData = mapDatabaseTourToTourData(data)
 
     return tour
   } catch (error) {
@@ -225,3 +120,4 @@ export async function getTourById(id: string): Promise<Tour | null> {
     return null
   }
 }
+

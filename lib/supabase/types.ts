@@ -8,12 +8,40 @@ export interface DatabaseTour {
   price_child?: number | null
   price_high_season?: number | null
   price_senior?: number | null
+  price_ms?: number | null // Added from SegundoSemestre
+  price_child_high_season?: number | null // Added from SegundoSemestre
+  price_child_low_season?: number | null // Added from SegundoSemestre
+  price_senior_high_season?: number | null // Added from SegundoSemestre
+  price_senior_low_season?: number | null // Added from SegundoSemestre
+  min_child_age?: number | null // Added from SegundoSemestre
   image: string | null
+  gallery?: string[] | null // Added from SegundoSemestre
   rating: number
   category: string
   slug: string | null
   created_at: string
   updated_at: string
+  duration?: string | null
+}
+
+export interface DatabaseTour2 {
+  id: string
+  title: string | null
+  description: string | null
+  price: number | null // Corresponds to 'price' in the UI
+  chd_price: number | null // Corresponds to 'price_child' in the UI
+  hs_price: number | null // Corresponds to 'price_high_season' in the UI
+  senior_price: number | null // Corresponds to 'price_senior' in the UI
+  ms_price: number | null // Corresponds to 'price_ms' in the UI
+  min_child_age: number | null
+  image: string | null
+  gallery: string[] | null
+  rating: number | null
+  category: string | null
+  slug: string | null
+  created_at: string
+  updated_at: string
+  duration: string | null
 }
 
 export interface DatabasePackage {
@@ -95,23 +123,24 @@ export interface AttractionHighlight {
   highlight: string
 }
 
-export interface DatabaseTourSegundoSemestre {
+export interface Tour2Data { // Interface for the transformed tour data from 'tours_2' table, matching UI component needs
   id: string
   title: string
   description: string
-  price: number
-  price_ms_low_season?: number | null
-  price_ms_high_season?: number | null
-  price_child?: number | null
-  price_high_season?: number | null
-  price_senior?: number | null
-  price_child_high_season?: number | null
-  price_senior_high_season?: number | null
-  image: string | null
-  rating: number
+  price: number // Corresponds to price in UI (Baixa Temporada - Adulto)
+  chd_price?: number | null // Corresponds to price_child in UI (Criança - qualquer temporada)
+  hs_price?: number | null // Corresponds to price_high_season in UI (Alta Temporada - Adulto)
+  senior_price?: number | null // Corresponds to price_senior in UI (Melhor Idade - qualquer temporada)
+  ms_price?: number | null // Corresponds to price_ms in UI (Morador MS - qualquer temporada)
+  min_child_age?: number | null
+  image: string
+  gallery?: string[]
   category: string
-  slug: string | null
-  created_at: string
-  updated_at: string
-  visivel_no_tarifario_2o_semestre: boolean
+  rating: number
+  slug?: string
+  created_at?: string
+  updated_at?: string
+  duration?: string | null
 }
+
+

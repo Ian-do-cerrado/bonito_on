@@ -10,10 +10,10 @@ import Link from "next/link"
 import { SiteLayout } from "@/components/site-layout"
 import { Tour2Data as TourData } from "@/lib/supabase/types"
 import { useContactModal } from "@/hooks/use-contact-modal"
-import { getTourBySlug } from "@/services/supabase-tours"
+import { getTour2BySlug } from "@/lib/supabase/tours-2" // Changed to tours-2 service
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
-interface TourDetailPageProps {
+interface ValorFuturoTourDetailPageProps {
   initialTour: TourData | null;
 }
 
@@ -217,7 +217,7 @@ function formatInlineText(text: string) {
   })
 }
 
-export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
+export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFuturoTourDetailPageProps) {
   const { openModal } = useContactModal()
   const [tour, setTour] = useState<TourData | null>(initialTour)
   const [isLoading, setIsLoading] = useState(false) // No longer loading on client if initialTour is provided
@@ -245,7 +245,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
           if (!slug) return;
 
           // Tenta buscar do Supabase primeiro
-          const tourData = await getTourBySlug(slug)
+          const tourData = await getTour2BySlug(slug) // Changed to getTour2BySlug
 
           if (tourData) {
             setTour(tourData)
@@ -278,29 +278,42 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
 
   const getCategoryLabel = (category: string) => {
     switch (category) {
-      case "passeios":
-        return "Passeios"
-      case "locations":
-        return "Eventos"
-      case "food":
-        return "Gastronomia"
-      case "transportation":
-        return "Transporte"
-      default:
-        return "Passeios"
+      case "resort": return "Balneário"
+      case "floating": return "Flutuação"
+      case "adventure": return "Aventura"
+      case "waterfall": return "Cachoeira"
+      case "contemplation": return "Contemplação"
+      case "biking": return "Passeio de Bike"
+      case "pantanal": return "Pantanal"
+      case "scubaDiving": return "Mergulho com Cilindro"
+      case "rappelling": return "Rapel"
+      case "cave": return "Caverna"
+      default: return "Passeios"
     }
   }
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "passeios":
-        return "bg-green-100 text-green-800"
-      case "locations":
+      case "resort":
         return "bg-blue-100 text-blue-800"
-      case "food":
+      case "floating":
+        return "bg-cyan-100 text-cyan-800"
+      case "adventure":
         return "bg-orange-100 text-orange-800"
-      case "transportation":
+      case "waterfall":
+        return "bg-indigo-100 text-indigo-800"
+      case "contemplation":
+        return "bg-yellow-100 text-yellow-800"
+      case "biking":
         return "bg-purple-100 text-purple-800"
+      case "pantanal":
+        return "bg-amber-100 text-amber-800"
+      case "scubaDiving":
+        return "bg-teal-100 text-teal-800"
+      case "rappelling":
+        return "bg-red-100 text-red-800"
+      case "cave":
+        return "bg-gray-100 text-gray-800"
       default:
         return "bg-green-100 text-green-800"
     }
@@ -337,10 +350,10 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Item não encontrado</h1>
-            <Link href="/">
+            <Link href="/valor-futuro"> {/* Changed back to /valor-futuro */}
               <Button className="bg-green-600 hover:bg-green-700">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar ao Início
+                Voltar aos Passeios
               </Button>
             </Link>
           </div>
@@ -365,7 +378,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <Link href="/">
+          <Link href="/valor-futuro"> {/* Changed back to /valor-futuro */}
             <Button variant="outline" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
@@ -517,7 +530,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
             </Card>
           </div>
 
-          {/* Sidebar */}
+          {/*  Sidebar */}
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardContent className="p-6">
@@ -531,12 +544,12 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="text-sm font-medium text-green-800">Baixa Temporada</p>
+                        <p className="text-sm font-medium text-green-800">Valor</p>
                         <p className="text-xs text-green-600">Adulto</p>
                       </div>
                       <div className="text-right">
                         <div className="text-2xl font-bold text-green-700">
-                          R$ {tour.price.toFixed(2).replace(".", ",")}
+                          R$ {tour.price ? tour.price.toFixed(2).replace(".", ",") : "N/A"}
                         </div>
                       </div>
                     </div>
@@ -564,12 +577,12 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                     </div>
                   )}
 
-                  {/* Criança (Baixa Temporada) */}
+                  {/* Criança */}
                   {tour.chd_price && tour.chd_price > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">Criança (Baixa Temporada)</p>
+                          <p className="text-sm font-medium text-gray-900">Criança</p>
                           {tour.min_child_age !== undefined && tour.min_child_age !== null && (
                             <p className="text-xs text-gray-500">Grátis até: {tour.min_child_age} anos</p>
                           )}
@@ -577,6 +590,38 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
                             R$ {tour.chd_price.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Melhor Idade */}
+                  {tour.senior_price && tour.senior_price > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Melhor Idade</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.senior_price.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Morador MS */}
+                  {tour.ms_price && tour.ms_price > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Morador MS</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.ms_price.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>

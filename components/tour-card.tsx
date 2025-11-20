@@ -4,21 +4,17 @@ import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import type { Tour } from "@/components/tours-section"
-import { DatabaseTourSegundoSemestre } from "@/lib/supabase/types"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
+import type { DatabaseTour as TourData } from "@/lib/supabase/types"
 import { PencilIcon, TrashIcon } from "lucide-react"
 
 interface TourCardProps {
-  tour: Tour | DatabaseTourSegundoSemestre
-  semestre?: "atual" | "2o"
-  onVisibilityChange?: (id: string, visible: boolean) => void
-  onEdit?: (tour: Tour | DatabaseTourSegundoSemestre) => void
+  tour: TourData
+  onEdit?: (tour: TourData) => void
   onDelete?: (id: string) => void
+  basePath?: string // New prop for base path
 }
 
-export function TourCard({ tour, semestre, onVisibilityChange, onEdit, onDelete }: TourCardProps) {
+export function TourCard({ tour, onEdit, onDelete, basePath = "/passeios" }: TourCardProps) {
   const price =
     typeof tour.price === "number"
       ? `R$ ${tour.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
@@ -45,11 +41,6 @@ export function TourCard({ tour, semestre, onVisibilityChange, onEdit, onDelete 
           <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getCategoryColor(tour.category)}`}>
             {getCategoryLabel(tour.category)}
           </span>
-          {semestre === "2o" && (
-            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-              2º Semestre
-            </span>
-          )}
         </div>
         <div className="absolute bottom-3 left-3 right-3 z-20">
           <h3 className="text-white font-bold text-lg leading-tight line-clamp-2">{tour.title}</h3>
@@ -65,11 +56,16 @@ export function TourCard({ tour, semestre, onVisibilityChange, onEdit, onDelete 
         <div className="mb-3 mt-auto">
           {price && <div className="text-2xl font-bold text-green-600">{price}</div>}
           <div className="text-xs text-gray-500">por pessoa</div>
+          {tour.min_child_age && tour.min_child_age > 0 && (
+            <div className="text-xs text-gray-500 mt-1">
+              Grátis até: {tour.min_child_age} ano(s)
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col space-y-2 w-full">
           <Link
-            href={`/passeios/${tour.slug || slugify(tour.title)}`}
+            href={`${basePath}/${tour.slug || slugify(tour.title)}`}
             className="w-full"
           >
             <Button variant="outline" size="sm" className="text-sm w-full">
@@ -97,23 +93,19 @@ export function TourCard({ tour, semestre, onVisibilityChange, onEdit, onDelete 
         </a>
       </CardContent>
 
-      {semestre === "2o" && (
+      {(onEdit || onDelete) && (
         <div className="p-4 border-t flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <Label htmlFor={`visivel-${tour.id}`}>Mostrar no tarifário 2º semestre</Label>
-            <Switch
-              id={`visivel-${tour.id}`}
-              checked={(tour as DatabaseTourSegundoSemestre).visivel_no_tarifario_2o_semestre}
-              onCheckedChange={(checked) => onVisibilityChange?.(tour.id, checked)}
-            />
-          </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="flex-1" onClick={() => onEdit?.(tour)}>
-              <PencilIcon className="h-4 w-4 mr-2" /> Editar
-            </Button>
-            <Button variant="destructive" size="sm" className="flex-1" onClick={() => onDelete?.(tour.id)}>
-              <TrashIcon className="h-4 w-4 mr-2" /> Apagar
-            </Button>
+            {onEdit && (
+              <Button variant="outline" size="sm" className="flex-1" onClick={() => onEdit?.(tour)}>
+                <PencilIcon className="h-4 w-4 mr-2" /> Editar
+              </Button>
+            )}
+            {onDelete && (
+              <Button variant="destructive" size="sm" className="flex-1" onClick={() => onDelete?.(tour.id)}>
+                <TrashIcon className="h-4 w-4 mr-2" /> Apagar
+              </Button>
+            )}
           </div>
         </div>
       )}
@@ -147,7 +139,7 @@ function htmlToText(html: string) {
     .replace(/\n{3,}/g, "\n\n")
 }
 
-function getCategoryLabel(category: Tour["category"]) {
+function getCategoryLabel(category: TourData["category"]) {
   const map: Record<string, string> = {
     adventure: "Aventura",
     contemplation: "Contemplação",
@@ -164,7 +156,7 @@ function getCategoryLabel(category: Tour["category"]) {
   return map[category] || "Aventura"
 }
 
-function getCategoryColor(category: Tour["category"]) {
+function getCategoryColor(category: TourData["category"]) {
   switch (category) {
     case "pantanal":
     case "adventure":

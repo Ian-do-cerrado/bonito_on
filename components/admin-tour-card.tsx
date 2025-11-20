@@ -11,20 +11,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Edit, Trash2, Save, X } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import Image from "next/image"
-import type { Tour } from "@/components/tours-section"
+import type { DatabaseTour } from "@/lib/supabase/types" // Use DatabaseTour
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 
 interface AdminTourCardProps {
-  tour: Tour
-  onUpdate: (tour: Tour) => void
+  tour: DatabaseTour
+  onUpdate: (tour: DatabaseTour) => void
   onDelete: (tourId: string) => void
 }
 
 export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) {
   const { t } = useLanguage()
   const [isEditing, setIsEditing] = useState(false)
-  const [editedTour, setEditedTour] = useState<Tour>(tour)
+  const [editedTour, setEditedTour] = useState<DatabaseTour>(tour)
 
   const handleSave = () => {
     onUpdate(editedTour)
@@ -36,7 +36,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
     setIsEditing(false)
   }
 
-  const getCategoryLabel = (category: Tour["category"]) => {
+  const getCategoryLabel = (category: DatabaseTour["category"]) => {
     switch (category) {
       case "adventure":
         return t("adventure")
@@ -65,7 +65,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
     }
   }
 
-  const getCategoryColor = (category: Tour["category"]) => {
+  const getCategoryColor = (category: DatabaseTour["category"]) => {
     switch (category) {
       case "adventure":
         return "bg-red-100 text-red-800"
@@ -165,6 +165,58 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                   type="number"
                   value={editedTour.price}
                   onChange={(e) => setEditedTour({ ...editedTour, price: Number(e.target.value) })}
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+              <div>
+                <Label htmlFor="price_high_season">Preço Alta Temporada</Label>
+                <Input
+                  id="price_high_season"
+                  type="number"
+                  value={editedTour.price_high_season ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_high_season: Number(e.target.value) || null })}
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="price_child">Preço Criança</Label>
+                <Input
+                  id="price_child"
+                  type="number"
+                  value={editedTour.price_child ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_child: Number(e.target.value) || null })}
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+              <div>
+                <Label htmlFor="price_senior">Preço Melhor Idade</Label>
+                <Input
+                  id="price_senior"
+                  type="number"
+                  value={editedTour.price_senior ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_senior: Number(e.target.value) || null })}
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="price_ms">Preço MS</Label>
+                <Input
+                  id="price_ms"
+                  type="number"
+                  value={editedTour.price_ms ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_ms: Number(e.target.value) || null })}
+                  min="0"
+                  step="0.01"
                 />
               </div>
               <div>
@@ -233,32 +285,14 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
               <div>
                 <Label htmlFor="price_high_season">Preço Alta Temporada</Label>
                 <Input
-                  id="price_high_season"
-                  type="number"
-                  value={editedTour.price_high_season ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_high_season: Number(e.target.value) || null })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="price_senior_low_season">Preço melhor idade Baixa temporada</Label>
-                <Input
-                  id="price_senior_low_season"
-                  type="number"
-                  value={editedTour.price_senior_low_season ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_senior_low_season: Number(e.target.value) || null })}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="price_senior_high_season">Preço melhor idade Alta temporada</Label>
-                <Input
                   id="price_senior_high_season"
                   type="number"
                   value={editedTour.price_senior_high_season ?? ""}
                   onChange={(e) =>
                     setEditedTour({ ...editedTour, price_senior_high_season: Number(e.target.value) || null })
                   }
+                  min="0"
+                  step="0.01"
                 />
               </div>
             </div>
@@ -269,14 +303,16 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                 type="number"
                 value={editedTour.min_child_age ?? ""}
                 onChange={(e) => setEditedTour({ ...editedTour, min_child_age: Number(e.target.value) || null })}
+                min="0"
               />
             </div>
-            
             <div>
               <Label htmlFor="category">{t("category")}</Label>
               <Select
                 value={editedTour.category}
-                onValueChange={(value) => setEditedTour({ ...editedTour, category: value as Tour["category"] })}
+                onValueChange={(value) =>
+                  setEditedTour({ ...editedTour, category: value as DatabaseTour["category"] })
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -305,6 +341,29 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                 placeholder="https://exemplo.com/imagem.jpg"
               />
             </div>
+            <div>
+              <Label htmlFor="duration">Duração</Label>
+              <Input
+                id="duration"
+                value={editedTour.duration || ""}
+                onChange={(e) => setEditedTour({ ...editedTour, duration: e.target.value })}
+                placeholder="Ex: Meio dia"
+              />
+            </div>
+            <div>
+              <Label htmlFor="gallery">Galeria (URLs separadas por vírgula)</Label>
+              <Input
+                id="gallery"
+                value={editedTour.gallery?.join(", ") || ""}
+                onChange={(e) =>
+                  setEditedTour({
+                    ...editedTour,
+                    gallery: e.target.value ? e.target.value.split(",").map((s) => s.trim()) : [],
+                  })
+                }
+                placeholder="https://exemplo.com/img1.jpg, https://exemplo.com/img2.jpg"
+              />
+            </div>
           </>
         ) : (
           <>
@@ -313,46 +372,96 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
               dangerouslySetInnerHTML={{ __html: tour.description }}
             ></div>
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold text-green-600">R$ {tour.price.toFixed(2).replace(".", ",")}</div>
+              <div className="text-2xl font-bold text-green-600">
+                R$ {tour.price !== null ? tour.price.toFixed(2).replace(".", ",") : "N/A"}
+              </div>
               <div className="text-sm text-gray-500">{tour.rating} ⭐</div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm mt-2">
-              {tour.price_ms_low_season && (
+              {tour.price_ms_low_season !== null && tour.price_ms_low_season !== undefined && (
                 <div>
-                  <strong>Preço MS Baixa Temp.:</strong> R$ {tour.price_ms_low_season.toFixed(2).replace(".", ",")}
+                  <strong>Preço MS Baixa Temp.:</strong> R$
+                  {tour.price_ms_low_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_ms_high_season && (
+              {tour.price_ms_high_season !== null && tour.price_ms_high_season !== undefined && (
                 <div>
-                  <strong>Preço MS Alta Temp.:</strong> R$ {tour.price_ms_high_season.toFixed(2).replace(".", ",")}
+                  <strong>Preço MS Alta Temp.:</strong> R$
+                  {tour.price_ms_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_child_low_season && (
+              {tour.price_child_low_season !== null && tour.price_child_low_season !== undefined && (
                 <div>
-                  <strong>Criança Baixa Temp.:</strong> R$ {tour.price_child_low_season.toFixed(2).replace(".", ",")}
+                  <strong>Criança Baixa Temp.:</strong> R$
+                  {tour.price_child_low_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_child_high_season && (
+              {tour.price_child_high_season !== null && tour.price_child_high_season !== undefined && (
                 <div>
-                  <strong>Criança Alta Temp.:</strong> R$ {tour.price_child_high_season.toFixed(2).replace(".", ",")}
+                  <strong>Criança Alta Temp.:</strong> R$
+                  {tour.price_child_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_high_season && (
+              {tour.price_high_season !== null && tour.price_high_season !== undefined && (
                 <div>
                   <strong>Alta Temp.:</strong> R$ {tour.price_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_senior_low_season && (
+              {tour.price_senior_low_season !== null && tour.price_senior_low_season !== undefined && (
                 <div>
-                  <strong>Melhor Idade Baixa Temp.:</strong> R$ {tour.price_senior_low_season.toFixed(2).replace(".", ",")}
+                  <strong>Melhor Idade Baixa Temp.:</strong> R$
+                  {tour.price_senior_low_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_senior_high_season && (
+              {tour.price_senior_high_season !== null && tour.price_senior_high_season !== undefined && (
                 <div>
-                  <strong>Melhor Idade Alta Temp.:</strong> R$ {tour.price_senior_high_season.toFixed(2).replace(".", ",")}
+                  <strong>Melhor Idade Alta Temp.:</strong> R$
+                  {tour.price_senior_high_season.toFixed(2).replace(".", ",")}
+                </div>
+              )}
+              {tour.price_child !== null && tour.price_child !== undefined && (
+                <div>
+                  <strong>Preço Criança:</strong> R$ {tour.price_child.toFixed(2).replace(".", ",")}
+                </div>
+              )}
+              {tour.price_senior !== null && tour.price_senior !== undefined && (
+                <div>
+                  <strong>Preço Melhor Idade:</strong> R$ {tour.price_senior.toFixed(2).replace(".", ",")}
+                </div>
+              )}
+              {tour.price_ms !== null && tour.price_ms !== undefined && (
+                <div>
+                  <strong>Preço MS:</strong> R$ {tour.price_ms.toFixed(2).replace(".", ",")}
                 </div>
               )}
             </div>
+            {tour.duration && (
+              <div className="text-sm text-gray-500 mt-2">
+                <strong>Duração:</strong> {tour.duration}
+              </div>
+            )}
+            {tour.min_child_age !== null && tour.min_child_age !== undefined && (
+              <div className="text-sm text-gray-500 mt-2">
+                <strong>Idade Mínima Criança Pagante:</strong> {tour.min_child_age} anos
+              </div>
+            )}
+            {tour.gallery && tour.gallery.length > 0 && (
+              <div className="mt-4">
+                <strong>Galeria:</strong>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {tour.gallery.map((img, idx) => (
+                    <Image
+                      key={idx}
+                      src={img}
+                      alt={`Galeria ${idx + 1}`}
+                      width={60}
+                      height={40}
+                      className="object-cover rounded-md"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </>
         )}
       </CardContent>

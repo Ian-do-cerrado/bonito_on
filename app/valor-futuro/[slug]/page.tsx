@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
-import { getAllTours, getTourBySlug } from "@/services/supabase-tours"
-import { Tour2Data as TourData } from "@/lib/supabase/types" // Import Tour2Data from types.ts
-import TourDetailPageClient from "./index"
+import { getAllTours2, getTour2BySlug } from "@/lib/supabase/tours-2"
+import { TourData } from "@/lib/supabase/types"
+import ValorFuturoTourDetailPageClient from "./index"
 
-interface TourPageProps {
+interface ValorFuturoTourPageProps {
   params: {
     slug: string
   },
@@ -12,7 +12,7 @@ interface TourPageProps {
 }
 
 export async function generateStaticParams() {
-  const tours = await getAllTours()
+  const tours = await getAllTours2()
 
   const paths = tours.filter((tour) => tour.slug).map((tour) => ({
     slug: tour.slug,
@@ -21,8 +21,8 @@ export async function generateStaticParams() {
   return paths
 }
 
-export async function generateMetadata({ params }: TourPageProps): Promise<Metadata> {
-  const tour = await getTourBySlug(params.slug)
+export async function generateMetadata({ params }: ValorFuturoTourPageProps): Promise<Metadata> {
+  const tour = await getTour2BySlug(params.slug)
 
   if (!tour) {
     return {
@@ -51,12 +51,12 @@ export async function generateMetadata({ params }: TourPageProps): Promise<Metad
   }
 }
 
-export default async function TourPage({ params }: TourPageProps) {
-  const tour = await getTourBySlug(params.slug)
+export default async function ValorFuturoTourPage({ params }: ValorFuturoTourPageProps) {
+  const tour = await getTour2BySlug(params.slug)
 
   if (!tour) {
     notFound()
   }
 
-  return <TourDetailPageClient initialTour={tour as TourData} />
+  return <ValorFuturoTourDetailPageClient initialTour={tour as TourData} />
 }

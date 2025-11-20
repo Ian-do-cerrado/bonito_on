@@ -1,13 +1,16 @@
 import { createClient } from "@/lib/supabase/client"
-import type { Tour } from "@/components/tours-section"
+import type { Tour2Data } from "@/services/supabase-tours-2"
 import type { Package } from "@/types/package"
 import type { Attraction } from "@/components/attractions-section"
 import type { BlogPost } from "@/types/index" // Declare BlogPost variable
+import { DatabaseTour } from "@/lib/supabase/types" // Import DatabaseTour
 
 const supabase = createClient()
 
 // TOURS CRUD
-export async function createTour(tour: Omit<Tour, "id">): Promise<Tour | null> {
+export async function createTour(
+  tour: Omit<DatabaseTour, "id" | "created_at" | "updated_at" | "slug">, // Explicitly omit slug
+): Promise<DatabaseTour | null> {
   try {
     const { data, error } = await supabase
       .from("tours")
@@ -15,9 +18,23 @@ export async function createTour(tour: Omit<Tour, "id">): Promise<Tour | null> {
         title: tour.title,
         description: tour.description,
         price: tour.price,
-        image: tour.image,
+        duration: tour.duration || null,
+        price_child: tour.price_child || null,
+        price_high_season: tour.price_high_season || null,
+        price_senior: tour.price_senior || null,
+        price_ms_low_season: tour.price_ms_low_season || null,
+        price_ms_high_season: tour.price_ms_high_season || null,
+        price_ms: tour.price_ms || null,
+        price_child_high_season: tour.price_child_high_season || null,
+        price_child_low_season: tour.price_child_low_season || null,
+        price_senior_high_season: tour.price_senior_high_season || null,
+        price_senior_low_season: tour.price_senior_low_season || null,
+        min_child_age: tour.min_child_age || null,
+        image: tour.image || null,
+        gallery: tour.gallery || null,
         rating: tour.rating,
         category: tour.category,
+        slug: tour.title ? tour.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-*|-*$/g, "") : null, // Generate slug internally
       })
       .select()
       .single()
@@ -27,22 +44,15 @@ export async function createTour(tour: Omit<Tour, "id">): Promise<Tour | null> {
       return null
     }
 
-    return {
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      price: data.price,
-      image: data.image,
-      rating: data.rating,
-      category: data.category,
-    }
+    // Return the created tour with all properties
+    return data
   } catch (error) {
     console.error("Error in createTour:", error)
     return null
   }
 }
 
-export async function updateTour(tour: Tour): Promise<boolean> {
+export async function updateTour(tour: DatabaseTour): Promise<boolean> {
   try {
     const { error } = await supabase
       .from("tours")
@@ -50,9 +60,24 @@ export async function updateTour(tour: Tour): Promise<boolean> {
         title: tour.title,
         description: tour.description,
         price: tour.price,
-        image: tour.image,
+        duration: tour.duration || null,
+        price_child: tour.price_child || null,
+        price_high_season: tour.price_high_season || null,
+        price_senior: tour.price_senior || null,
+        price_ms_low_season: tour.price_ms_low_season || null,
+        price_ms_high_season: tour.price_ms_high_season || null,
+        price_ms: tour.price_ms || null,
+        price_child_high_season: tour.price_child_high_season || null,
+        price_child_low_season: tour.price_child_low_season || null,
+        price_senior_high_season: tour.price_senior_high_season || null,
+        price_senior_low_season: tour.price_senior_low_season || null,
+        min_child_age: tour.min_child_age || null,
+        image: tour.image || null,
+        gallery: tour.gallery || null,
         rating: tour.rating,
         category: tour.category,
+        slug: tour.slug || null, // Ensure slug is handled
+        updated_at: new Date().toISOString(),
       })
       .eq("id", tour.id)
 
@@ -80,6 +105,105 @@ export async function deleteTour(tourId: string): Promise<boolean> {
     return true
   } catch (error) {
     console.error("Error in deleteTour:", error)
+    return false
+  }
+}
+
+// TOURS_2 CRUD
+export async function createTour2(tour: Omit<Tour2Data, "id">): Promise<Tour2Data | null> {
+  try {
+    const { data, error } = await supabase
+      .from("tours_2")
+      .insert({
+        title: tour.title,
+        description: tour.description,
+        price_to_semester: tour.price_to_semester,
+        chd_price: tour.chd_price,
+        hs_price: tour.hs_price,
+        senior_price: tour.senior_price,
+        ms_price: tour.ms_price,
+        min_child_age: tour.min_child_age,
+        gallery: tour.gallery,
+        image: tour.image,
+        category: tour.category,
+        rating: tour.rating,
+        slug: tour.slug,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error("Error creating tour in tours_2:", error)
+      return null
+    }
+
+    return {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      price_to_semester: data.price_to_semester,
+      chd_price: data.chd_price,
+      hs_price: data.hs_price,
+      senior_price: data.senior_price,
+      ms_price: data.ms_price,
+      min_child_age: data.min_child_age,
+      gallery: data.gallery,
+      image: data.image,
+      rating: data.rating,
+      category: data.category,
+      slug: data.slug,
+    }
+  } catch (error) {
+    console.error("Error in createTour2:", error)
+    return null
+  }
+}
+
+export async function updateTour2(tour: Tour2Data): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from("tours_2")
+      .update({
+        title: tour.title,
+        description: tour.description,
+        price_to_semester: tour.price_to_semester,
+        chd_price: tour.chd_price,
+        hs_price: tour.hs_price,
+        senior_price: tour.senior_price,
+        ms_price: tour.ms_price,
+        min_child_age: tour.min_child_age,
+        gallery: tour.gallery,
+        image: tour.image,
+        category: tour.category,
+        rating: tour.rating,
+        slug: tour.slug,
+      })
+      .eq("id", tour.id)
+
+    if (error) {
+      console.error("Error updating tour in tours_2:", error)
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error("Error in updateTour2:", error)
+    return false
+  }
+}
+
+export async function deleteTour2(tourId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase.from("tours_2").delete().eq("id", tourId)
+
+    if (error) {
+      console.error("Error deleting tour from tours_2:", error)
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error("Error in deleteTour2:", error)
     return false
   }
 }
