@@ -1,8 +1,68 @@
 import { createClient } from "@/lib/supabase/client"
 import { DatabaseTour2, Tour2Data } from "@/lib/supabase/types"
-import { mapDatabaseTour2ToTourData } from "@/lib/supabase/server-utils"
 
 const supabase = createClient()
+
+// Função para criar slug a partir do título
+function createSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+}
+
+// Function to map raw DatabaseTour to Tour2Data
+export function mapDatabaseTour2ToTourData(data: DatabaseTour2): Tour2Data {
+  return {
+    id: data.id,
+    title: data.title || "",
+    description: data.description || "",
+    price: data.price || 0,
+    chd_price: data.chd_price,
+    hs_price: data.hs_price,
+    senior_price: data.senior_price,
+    ms_price: data.ms_price,
+    min_child_age: data.min_child_age,
+    image: data.image || "/placeholder.svg?height=400&width=600",
+    gallery: data.gallery || [],
+    category: data.category || "adventure", // Default to "adventure" if null
+    rating: data.rating || 5,
+    slug: data.slug || createSlug(data.title || ""),
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+    duration: data.duration,
+  }
+}
+
+// Function to map Tour2Data back to DatabaseTour2 for updates/inserts
+export function mapTour2DataToDatabaseTour2(data: Tour2Data): DatabaseTour2 {
+  const slugValue = data.slug === undefined ? null : data.slug
+  const imageValue = data.image === undefined ? null : data.image
+
+  return {
+    id: data.id,
+    title: data.title,
+    description: data.description,
+    price: data.price,
+    chd_price: data.chd_price || null,
+    hs_price: data.hs_price || null,
+    senior_price: data.senior_price || null,
+    ms_price: data.ms_price || null,
+    min_child_age: data.min_child_age || null,
+    gallery: data.gallery || null,
+    image: imageValue,
+    category: data.category,
+    rating: data.rating,
+    slug: slugValue,
+    created_at: data.created_at || new Date().toISOString(),
+    updated_at: data.updated_at || new Date().toISOString(),
+    duration: data.duration || null,
+  }
+}
 
 export async function getAllTours2(): Promise<Tour2Data[]> {
   try {

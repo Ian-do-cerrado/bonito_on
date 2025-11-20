@@ -24,7 +24,7 @@ interface AddTour2DialogProps {
 const initialState: Omit<Tour2Data, "id"> = {
   title: "",
   description: "",
-  price_to_semester: 0, // Corresponds to price in UI (Baixa Temporada - Adulto)
+  price: 0,
   chd_price: null, // Corresponds to price_child in UI (Criança - qualquer temporada)
   hs_price: null, // Corresponds to price_high_season in UI (Alta Temporada - Adulto)
   senior_price: null, // Corresponds to price_senior in UI (Melhor Idade - qualquer temporada)
@@ -68,9 +68,9 @@ export function AddTour2Dialog({ open, onOpenChange, onAdd }: AddTour2DialogProp
           />
           <Input
             type="number"
-            value={newTour.price_to_semester}
-            onChange={(e) => setNewTour({ ...newTour, price_to_semester: parseFloat(e.target.value) || 0 })}
-            placeholder="Preço (2º Semestre)"
+            value={newTour.price}
+            onChange={(e) => setNewTour({ ...newTour, price: parseFloat(e.target.value) || 0 })}
+            placeholder="Preço"
           />
           <Input
             type="number"

@@ -7,7 +7,7 @@ interface Tour2Data {
   id: string
   title: string
   description: string
-  price_to_semester: number // Corresponds to price in UI (Baixa Temporada - Adulto)
+  price: number // Corresponds to price in UI (Baixa Temporada - Adulto)
   chd_price?: number | null // Corresponds to price_child in UI (Criança - qualquer temporada)
   hs_price?: number | null // Corresponds to price_high_season in UI (Alta Temporada - Adulto)
   senior_price?: number | null // Corresponds to price_senior in UI (Melhor Idade - qualquer temporada)
@@ -45,7 +45,7 @@ export function mapDatabaseTour2ToTour2Data(data: DatabaseTour2): Tour2Data {
     id: data.id,
     title: data.title || "",
     description: data.description || "",
-    price_to_semester: data.price_to_semester || 0, // Map to new field name
+    price: data.price || 0, // Map to new field name
     chd_price: data.chd_price, // Map to new field name
     hs_price: data.hs_price, // Map to new field name
     senior_price: data.senior_price, // Map to new field name
@@ -71,7 +71,7 @@ export function mapTour2DataToDatabaseTour2(data: Tour2Data): DatabaseTour2 {
     id: data.id,
     title: data.title,
     description: data.description,
-    price_to_semester: data.price_to_semester, // Map to new field name
+    price: data.price, // Map to new field name
     chd_price: data.chd_price || null, // Map to new field name
     hs_price: data.hs_price || null, // Map to new field name
     senior_price: data.senior_price || null, // Map to new field name
@@ -84,7 +84,7 @@ export function mapTour2DataToDatabaseTour2(data: Tour2Data): DatabaseTour2 {
     slug: slugValue,
     created_at: data.created_at || new Date().toISOString(),
     updated_at: data.updated_at || new Date().toISOString(),
-    duration: data.duration,
+    duration: data.duration || null,
   };
 }
 
@@ -130,7 +130,7 @@ export async function createTour2(tour: Omit<Tour2Data, "id">): Promise<Tour2Dat
       .insert({
         title: tour.title,
         description: tour.description,
-        price_to_semester: tour.price_to_semester,
+        price: tour.price,
         chd_price: tour.chd_price || null,
         hs_price: tour.hs_price || null,
         senior_price: tour.senior_price || null,
@@ -166,7 +166,7 @@ export async function updateTour2(tour: Tour2Data): Promise<boolean> {
       .update({
         title: tour.title,
         description: tour.description,
-        price_to_semester: tour.price_to_semester,
+        price: tour.price,
         chd_price: tour.chd_price || null,
         hs_price: tour.hs_price || null,
         senior_price: tour.senior_price || null,

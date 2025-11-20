@@ -59,9 +59,9 @@ export function AdminTour2Card({ tour, onUpdate, onDelete }: AdminTour2CardProps
             />
             <Input
               type="number"
-              value={editedTour.price_to_semester}
-              onChange={(e) => setEditedTour({ ...editedTour, price_to_semester: parseFloat(e.target.value) || 0 })}
-              placeholder="Preço (2º Semestre)"
+              value={editedTour.price}
+              onChange={(e) => setEditedTour({ ...editedTour, price: parseFloat(e.target.value) || 0 })}
+              placeholder="Preço"
             />
             <Input
               type="number"
@@ -149,7 +149,7 @@ export function AdminTour2Card({ tour, onUpdate, onDelete }: AdminTour2CardProps
         ) : (
           <div className="space-y-2 text-sm">
             <p className="text-gray-600 truncate">{tour.description}</p>
-            <p><span className="font-semibold">Preço:</span> R$ {tour.price_to_semester.toFixed(2)}</p>
+            <p><span className="font-semibold">Preço:</span> R$ {tour.price.toFixed(2)}</p>
             {tour.min_child_age && tour.min_child_age > 0 && (
               <p className="text-xs text-gray-500 mt-1">
                 Grátis até: {tour.min_child_age} ano(s)
