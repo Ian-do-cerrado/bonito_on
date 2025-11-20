@@ -1,0 +1,2 @@
+ALTER TABLE public.tours_2
+ADD COLUMN is_visible BOOLEAN DEFAULT FALSE;

@@ -2,29 +2,7 @@ import { createClient } from "@/lib/supabase/client"
 import { DatabaseTour2 } from "@/lib/supabase/types"
 
 // Interface for the transformed tour data from 'tours_2' table
-// Interface for the transformed tour data from 'tours_2' table, matching UI component needs
-interface Tour2Data {
-  id: string
-  title: string
-  description: string
-  price: number // Corresponds to price in UI (Baixa Temporada - Adulto)
-  chd_price_ls?: number | null
-  price_child_hs?: number | null
-  hs_price?: number | null // Corresponds to price_high_season in UI (Alta Temporada - Adulto)
-  senior_price?: number | null // Corresponds to price_senior in UI (Melhor Idade - qualquer temporada)
-  ms_price?: number | null // Corresponds to price_ms in UI (Morador MS - qualquer temporada)
-  min_child_age?: number | null
-  image: string
-  gallery?: string[]
-  category: string
-  rating: number
-  slug?: string
-  created_at?: string
-  updated_at?: string
-  duration?: string | null
-}
-
-export type { Tour2Data }
+import { Tour2Data } from "@/lib/supabase/types"
 
 const supabase = createClient()
 
@@ -46,12 +24,14 @@ export function mapDatabaseTour2ToTour2Data(data: DatabaseTour2): Tour2Data {
     id: data.id,
     title: data.title || "",
     description: data.description || "",
-    price: data.price || 0, // Map to new field name
+    price: data.price || 0,
+    hs_price: data.hs_price,
     chd_price_ls: data.chd_price_ls,
-    price_child_hs: data.price_child_hs,
-    hs_price: data.hs_price, // Map to new field name
-    senior_price: data.senior_price, // Map to new field name
-    ms_price: data.ms_price, // Map to new field name
+    price_chd_hs: data.price_child_hs,
+    senior_price_ls: data.senior_price,
+    price_senior_hs: data.price_senior_hs,
+    ms_price_ls: data.ms_price,
+    price_ms_hs: data.price_ms_hs,
     min_child_age: data.min_child_age,
     image: data.image || "/placeholder.svg?height=400&width=600",
     gallery: data.gallery || [],
@@ -66,29 +46,28 @@ export function mapDatabaseTour2ToTour2Data(data: DatabaseTour2): Tour2Data {
 
 // Function to map Tour2Data back to DatabaseTour2 for updates/inserts
 export function mapTour2DataToDatabaseTour2(data: Tour2Data): DatabaseTour2 {
-  const slugValue = data.slug === undefined ? null : data.slug;
-  const imageValue = data.image === undefined ? null : data.image;
-
   return {
     id: data.id,
     title: data.title,
     description: data.description,
-    price: data.price, // Map to new field name
-    chd_price_ls: data.chd_price_ls || null,
-    price_child_hs: data.price_child_hs || null,
-    hs_price: data.hs_price || null, // Map to new field name
-    senior_price: data.senior_price || null, // Map to new field name
-    ms_price: data.ms_price || null, // Map to new field name
-    min_child_age: data.min_child_age || null,
-    gallery: data.gallery || null,
-    image: imageValue,
+    price: data.price,
+    hs_price: data.hs_price,
+    chd_price_ls: data.chd_price_ls,
+    price_child_hs: data.price_chd_hs,
+    senior_price: data.senior_price_ls,
+    price_senior_hs: data.price_senior_hs,
+    ms_price: data.ms_price_ls,
+    price_ms_hs: data.price_ms_hs,
+    min_child_age: data.min_child_age,
+    image: data.image,
+    gallery: data.gallery,
     category: data.category,
     rating: data.rating,
-    slug: slugValue,
-    created_at: data.created_at || new Date().toISOString(),
-    updated_at: data.updated_at || new Date().toISOString(),
-    duration: data.duration || null,
-  };
+    slug: data.slug,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+    duration: data.duration,
+  }
 }
 
 export async function getAllTours2(): Promise<Tour2Data[]> {
@@ -135,10 +114,12 @@ export async function createTour2(tour: Omit<Tour2Data, "id">): Promise<Tour2Dat
         description: tour.description,
         price: tour.price,
         chd_price_ls: tour.chd_price_ls || null,
-        price_child_hs: tour.price_child_hs || null,
+        price_chd_hs: tour.price_chd_hs || null,
         hs_price: tour.hs_price || null,
-        senior_price: tour.senior_price || null,
-        ms_price: tour.ms_price || null,
+        senior_price_ls: tour.senior_price_ls || null,
+        price_senior_hs: tour.price_senior_hs || null,
+        ms_price_ls: tour.ms_price_ls || null,
+        price_ms_hs: tour.price_ms_hs || null,
         min_child_age: tour.min_child_age || null,
         image: tour.image,
         gallery: tour.gallery || null,
@@ -172,17 +153,20 @@ export async function updateTour2(tour: Tour2Data): Promise<boolean> {
         description: tour.description,
         price: tour.price,
         chd_price_ls: tour.chd_price_ls || null,
-        price_child_hs: tour.price_child_hs || null,
+        price_chd_hs: tour.price_chd_hs || null,
         hs_price: tour.hs_price || null,
-        senior_price: tour.senior_price || null,
-        ms_price: tour.ms_price || null,
+        senior_price_ls: tour.senior_price_ls || null,
+        price_senior_hs: tour.price_senior_hs || null,
+        ms_price_ls: tour.ms_price_ls || null,
+        price_ms_hs: tour.price_ms_hs || null,
         min_child_age: tour.min_child_age || null,
         gallery: tour.gallery || null,
         image: tour.image,
         category: tour.category,
         rating: tour.rating,
-        slug: tour.slug,
+        slug: createSlug(tour.title), // Regenerate slug based on title
         duration: tour.duration,
+        updated_at: new Date().toISOString(),
       })
       .eq("id", tour.id)
 

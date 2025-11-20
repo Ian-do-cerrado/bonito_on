@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { getAllTours2, getTour2BySlug } from "@/lib/supabase/tours-2"
-import { TourData } from "@/lib/supabase/types"
+import { Tour2Data } from "@/lib/supabase/types"
 import ValorFuturoTourDetailPageClient from "./index"
 
 interface ValorFuturoTourPageProps {
@@ -58,5 +58,5 @@ export default async function ValorFuturoTourPage({ params }: ValorFuturoTourPag
     notFound()
   }
 
-  return <ValorFuturoTourDetailPageClient initialTour={tour as TourData} />
+  return <ValorFuturoTourDetailPageClient initialTour={tour as Tour2Data} />
 }

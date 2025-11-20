@@ -6,10 +6,11 @@ import { AddTour2Dialog } from "@/components/add-tour-2-dialog"
 import { Button } from "@/components/ui/button"
 import { Plus, ArrowLeft, LogOut, RefreshCw } from "lucide-react"
 import Link from "next/link"
-import { Tour2Data } from "@/services/supabase-tours-2"
+import { Tour2Data } from "@/lib/supabase/types"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
-import { getAllTours2, createTour2, updateTour2, deleteTour2 } from "@/services/supabase-tours-2"
+import { getAllTours2Admin } from "@/lib/supabase/tours-2"
+import { createTour2, updateTour2, deleteTour2 } from "@/services/admin-supabase"
 import { useToast } from "@/hooks/use-toast"
 
 export default function AdminValorFuturoPage() {
@@ -56,7 +57,7 @@ export default function AdminValorFuturoPage() {
   const loadData = async () => {
     setIsRefreshing(true)
     try {
-      const toursData = await getAllTours2()
+      const toursData = await getAllTours2Admin()
       setTours(toursData)
     } catch (error) {
       console.error("Error loading data:", error)

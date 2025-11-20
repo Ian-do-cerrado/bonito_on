@@ -578,7 +578,7 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                   )}
 
                   {/* Criança */}
-                  {tour.chd_price && tour.chd_price > 0 && (
+                  {tour.chd_price_ls && tour.chd_price_ls > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
@@ -589,15 +589,31 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.chd_price.toFixed(2).replace(".", ",")}
+                            R$ {tour.chd_price_ls.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>
                     </div>
                   )}
                   
+                  {/* Criança Alta Temporada */}
+                  {tour.price_chd_hs && tour.price_chd_hs > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Criança Alta Temporada</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.price_chd_hs.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Melhor Idade */}
-                  {tour.senior_price && tour.senior_price > 0 && (
+                  {tour.senior_price_ls && tour.senior_price_ls > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
@@ -605,7 +621,23 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.senior_price.toFixed(2).replace(".", ",")}
+                            R$ {tour.senior_price_ls.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Melhor Idade Alta Temporada */}
+                  {tour.price_senior_hs && tour.price_senior_hs > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Melhor Idade Alta Temporada</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.price_senior_hs.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>
@@ -613,7 +645,7 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                   )}
 
                   {/* Morador MS */}
-                  {tour.ms_price && tour.ms_price > 0 && (
+                  {tour.ms_price_ls && tour.ms_price_ls > 0 && (
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
@@ -621,7 +653,23 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
-                            R$ {tour.ms_price.toFixed(2).replace(".", ",")}
+                            R$ {tour.ms_price_ls.toFixed(2).replace(".", ",")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Morador MS Alta Temporada */}
+                  {tour.price_ms_hs && tour.price_ms_hs > 0 && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">Morador MS Alta Temporada</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-gray-900">
+                            R$ {tour.price_ms_hs.toFixed(2).replace(".", ",")}
                           </div>
                         </div>
                       </div>

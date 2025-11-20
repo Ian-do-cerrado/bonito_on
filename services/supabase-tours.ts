@@ -11,7 +11,7 @@ interface TourData {
   price_child_hs?: number | null
   price_high_season?: number | null
   price_senior?: number | null
-  price_ms_low_season?: number | null
+  ms_price_ls?: number | null
   price_ms_high_season?: number | null
   min_child_age?: number | null
   image: string
@@ -42,7 +42,7 @@ export function mapTourDataToDatabaseTour(data: TourData): DatabaseTour {
     price_child_hs: data.price_child_hs || null,
     price_high_season: data.price_high_season || null,
     price_senior: data.price_senior || null,
-    price_ms_low_season: data.price_ms_low_season || null,
+    ms_price_ls: data.ms_price_ls || null,
     price_ms_high_season: data.price_ms_high_season || null,
     min_child_age: data.min_child_age || null,
     gallery: data.gallery || null, // Assuming gallery is optional and can be null
@@ -68,9 +68,9 @@ export function mapDatabaseTourToTourData(data: DatabaseTour): TourData {
     chd_price_ls: data.chd_price_ls,
     price_child_hs: data.price_child_hs,
     price_high_season: data.price_high_season,
-    price_senior: data.price_senior,
-    price_ms_high_season: data.price_ms_high_season,
-    price_ms_low_season: data.price_ms_low_season,
+    price_senior: data.price_senior_low_season,
+    price_ms_high_season: data.price_ms_hs,
+    ms_price_ls: data.price_ms_low_season,
     min_child_age: data.min_child_age,
     image: data.image || "/placeholder.svg?height=400&width=600",
     category: data.category || "passeios",

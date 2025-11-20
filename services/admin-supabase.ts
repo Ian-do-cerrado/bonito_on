@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/client"
-import type { Tour2Data } from "@/services/supabase-tours-2"
+import { Tour2Data } from "@/lib/supabase/types"
 import type { Package } from "@/types/package"
 import type { Attraction } from "@/components/attractions-section"
 import type { BlogPost } from "@/types/index" // Declare BlogPost variable
@@ -19,15 +19,12 @@ export async function createTour(
         description: tour.description,
         price: tour.price,
         duration: tour.duration || null,
-        price_child: tour.price_child || null,
         price_high_season: tour.price_high_season || null,
-        price_senior: tour.price_senior || null,
         price_ms_low_season: tour.price_ms_low_season || null,
-        price_ms_high_season: tour.price_ms_high_season || null,
-        price_ms: tour.price_ms || null,
-        price_child_high_season: tour.price_child_high_season || null,
-        price_child_low_season: tour.price_child_low_season || null,
-        price_senior_high_season: tour.price_senior_high_season || null,
+        price_ms_hs: tour.price_ms_hs || null,
+        price_child_ls: tour.price_child_ls || null,
+        price_child_hs: tour.price_child_hs || null,
+        price_senior_hs: tour.price_senior_hs || null,
         price_senior_low_season: tour.price_senior_low_season || null,
         min_child_age: tour.min_child_age || null,
         image: tour.image || null,
@@ -61,14 +58,11 @@ export async function updateTour(tour: DatabaseTour): Promise<boolean> {
         description: tour.description,
         price: tour.price,
         duration: tour.duration || null,
-        price_child: tour.price_child || null,
         price_high_season: tour.price_high_season || null,
-        price_senior: tour.price_senior || null,
         price_ms_low_season: tour.price_ms_low_season || null,
-        price_ms_high_season: tour.price_ms_high_season || null,
-        price_ms: tour.price_ms || null,
-        price_child_high_season: tour.price_child_high_season || null,
-        price_child_low_season: tour.price_child_low_season || null,
+        price_ms_hs: tour.price_ms_hs || null,
+        chd_price_ls: tour.chd_price_ls || null,
+        price_child_hs: tour.price_child_hs || null,
         price_senior_high_season: tour.price_senior_high_season || null,
         price_senior_low_season: tour.price_senior_low_season || null,
         min_child_age: tour.min_child_age || null,
@@ -117,17 +111,21 @@ export async function createTour2(tour: Omit<Tour2Data, "id">): Promise<Tour2Dat
       .insert({
         title: tour.title,
         description: tour.description,
-        price_to_semester: tour.price_to_semester,
-        chd_price: tour.chd_price,
+        price: tour.price,
+        chd_price_ls: tour.chd_price_ls,
+        price_chd_hs: tour.price_chd_hs,
         hs_price: tour.hs_price,
-        senior_price: tour.senior_price,
-        ms_price: tour.ms_price,
+        senior_price_ls: tour.senior_price_ls,
+        price_senior_hs: tour.price_senior_hs,
+        ms_price_ls: tour.ms_price_ls,
+        price_ms_hs: tour.price_ms_hs,
         min_child_age: tour.min_child_age,
         gallery: tour.gallery,
         image: tour.image,
         category: tour.category,
         rating: tour.rating,
         slug: tour.slug,
+        is_visible: tour.is_visible,
       })
       .select()
       .single()
@@ -137,22 +135,7 @@ export async function createTour2(tour: Omit<Tour2Data, "id">): Promise<Tour2Dat
       return null
     }
 
-    return {
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      price_to_semester: data.price_to_semester,
-      chd_price: data.chd_price,
-      hs_price: data.hs_price,
-      senior_price: data.senior_price,
-      ms_price: data.ms_price,
-      min_child_age: data.min_child_age,
-      gallery: data.gallery,
-      image: data.image,
-      rating: data.rating,
-      category: data.category,
-      slug: data.slug,
-    }
+    return data
   } catch (error) {
     console.error("Error in createTour2:", error)
     return null
@@ -166,17 +149,22 @@ export async function updateTour2(tour: Tour2Data): Promise<boolean> {
       .update({
         title: tour.title,
         description: tour.description,
-        price_to_semester: tour.price_to_semester,
-        chd_price: tour.chd_price,
+        price: tour.price,
+        chd_price_ls: tour.chd_price_ls,
+        price_chd_hs: tour.price_chd_hs,
         hs_price: tour.hs_price,
-        senior_price: tour.senior_price,
-        ms_price: tour.ms_price,
+        senior_price_ls: tour.senior_price_ls,
+        price_senior_hs: tour.price_senior_hs,
+        ms_price_ls: tour.ms_price_ls,
+        price_ms_hs: tour.price_ms_hs,
         min_child_age: tour.min_child_age,
         gallery: tour.gallery,
         image: tour.image,
         category: tour.category,
         rating: tour.rating,
         slug: tour.slug,
+        updated_at: new Date().toISOString(),
+        is_visible: tour.is_visible,
       })
       .eq("id", tour.id)
 

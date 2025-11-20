@@ -29,15 +29,11 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
     price: 0, // price for low season
     price_high_season: null, // Generic high season price
     price_ms_low_season: null,
-    price_ms_high_season: null,
-    chd_price_ls: null,
+    price_ms_hs: null,
+    price_child_ls: null,
     price_child_hs: null,
-    price_child_low_season: null,
-    price_child_high_season: null,
-    price_senior: null, // Generic senior price
     price_senior_low_season: null,
-    price_senior_high_season: null,
-    price_ms: null, // Generic MS price
+    price_senior_hs: null,
     min_child_age: null,
     image: "/placeholder.svg?height=300&width=400",
     gallery: [], // Initialize as empty array
@@ -56,15 +52,11 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
         price: 0,
         price_high_season: null,
         price_ms_low_season: null,
-        price_ms_high_season: null,
-        chd_price_ls: null,
+        price_ms_hs: null,
+        price_child_ls: null,
         price_child_hs: null,
-        price_child_low_season: null,
-        price_child_high_season: null,
-        price_senior: null,
         price_senior_low_season: null,
-        price_senior_high_season: null,
-        price_ms: null,
+        price_senior_hs: null,
         min_child_age: null,
         image: "/placeholder.svg?height=300&width=400",
         gallery: [],
@@ -100,11 +92,11 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
               theme="snow"
               value={newTour.description}
               onChange={(value) => setNewTour({ ...newTour, description: value })}
-              className="h-32 mb-10"
+              className="h-64"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 pt-12">
             <div>
               <Label htmlFor="price">Preço baixa Temporada</Label>
               <Input
@@ -134,24 +126,24 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="chd_price_ls">Preço Criança Baixa Temporada</Label>
+              <Label htmlFor="price_child_ls">preço criança baixa temporada</Label>
               <Input
-                id="chd_price_ls"
+                id="price_child_ls"
                 type="number"
-                value={newTour.chd_price_ls ?? ""}
-                onChange={(e) => setNewTour({ ...newTour, chd_price_ls: Number(e.target.value) || null })}
+                value={newTour.price_child_ls ?? ""}
+                onChange={(e) => setNewTour({ ...newTour, price_child_ls: Number(e.target.value) || null })}
                 placeholder="0"
                 min="0"
                 step="0.01"
               />
             </div>
             <div>
-              <Label htmlFor="price_senior">Preço Melhor Idade</Label>
+              <Label htmlFor="price_child_hs">preço criança alta temporada</Label>
               <Input
-                id="price_senior"
+                id="price_child_hs"
                 type="number"
-                value={newTour.price_senior ?? ""}
-                onChange={(e) => setNewTour({ ...newTour, price_senior: Number(e.target.value) || null })}
+                value={newTour.price_child_hs ?? ""}
+                onChange={(e) => setNewTour({ ...newTour, price_child_hs: Number(e.target.value) || null })}
                 placeholder="0"
                 min="0"
                 step="0.01"
@@ -160,18 +152,6 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="price_ms">Preço MS</Label>
-              <Input
-                id="price_ms"
-                type="number"
-                value={newTour.price_ms ?? ""}
-                onChange={(e) => setNewTour({ ...newTour, price_ms: Number(e.target.value) || null })}
-                placeholder="0"
-                min="0"
-                step="0.01"
-              />
-            </div>
             <div>
               <Label htmlFor="rating">{t("rating")}</Label>
               <Select
@@ -190,26 +170,8 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="price_child_hs">Preço Criança Alta Temporada</Label>
-              <Input
-                id="price_child_hs"
-                type="number"
-                value={newTour.price_child_hs ?? ""}
-                onChange={(e) => setNewTour({ ...newTour, price_child_hs: Number(e.target.value) || null })}
-                placeholder="0"
-                min="0"
-                step="0.01"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="price_senior_low_season">Preço melhor idade Baixa temporada</Label>
+              <Label htmlFor="price_senior_low_season">preço melhor idade baixa temporada</Label>
               <Input
                 id="price_senior_low_season"
                 type="number"
@@ -221,12 +183,12 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
               />
             </div>
             <div>
-              <Label htmlFor="price_senior_high_season">Preço melhor idade Alta temporada</Label>
+              <Label htmlFor="price_senior_hs">preço melhor idade alta temporada</Label>
               <Input
-                id="price_senior_high_season"
+                id="price_senior_hs"
                 type="number"
-                value={newTour.price_senior_high_season ?? ""}
-                onChange={(e) => setNewTour({ ...newTour, price_senior_high_season: Number(e.target.value) || null })}
+                value={newTour.price_senior_hs ?? ""}
+                onChange={(e) => setNewTour({ ...newTour, price_senior_hs: Number(e.target.value) || null })}
                 placeholder="0"
                 min="0"
                 step="0.01"
@@ -236,7 +198,7 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="price_ms_low_season">Preço MS Baixa temporada</Label>
+              <Label htmlFor="price_ms_low_season">preço ms baixa temporada</Label>
               <Input
                 id="price_ms_low_season"
                 type="number"
@@ -248,12 +210,12 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
               />
             </div>
             <div>
-              <Label htmlFor="price_ms_high_season">Preço MS Alta temporada</Label>
+              <Label htmlFor="price_ms_hs">preço ms alta temporada</Label>
               <Input
-                id="price_ms_high_season"
+                id="price_ms_hs"
                 type="number"
-                value={newTour.price_ms_high_season ?? ""}
-                onChange={(e) => setNewTour({ ...newTour, price_ms_high_season: Number(e.target.value) || null })}
+                value={newTour.price_ms_hs ?? ""}
+                onChange={(e) => setNewTour({ ...newTour, price_ms_hs: Number(e.target.value) || null })}
                 placeholder="0"
                 min="0"
                 step="0.01"

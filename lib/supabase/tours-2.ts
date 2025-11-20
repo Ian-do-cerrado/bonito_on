@@ -23,10 +23,12 @@ export function mapDatabaseTour2ToTourData(data: DatabaseTour2): Tour2Data {
     description: data.description || "",
     price: data.price || 0,
     chd_price_ls: data.chd_price_ls,
-    price_child_hs: data.price_child_hs,
+    price_chd_hs: data.price_chd_hs,
     hs_price: data.hs_price,
-    senior_price: data.senior_price,
-    ms_price: data.ms_price,
+    senior_price_ls: data.senior_price,
+    price_senior_hs: data.price_senior_hs,
+    ms_price_ls: data.ms_price,
+    price_ms_hs: data.price_ms_hs,
     min_child_age: data.min_child_age,
     image: data.image || "/placeholder.svg?height=400&width=600",
     gallery: data.gallery || [],
@@ -36,6 +38,7 @@ export function mapDatabaseTour2ToTourData(data: DatabaseTour2): Tour2Data {
     created_at: data.created_at,
     updated_at: data.updated_at,
     duration: data.duration,
+    is_visible: data.is_visible,
   }
 }
 
@@ -50,10 +53,12 @@ export function mapTour2DataToDatabaseTour2(data: Tour2Data): DatabaseTour2 {
     description: data.description,
     price: data.price,
     chd_price_ls: data.chd_price_ls || null,
-    price_child_hs: data.price_child_hs || null,
+    price_child_hs: data.price_chd_hs,
     hs_price: data.hs_price || null,
-    senior_price: data.senior_price || null,
-    ms_price: data.ms_price || null,
+    senior_price: data.senior_price_ls || null,
+    price_senior_hs: data.price_senior_hs || null,
+    ms_price: data.ms_price_ls || null,
+    price_ms_hs: data.price_ms_hs || null,
     min_child_age: data.min_child_age || null,
     gallery: data.gallery || null,
     image: imageValue,
@@ -63,6 +68,7 @@ export function mapTour2DataToDatabaseTour2(data: Tour2Data): DatabaseTour2 {
     created_at: data.created_at || new Date().toISOString(),
     updated_at: data.updated_at || new Date().toISOString(),
     duration: data.duration || null,
+    is_visible: data.is_visible,
   }
 }
 
@@ -70,7 +76,7 @@ export async function getAllTours2(): Promise<Tour2Data[]> {
   try {
     console.log("🚀 Carregando tours 2 do Supabase...")
 
-    const { data, error } = await supabase.from("tours_2").select("*, duration").order("created_at", { ascending: false })
+    const { data, error } = await supabase.from("tours_2").select("*, duration").eq("is_visible", true).order("created_at", { ascending: false })
 
     if (error) {
       console.error("❌ Erro ao buscar tours 2:", error)
@@ -98,6 +104,42 @@ export async function getAllTours2(): Promise<Tour2Data[]> {
     return tours
   } catch (error) {
     console.error("❌ Erro inesperado ao buscar tours 2:", error)
+    return []
+  }
+}
+
+export async function getAllTours2Admin(): Promise<Tour2Data[]> {
+  try {
+    console.log("🚀 Carregando tours 2 do Supabase para admin...")
+
+    const { data, error } = await supabase.from("tours_2").select("*, duration").order("created_at", { ascending: false })
+
+    if (error) {
+      console.error("❌ Erro ao buscar tours 2 para admin:", error)
+      return []
+    }
+
+    console.log("📊 Tours 2 carregados para admin:", data?.length || 0)
+
+    if (!data || data.length === 0) {
+      console.log("⚠️ Nenhum tour 2 encontrado no Supabase para admin")
+      return []
+    }
+
+    // Transformar os dados para o formato esperado
+    const tours: Tour2Data[] = data.reduce((acc: Tour2Data[], tour: DatabaseTour2) => {
+      try {
+        const mappedTour: Tour2Data = mapDatabaseTour2ToTourData(tour)
+        acc.push(mappedTour)
+      } catch (e) {
+        console.error("❌ Erro ao processar o tour 2 para admin:", tour.id, e)
+      }
+      return acc
+    }, [])
+
+    return tours
+  } catch (error) {
+    console.error("❌ Erro inesperado ao buscar tours 2 para admin:", error)
     return []
   }
 }

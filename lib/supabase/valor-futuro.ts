@@ -15,6 +15,7 @@ export async function getPasseiosValorFuturoPublic() {
       *
     `,
     )
+    .eq("is_visible", true)
 
   if (error) {
     console.error("Error fetching valor futuro tours:", error)
