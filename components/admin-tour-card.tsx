@@ -184,12 +184,12 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price_child">Preço Criança</Label>
+                <Label htmlFor="chd_price_ls">Preço Criança Baixa Temporada</Label>
                 <Input
-                  id="price_child"
+                  id="chd_price_ls"
                   type="number"
-                  value={editedTour.price_child ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_child: Number(e.target.value) || null })}
+                  value={editedTour.chd_price_ls ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, chd_price_ls: Number(e.target.value) || null })}
                   min="0"
                   step="0.01"
                 />
@@ -262,21 +262,12 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price_child_low_season">Preço Criança Baixa temporada</Label>
+                <Label htmlFor="price_child_hs">Preço Criança Alta Temporada</Label>
                 <Input
-                  id="price_child_low_season"
+                  id="price_child_hs"
                   type="number"
-                  value={editedTour.price_child_low_season ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_child_low_season: Number(e.target.value) || null })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="price_child_high_season">Preço Criança Alta temporada</Label>
-                <Input
-                  id="price_child_high_season"
-                  type="number"
-                  value={editedTour.price_child_high_season ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_child_high_season: Number(e.target.value) || null })}
+                  value={editedTour.price_child_hs ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, price_child_hs: Number(e.target.value) || null })}
                 />
               </div>
             </div>
@@ -390,16 +381,16 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                   {tour.price_ms_high_season.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_child_low_season !== null && tour.price_child_low_season !== undefined && (
+              {tour.chd_price_ls !== null && tour.chd_price_ls !== undefined && (
                 <div>
                   <strong>Criança Baixa Temp.:</strong> R$
-                  {tour.price_child_low_season.toFixed(2).replace(".", ",")}
+                  {tour.chd_price_ls.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_child_high_season !== null && tour.price_child_high_season !== undefined && (
+              {tour.price_child_hs !== null && tour.price_child_hs !== undefined && (
                 <div>
                   <strong>Criança Alta Temp.:</strong> R$
-                  {tour.price_child_high_season.toFixed(2).replace(".", ",")}
+                  {tour.price_child_hs.toFixed(2).replace(".", ",")}
                 </div>
               )}
               {tour.price_high_season !== null && tour.price_high_season !== undefined && (
@@ -417,11 +408,6 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                 <div>
                   <strong>Melhor Idade Alta Temp.:</strong> R$
                   {tour.price_senior_high_season.toFixed(2).replace(".", ",")}
-                </div>
-              )}
-              {tour.price_child !== null && tour.price_child !== undefined && (
-                <div>
-                  <strong>Preço Criança:</strong> R$ {tour.price_child.toFixed(2).replace(".", ",")}
                 </div>
               )}
               {tour.price_senior !== null && tour.price_senior !== undefined && (

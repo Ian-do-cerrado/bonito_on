@@ -8,7 +8,8 @@ interface Tour2Data {
   title: string
   description: string
   price: number // Corresponds to price in UI (Baixa Temporada - Adulto)
-  chd_price?: number | null // Corresponds to price_child in UI (Criança - qualquer temporada)
+  chd_price_ls?: number | null
+  price_child_hs?: number | null
   hs_price?: number | null // Corresponds to price_high_season in UI (Alta Temporada - Adulto)
   senior_price?: number | null // Corresponds to price_senior in UI (Melhor Idade - qualquer temporada)
   ms_price?: number | null // Corresponds to price_ms in UI (Morador MS - qualquer temporada)
@@ -46,7 +47,8 @@ export function mapDatabaseTour2ToTour2Data(data: DatabaseTour2): Tour2Data {
     title: data.title || "",
     description: data.description || "",
     price: data.price || 0, // Map to new field name
-    chd_price: data.chd_price, // Map to new field name
+    chd_price_ls: data.chd_price_ls,
+    price_child_hs: data.price_child_hs,
     hs_price: data.hs_price, // Map to new field name
     senior_price: data.senior_price, // Map to new field name
     ms_price: data.ms_price, // Map to new field name
@@ -72,7 +74,8 @@ export function mapTour2DataToDatabaseTour2(data: Tour2Data): DatabaseTour2 {
     title: data.title,
     description: data.description,
     price: data.price, // Map to new field name
-    chd_price: data.chd_price || null, // Map to new field name
+    chd_price_ls: data.chd_price_ls || null,
+    price_child_hs: data.price_child_hs || null,
     hs_price: data.hs_price || null, // Map to new field name
     senior_price: data.senior_price || null, // Map to new field name
     ms_price: data.ms_price || null, // Map to new field name
@@ -131,7 +134,8 @@ export async function createTour2(tour: Omit<Tour2Data, "id">): Promise<Tour2Dat
         title: tour.title,
         description: tour.description,
         price: tour.price,
-        chd_price: tour.chd_price || null,
+        chd_price_ls: tour.chd_price_ls || null,
+        price_child_hs: tour.price_child_hs || null,
         hs_price: tour.hs_price || null,
         senior_price: tour.senior_price || null,
         ms_price: tour.ms_price || null,
@@ -167,7 +171,8 @@ export async function updateTour2(tour: Tour2Data): Promise<boolean> {
         title: tour.title,
         description: tour.description,
         price: tour.price,
-        chd_price: tour.chd_price || null,
+        chd_price_ls: tour.chd_price_ls || null,
+        price_child_hs: tour.price_child_hs || null,
         hs_price: tour.hs_price || null,
         senior_price: tour.senior_price || null,
         ms_price: tour.ms_price || null,

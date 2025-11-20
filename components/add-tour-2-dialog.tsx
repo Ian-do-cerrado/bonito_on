@@ -25,7 +25,8 @@ const initialState: Omit<Tour2Data, "id"> = {
   title: "",
   description: "",
   price: 0,
-  chd_price: null, // Corresponds to price_child in UI (Criança - qualquer temporada)
+  chd_price_ls: null,
+  price_child_hs: null,
   hs_price: null, // Corresponds to price_high_season in UI (Alta Temporada - Adulto)
   senior_price: null, // Corresponds to price_senior in UI (Melhor Idade - qualquer temporada)
   ms_price: null, // Corresponds to price_ms in UI (Morador MS - qualquer temporada)
@@ -74,11 +75,19 @@ export function AddTour2Dialog({ open, onOpenChange, onAdd }: AddTour2DialogProp
           />
           <Input
             type="number"
-            value={newTour.chd_price || ""}
+            value={newTour.chd_price_ls || ""}
             onChange={(e) =>
-              setNewTour({ ...newTour, chd_price: parseFloat(e.target.value) || null })
+              setNewTour({ ...newTour, chd_price_ls: parseFloat(e.target.value) || null })
             }
-            placeholder="Preço Criança"
+            placeholder="Preço Criança Baixa Temporada"
+          />
+          <Input
+            type="number"
+            value={newTour.price_child_hs || ""}
+            onChange={(e) =>
+              setNewTour({ ...newTour, price_child_hs: parseFloat(e.target.value) || null })
+            }
+            placeholder="Preço Criança Alta Temporada"
           />
           <Input
             type="number"

@@ -65,11 +65,19 @@ export function AdminTour2Card({ tour, onUpdate, onDelete }: AdminTour2CardProps
             />
             <Input
               type="number"
-              value={editedTour.chd_price || ""}
+              value={editedTour.chd_price_ls || ""}
               onChange={(e) =>
-                setEditedTour({ ...editedTour, chd_price: parseFloat(e.target.value) || null })
+                setEditedTour({ ...editedTour, chd_price_ls: parseFloat(e.target.value) || null })
               }
-              placeholder="Preço Criança"
+              placeholder="Preço Criança Baixa Temporada"
+            />
+            <Input
+              type="number"
+              value={editedTour.price_child_hs || ""}
+              onChange={(e) =>
+                setEditedTour({ ...editedTour, price_child_hs: parseFloat(e.target.value) || null })
+              }
+              placeholder="Preço Criança Alta Temporada"
             />
             <Input
               type="number"

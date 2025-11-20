@@ -5,7 +5,8 @@ export interface DatabaseTour {
   price: number
   price_ms_low_season?: number | null
   price_ms_high_season?: number | null
-  price_child?: number | null
+  chd_price_ls?: number | null
+  price_child_hs?: number | null
   price_high_season?: number | null
   price_senior?: number | null
   price_ms?: number | null // Added from SegundoSemestre
@@ -29,7 +30,8 @@ export interface DatabaseTour2 {
   title: string | null
   description: string | null
   price: number | null // Corresponds to 'price' in the UI
-  chd_price: number | null // Corresponds to 'price_child' in the UI
+  chd_price_ls: number | null
+  price_child_hs: number | null
   hs_price: number | null // Corresponds to 'price_high_season' in the UI
   senior_price: number | null // Corresponds to 'price_senior' in the UI
   ms_price: number | null // Corresponds to 'price_ms' in the UI
@@ -128,7 +130,8 @@ export interface Tour2Data { // Interface for the transformed tour data from 'to
   title: string
   description: string
   price: number // Corresponds to price in UI (Baixa Temporada - Adulto)
-  chd_price?: number | null // Corresponds to price_child in UI (Criança - qualquer temporada)
+  chd_price_ls?: number | null
+  price_child_hs?: number | null
   hs_price?: number | null // Corresponds to price_high_season in UI (Alta Temporada - Adulto)
   senior_price?: number | null // Corresponds to price_senior in UI (Melhor Idade - qualquer temporada)
   ms_price?: number | null // Corresponds to price_ms in UI (Morador MS - qualquer temporada)

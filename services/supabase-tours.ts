@@ -7,7 +7,8 @@ interface TourData {
   title: string
   description: string
   price: number
-  price_child?: number | null
+  chd_price_ls?: number | null
+  price_child_hs?: number | null
   price_high_season?: number | null
   price_senior?: number | null
   price_ms_low_season?: number | null
@@ -37,7 +38,8 @@ export function mapTourDataToDatabaseTour(data: TourData): DatabaseTour {
     title: data.title,
     description: data.description,
     price: data.price,
-    price_child: data.price_child || null,
+    chd_price_ls: data.chd_price_ls || null,
+    price_child_hs: data.price_child_hs || null,
     price_high_season: data.price_high_season || null,
     price_senior: data.price_senior || null,
     price_ms_low_season: data.price_ms_low_season || null,
@@ -63,7 +65,8 @@ export function mapDatabaseTourToTourData(data: DatabaseTour): TourData {
     description: data.description || "",
     price: data.price,
     duration: data.duration,
-    price_child: data.price_child,
+    chd_price_ls: data.chd_price_ls,
+    price_child_hs: data.price_child_hs,
     price_high_season: data.price_high_season,
     price_senior: data.price_senior,
     price_ms_high_season: data.price_ms_high_season,
