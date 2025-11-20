@@ -1,7 +1,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
-import { mapDatabaseTourToTourData } from "@/lib/supabase/server-utils"
+import { mapDatabaseTour2ToTourData } from "@/lib/supabase/tours-2"
 import { cookies } from "next/headers"
 
 export async function getPasseiosValorFuturoPublic() {
@@ -21,6 +21,6 @@ export async function getPasseiosValorFuturoPublic() {
     return { data: [], error }
   }
 
-  const result = data.map(mapDatabaseTourToTourData)
+  const result = data.map(mapDatabaseTour2ToTourData)
   return { data: result, error: null }
 }

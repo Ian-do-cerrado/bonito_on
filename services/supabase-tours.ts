@@ -1,6 +1,27 @@
 import { createClient } from "@/lib/supabase/client"
-import { DatabaseTour, TourData } from "@/lib/supabase/types"
-import { createSlug, mapDatabaseTourToTourData } from "@/lib/supabase/server-utils"
+import { DatabaseTour } from "@/lib/supabase/types"
+import { createSlug } from "@/lib/supabase/server-utils"
+
+interface TourData {
+  id: string
+  title: string
+  description: string
+  price: number
+  price_child?: number | null
+  price_high_season?: number | null
+  price_senior?: number | null
+  price_ms_low_season?: number | null
+  price_ms_high_season?: number | null
+  min_child_age?: number | null
+  image: string
+  gallery?: string[]
+  category: string
+  rating: number
+  slug?: string
+  created_at?: string
+  updated_at?: string
+  duration?: string | null
+}
 
 export type Tour = TourData
 
@@ -33,6 +54,29 @@ export function mapTourDataToDatabaseTour(data: TourData): DatabaseTour {
   };
 }
 
+
+// Function to map raw DatabaseTour to TourData
+export function mapDatabaseTourToTourData(data: DatabaseTour): TourData {
+  return {
+    id: data.id,
+    title: data.title || "",
+    description: data.description || "",
+    price: data.price,
+    duration: data.duration,
+    price_child: data.price_child,
+    price_high_season: data.price_high_season,
+    price_senior: data.price_senior,
+    price_ms_high_season: data.price_ms_high_season,
+    price_ms_low_season: data.price_ms_low_season,
+    min_child_age: data.min_child_age,
+    image: data.image || "/placeholder.svg?height=400&width=600",
+    category: data.category || "passeios",
+    rating: data.rating || 5,
+    slug: data.slug || createSlug(data.title || ""),
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  }
+}
 
 export async function getAllTours(): Promise<TourData[]> {
   try {
