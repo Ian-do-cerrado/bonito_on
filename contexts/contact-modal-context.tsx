@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 
 interface ContactModalContextType {
   isOpen: boolean
@@ -14,11 +15,15 @@ interface ContactModalContextType {
 export const ContactModalContext = createContext<ContactModalContextType | undefined>(undefined)
 
 export function ContactModalProvider({ children }: { children: React.ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [attraction, setAttraction] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false)
+  const [attraction, setAttraction] = useState<string | null>(null)
+  const pathname = usePathname()
 
   useEffect(() => {
-    // Verifica se o modal automático já foi mostrado nesta sessão
+    // Do not open modal automatically on the contact page
+    if (pathname === "/contato") return
+
+    // Check if the auto-modal has already been shown in this session
     const autoModalShown = sessionStorage.getItem("autoModalShown")
     if (autoModalShown) return
 
@@ -28,7 +33,7 @@ export function ContactModalProvider({ children }: { children: React.ReactNode }
     }, 4000)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [pathname])
 
   const openModal = () => {
     console.log("openModal called");
