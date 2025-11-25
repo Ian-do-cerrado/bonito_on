@@ -24,7 +24,7 @@ export async function subscribeNewsletter(data: NewsletterData) {
     // Send email using Resend
     const emailResult = await resend.emails.send({
       from: "BonitoON Website <noreply@resend.dev>",
-      to: [process.env.CONTACT_EMAIL],
+      to: [process.env.DESTINATION_EMAIL || ''],
       subject: `📧 Nova Inscrição Newsletter - ${data.email}`,
       html: `
         <!DOCTYPE html>

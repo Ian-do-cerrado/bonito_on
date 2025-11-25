@@ -176,12 +176,12 @@ export function AdminTour2Card({ tour, onUpdate, onDelete }: AdminTour2CardProps
                 />
               </div>
               <div>
-                <Label htmlFor="price_high_season">preço alta temporada</Label>
+                <Label htmlFor="hs_price">preço alta temporada</Label>
                 <Input
-                  id="price_high_season"
+                  id="hs_price"
                   type="number"
-                  value={editedTour.price_high_season ?? ""}
-                  onChange={(e) => setEditedTour({ ...editedTour, price_high_season: Number(e.target.value) || null })}
+                  value={editedTour.hs_price ?? ""}
+                  onChange={(e) => setEditedTour({ ...editedTour, hs_price: Number(e.target.value) || null })}
                   min="0"
                   step="0.01"
                 />
@@ -393,9 +393,9 @@ export function AdminTour2Card({ tour, onUpdate, onDelete }: AdminTour2CardProps
                   {tour.price_chd_hs.toFixed(2).replace(".", ",")}
                 </div>
               )}
-              {tour.price_high_season !== null && tour.price_high_season !== undefined && (
+              {tour.hs_price !== null && tour.hs_price !== undefined && (
                 <div>
-                  <strong>Alta Temp.:</strong> R$ {tour.price_high_season.toFixed(2).replace(".", ",")}
+                  <strong>Alta Temp.:</strong> R$ {tour.hs_price.toFixed(2).replace(".", ",")}
                 </div>
               )}
               {tour.senior_price_ls !== null && tour.senior_price_ls !== undefined && (

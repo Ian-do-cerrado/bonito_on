@@ -128,7 +128,7 @@ export interface Tour2Data {
   id: string
   title: string
   description: string
-  price: number // Baixa Temporada
+  price: number
   hs_price: number | null
   chd_price_ls: number | null
   price_chd_hs: number | null
@@ -139,12 +139,13 @@ export interface Tour2Data {
   min_child_age: number | null
   image: string | null
   gallery: string[] | null
-  category: string
+  category: "adventure" | "contemplation" | "cave" | "waterfall" | "rappelling" | "horseback" | "biking" | "scubaDiving" | "resort" | "floating" | "pantanal"
   rating: number
   slug: string | null
   created_at: string
   updated_at: string
   duration: string | null
+  is_visible: boolean
 }
 
 
