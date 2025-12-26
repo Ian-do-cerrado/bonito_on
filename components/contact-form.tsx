@@ -65,7 +65,7 @@ export default function ContactForm() {
                   <span className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                   WhatsApp <span className="text-red-500">*</span>
                 </Label>
-                <Input placeholder="(67) 9620-9978" className="border-gray-200" />
+                <Input placeholder="(67) 99139-5384" className="border-gray-200" />
               </div>
             </div>
 
@@ -155,7 +155,7 @@ export default function ContactForm() {
               <Search className="w-4 h-4 mr-2" />🎯 Garantir minha vaga agora!
             </Button>
             <Button variant="ghost" className="w-full text-gray-500 hover:text-gray-700 text-sm font-normal" asChild>
-              <a href="https://wa.me/556796209978" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/5567991395384" target="_blank" rel="noopener noreferrer">
                 Não quero preencher
               </a>
             </Button>

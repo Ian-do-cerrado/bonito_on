@@ -122,14 +122,14 @@ export default function PoliticaCancelamentoPage() {
                     <div className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                       1
                     </div>
-                    <p className="text-gray-700">Entre em contato via WhatsApp: (67) 9620-9978</p>
+                    <p className="text-gray-700">Entre em contato via WhatsApp: (67) 99139-5384</p>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                       2
                     </div>
-                    <p className="text-gray-700">Ou ligue para: (67) 9620-9978</p>
+                    <p className="text-gray-700">Ou ligue para: (67) 99139-5384</p>
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -170,10 +170,10 @@ export default function PoliticaCancelamentoPage() {
                 </p>
                 <div className="flex gap-2">
                   <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                    WhatsApp: (67) 9620-9978
+                    WhatsApp: (67) 99139-5384
                   </Button>
                   <Button size="sm" variant="outline">
-                    Telefone: (67) 9620-9978
+                    Telefone: (67) 99139-5384
                   </Button>
                 </div>
               </div>

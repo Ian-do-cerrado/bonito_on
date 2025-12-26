@@ -230,7 +230,7 @@ export function PackagesSection() {
                           </Button>
                         </div>
                         <a
-                          href={`https://wa.me/556796209978?text=${encodeURIComponent(
+                          href={`https://wa.me/5567991395384?text=${encodeURIComponent(
                             `Olá! Vim do site Bonito ON e gostaria de mais informações sobre o pacote ${pkg.title}.`,
                           )}`}
                           target="_blank"

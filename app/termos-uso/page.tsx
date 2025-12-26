@@ -74,7 +74,7 @@ export default function TermosUsoPage() {
                 <br />
                 E-mail: contato@bonitoon.com.br
                 <br />
-                Telefone: (67) 9620-9978
+                Telefone: (67) 99139-5384
               </p>
             </CardContent>
           </Card>

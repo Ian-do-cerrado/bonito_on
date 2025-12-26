@@ -137,7 +137,7 @@ export default function ThankYouPage() {
 
             <div className="grid md:grid-cols-2 gap-4">
               <a
-                href="https://wa.me/556796209978"
+                href="https://wa.me/5567991395384"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105"
@@ -151,13 +151,13 @@ export default function ThankYouPage() {
               </a>
 
               <a
-                href="tel:+55(67)9620-9978"
+                href="tel:+5567991395384"
                 className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-105"
               >
                 <Phone className="w-6 h-6" />
                 <div>
                   <h3 className="font-semibold">Ligar Agora</h3>
-                  <p className="text-sm opacity-90">(67) 9620-9978</p>
+                  <p className="text-sm opacity-90">(67) 99139-5384</p>
                 </div>
                 <ArrowRight className="w-5 h-5 ml-auto" />
               </a>
@@ -240,4 +240,3 @@ export default function ThankYouPage() {
     </div>
   )
 }
-

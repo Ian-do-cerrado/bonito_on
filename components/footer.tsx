@@ -129,9 +129,9 @@ export function Footer() {
                 <div>
                   <p className="text-sm text-white font-medium">{t("phones")}</p>
                   <p className="text-xs text-gray-300">
-                    (67) 9620-9978
+                    (67) 99139-5384
                     <br />
-                    (67) 9620-9978 (WhatsApp)
+                    (67) 99139-5384 (WhatsApp)
                   </p>
                 </div>
               </div>
@@ -162,7 +162,7 @@ export function Footer() {
             {/* Emergency Contact */}
             <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
               <p className="text-xs text-red-200 font-medium mb-1">🚨 {t("emergency24h")}</p>
-              <p className="text-xs text-red-100">(67) 9620-9978</p>
+              <p className="text-xs text-red-100">(67) 99139-5384</p>
             </div>
           </div>
 
@@ -197,7 +197,7 @@ export function Footer() {
                 <Button
                   size="sm"
                   className="bg-transparent border border-white/30 text-white hover:bg-white/10 p-2"
-                  onClick={() => window.open("https://wa.me/556796209978", "_blank")}
+                  onClick={() => window.open("https://wa.me/5567991395384", "_blank")}
                 >
                   <MessageCircle className="w-4 h-4" />
                 </Button>
