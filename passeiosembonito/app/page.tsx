@@ -891,7 +891,7 @@ export default function BonitoONLanding() {
               <div className="flex space-x-4">
                 <Button variant="outline" size="sm">
                   <Phone className="h-4 w-4 mr-2" />
-                  (67) 99139-5384
+                  +55 67 99139-5384
                 </Button>
                 <Button variant="outline" size="sm">
                   <Mail className="h-4 w-4 mr-2" />
