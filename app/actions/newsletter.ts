@@ -16,15 +16,10 @@ export async function subscribeNewsletter(data: NewsletterData) {
       throw new Error("Configuração de email não encontrada")
     }
 
-    if (!process.env.CONTACT_EMAIL) {
-      console.error("CONTACT_EMAIL não configurada")
-      throw new Error("Email de destino não configurado")
-    }
-
     // Send email using Resend
     const emailResult = await resend.emails.send({
-      from: "BonitoON Website <noreply@resend.dev>",
-      to: [process.env.DESTINATION_EMAIL || ''],
+      from: "BonitoON Website <contato@bonitoon.com.br>",
+      to: ["contato@bonitoon.com.br"],
       subject: `📧 Nova Inscrição Newsletter - ${data.email}`,
       html: `
         <!DOCTYPE html>

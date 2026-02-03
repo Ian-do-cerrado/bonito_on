@@ -21,11 +21,6 @@ export async function submitContactForm(data: SubmitContactFormData) {
       throw new Error("Configuração de email não encontrada")
     }
 
-    if (!process.env.CONTACT_EMAIL) {
-      console.error("CONTACT_EMAIL não configurada")
-      throw new Error("Email de destino não configurado")
-    }
-
     // Format WhatsApp number for better readability
     const formattedWhatsApp = data.whatsapp.replace(/\D/g, "")
     const whatsappDisplay =
@@ -39,8 +34,8 @@ export async function submitContactForm(data: SubmitContactFormData) {
 
     // Send email using Resend
     const emailResult = await resend.emails.send({
-      from: `BonitoON Website <${process.env.CONTACT_EMAIL}>`, // Using verified domain
-      to: [process.env.DESTINATION_EMAIL || ''],
+      from: "BonitoON Website <contato@bonitoon.com.br>",
+      to: ["contato@bonitoon.com.br"],
       subject: `🌿 Novo Lead - ${data.name} interessado em Bonito`,
       html: `
       <!DOCTYPE html>
@@ -245,7 +240,7 @@ Sistema de notificações v2.0
     const logData = {
       success: true,
       emailId: emailResult.data?.id,
-      to: process.env.CONTACT_EMAIL,
+      to: "contato@bonitoon.com.br",
       contact: {
         name: data.name,
         whatsapp: whatsappDisplay,
