@@ -275,7 +275,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                   </div>
                   <div className="flex items-center gap-3 text-gray-600">
                     <Globe className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                    <span className="text-sm sm:text-base break-all">contato@bonitoecoturismo.com</span>
+                    <span className="text-sm sm:text-base break-all">contato@bonitoon.com.br</span>
                   </div>
                 </div>
               </CardContent>

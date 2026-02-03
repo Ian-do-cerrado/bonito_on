@@ -696,7 +696,7 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                     </div>
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 text-green-600" />
-                      <span className="text-sm">contato@bonitoon.com</span>
+                      <span className="text-sm">contato@bonitoon.com.br</span>
                     </div>
                   </div>
                 </div>
