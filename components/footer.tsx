@@ -1,0 +1,285 @@
+"use client"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube, MessageCircle, Star, Award } from "lucide-react"
+import { useLanguage } from "@/contexts/language-context"
+
+export function Footer() {
+  const { t } = useLanguage()
+
+  const scrollToSection = (sectionId: string, category?: string) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
+
+      // If category is provided, trigger category change after scroll
+      if (category) {
+        setTimeout(() => {
+          const event = new CustomEvent("changeTourCategory", { detail: category })
+          window.dispatchEvent(event)
+        }, 500)
+      }
+    }
+  }
+
+  return (
+    <footer className="bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white">
+      {/* Main Footer Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Company Info */}
+          <div className="space-y-6">
+            <div>
+              <Link href="/" className="text-2xl font-bold tracking-tight">
+                Bonito<span className="text-green-400 font-extrabold">ON</span>
+              </Link>
+              <p className="text-green-100 mt-2 text-sm">{t("footerSlogan")}</p>
+            </div>
+
+            <p className="text-gray-300 text-sm leading-relaxed">
+              {t("footerAbout")}
+            </p>
+
+            {/* Stats */}
+            <div className="grid grid-cols-1 gap-4">
+              <div className="text-center p-3 bg-white/10 rounded-lg backdrop-blur-sm">
+                <div className="text-xl font-bold text-green-400">5000+</div>
+                <div className="text-xs text-gray-300">{t("satisfiedCustomers")}</div>
+              </div>
+            </div>
+
+            {/* Certifications */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-xs text-gray-300">
+                <Award className="w-4 h-4 text-green-400" />
+                <span>Cadastur</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-white">{t("quickLinks")}</h3>
+
+            <div className="space-y-3">
+              <Link href="/contato" className="block text-gray-300 hover:text-green-400 transition-colors text-sm">
+                {t("footerContact")}
+              </Link>
+              <Link href="/pacotes" className="block text-gray-300 hover:text-green-400 transition-colors text-sm">
+                {t("completePackages")}
+              </Link>
+              <button
+                onClick={() => scrollToSection("tours", "passeios")}
+                className="block text-gray-300 hover:text-green-400 transition-colors text-sm text-left"
+              >
+                {t("toursInBonito")}
+              </button>
+              <button
+                onClick={() => scrollToSection("tours", "food")}
+                className="block text-gray-300 hover:text-green-400 transition-colors text-sm text-left"
+              >
+                {t("localGastronomy")}
+              </button>
+              <button
+                onClick={() => scrollToSection("tours", "locations")}
+                className="block text-gray-300 hover:text-green-400 transition-colors text-sm text-left"
+              >
+                {t("accommodations")}
+              </button>
+              <button
+                onClick={() => scrollToSection("blog")}
+                className="block text-gray-300 hover:text-green-400 transition-colors text-sm text-left"
+              >
+                {t("blogAndTips")}
+              </button>
+            </div>
+
+            <div className="pt-4 border-t border-white/20">
+              <h4 className="text-sm font-semibold text-white mb-3">{t("popularTours")}</h4>
+              <div className="space-y-2">
+                <div className="text-xs text-gray-300">• Rio da Prata - Flutuação</div>
+                <div className="text-xs text-gray-300">• Gruta do Lago Azul</div>
+                <div className="text-xs text-gray-300">• Aquário Natural</div>
+                <div className="text-xs text-gray-300">• Balneário Municipal</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Info */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-white">{t("contact")}</h3>
+
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-white font-medium">{t("address")}</p>
+                  <p className="text-xs text-gray-300">
+                    Rua Coronel Pilad Rebuá, 1997
+                    <br />
+                    Centro, Bonito - MS
+                    <br />
+                    CEP: 79290-000
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-white font-medium">{t("phones")}</p>
+                  <p className="text-xs text-gray-300">
+                    (67) 99139-5384
+                    <br />
+                    (67) 99139-5384 (WhatsApp)
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Mail className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-white font-medium">{t("email")}</p>
+                  <p className="text-xs text-gray-300">contato@bonitoon.com.br</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Clock className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm text-white font-medium">{t("schedule")}</p>
+                  <p className="text-xs text-gray-300">
+                    Todos os dias: abre às 07:00h
+                    <br />
+                    Segunda a Sábado: até às 22:00h
+                    <br />
+                    Domingo: até às 21:00h
+                    <br />
+                    🚨 Plantão: até às 22:00h
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Emergency Contact */}
+            <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+              <p className="text-xs text-red-200 font-medium mb-1">🚨 {t("emergency24h")}</p>
+              <p className="text-xs text-red-100">(67) 99139-5384</p>
+            </div>
+          </div>
+
+          {/* Newsletter & Social */}
+          <div className="space-y-6">
+            {/* Social Media */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-white">{t("socialMedia")}</h4>
+
+              <div className="flex gap-3">
+                <Button
+                  size="sm"
+                  className="bg-transparent border border-white/30 text-white hover:bg-white/10 p-2"
+                  onClick={() => window.open("https://www.facebook.com/people/Ag%C3%AAncia-Bonito-On/61576109826482/", "_blank")}
+                >
+                  <Facebook className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-transparent border border-white/30 text-white hover:bg-white/10 p-2"
+                  onClick={() => window.open("https://www.instagram.com/agenciabonitoon/", "_blank")}
+                >
+                  <Instagram className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-transparent border border-white/30 text-white hover:bg-white/10 p-2"
+                  onClick={() => window.open("https://youtube.com/bonitoon", "_blank")}
+                >
+                  <Youtube className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-transparent border border-white/30 text-white hover:bg-white/10 p-2"
+                  onClick={() => window.open("https://wa.me/5567991395384", "_blank")}
+                >
+                  <MessageCircle className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Reviews Summary */}
+            <div className="p-4 bg-white/10 rounded-lg backdrop-blur-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <span className="text-sm font-semibold text-white">4.9/5</span>
+              </div>
+              <p className="text-xs text-gray-300">{t("basedOnGoogleReviews")}</p>
+              <Button
+                variant="link"
+                className="text-green-400 hover:text-green-300 p-0 h-auto text-xs mt-1"
+                onClick={() => window.open("https://g.page/r/CRyig6K6bIhfEBM/review", "_blank")}
+              >
+                {t("seeAllReviews")} →
+              </Button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-white/20 bg-black/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            {/* Copyright */}
+            <div className="text-center md:text-left">
+              <p className="text-sm text-gray-300">{t("copyright")}</p>
+              <p className="text-xs text-gray-400 mt-1">CNPJ: 12.345.678/0001-90 | Cadastur: 12.345678.90.0001-1</p>
+              <p className="text-xs text-gray-500 mt-1">Site feito por Ian Yamaguchi</p>
+            </div>
+
+            {/* Legal Links */}
+            <div className="flex flex-wrap justify-center gap-4 text-xs">
+              <Link href="/politica-privacidade" className="text-gray-400 hover:text-green-400 transition-colors">
+                {t("privacyPolicy")}
+              </Link>
+              <Link href="/termos-uso" className="text-gray-400 hover:text-green-400 transition-colors">
+                {t("termsOfUse")}
+              </Link>
+              <Link href="/politica-cancelamento" className="text-gray-400 hover:text-green-400 transition-colors">
+                {t("cancellationPolicy")}
+              </Link>
+            </div>
+
+            {/* Payment Methods */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400">{t("weAccept")}</span>
+              <div className="flex gap-1">
+                <div className="w-8 h-5 bg-white/20 rounded text-xs flex items-center justify-center text-white font-bold">
+                  💳
+                </div>
+                <div className="w-8 h-5 bg-white/20 rounded text-xs flex items-center justify-center text-white font-bold">
+                  💳
+                </div>
+                <div className="w-8 h-5 bg-white/20 rounded text-xs flex items-center justify-center text-white font-bold">
+                  🏦
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Elements */}
+      <div className="absolute top-4 right-4 opacity-10">
+        <div className="w-32 h-32 border border-white/20 rounded-full"></div>
+      </div>
+      <div className="absolute bottom-4 left-4 opacity-10">
+        <div className="w-24 h-24 border border-white/20 rounded-full"></div>
+      </div>
+    </footer>
+  )
+}

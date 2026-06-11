@@ -1,0 +1,2 @@
+# Evita enviar centenas de MB de fotos no deploy (galerias ficam no Supabase Storage)
+public/images/tours/**
