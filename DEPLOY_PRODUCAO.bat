@@ -11,8 +11,8 @@ echo ========================================================
 echo        DEPLOY BONITOON - VERSAO PRODUCAO
 echo ========================================================
 echo.
-echo Este script baixa o codigo aprovado no GitHub (branch %BRANCH%)
-echo e publica na Vercel.
+echo Este script baixa o codigo aprovado no GitHub e publica na Vercel.
+echo Repo: https://github.com/Ian-do-cerrado/bonito_on (branch %BRANCH%)
 echo.
 set /p opt="Deseja continuar? (S/N): "
 
