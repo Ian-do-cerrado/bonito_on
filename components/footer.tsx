@@ -3,11 +3,11 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube, Star, Award } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa"
-import { useContactModal } from "@/hooks/use-contact-modal"
+// SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 import { useLanguage } from "@/contexts/language-context"
 
 export function Footer() {
-  const { openModal } = useContactModal()
+  // SUSPENDED: const { openModal } = useContactModal()
   const { t } = useLanguage()
 
   const scrollToSection = (sectionId: string, category?: string) => {
