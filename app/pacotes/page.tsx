@@ -15,8 +15,10 @@ import type { Package } from "@/types/package"
 // SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { packageService } from "@/services/supabase-packages"
+import { useLanguage } from "@/contexts/language-context"
 
 export default function PackagesPage() {
+  const { t } = useLanguage()
   const router = useRouter()
   // SUSPENDED: const { openModal } = useContactModal()
   const [packages, setPackages] = useState<Package[]>([])
@@ -129,7 +131,7 @@ export default function PackagesPage() {
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Carregando pacotes...</p>
+            <p className="text-gray-600">{t("loadingPackages")}</p>
           </div>
         </div>
       </SiteLayout>
@@ -151,12 +153,12 @@ export default function PackagesPage() {
                 className="bg-white/10 border-white/30 text-white hover:bg-white/20"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar
+                {t("backBtn")}
               </Button>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-4">Pacotes Completos</h1>
+            <h1 className="text-4xl font-bold text-white mb-4">{t("completePackagesTitle")}</h1>
             <p className="text-xl text-green-100">
-              Experiências completas em Bonito com hospedagem, passeios e refeições inclusos
+              {t("completePackagesSubtitle")}
             </p>
           </div>
         </div>
@@ -169,7 +171,7 @@ export default function PackagesPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="Buscar pacotes..."
+                placeholder={t("searchPackagesPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -181,7 +183,7 @@ export default function PackagesPage() {
                 <SelectValue placeholder="Categoria" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todas as categorias</SelectItem>
+                <SelectItem value="all">{t("allCategories")}</SelectItem>
                 <SelectItem value="economico">Econômico</SelectItem>
                 <SelectItem value="premium">Premium</SelectItem>
                 <SelectItem value="luxo">Luxo</SelectItem>
@@ -190,22 +192,21 @@ export default function PackagesPage() {
 
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger>
-                <SelectValue placeholder="Ordenar por" />
+                <SelectValue placeholder={t("sortByLabel")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="price-asc">Menor preço</SelectItem>
-                <SelectItem value="price-desc">Maior preço</SelectItem>
-                <SelectItem value="duration-asc">Menor duração</SelectItem>
-                <SelectItem value="duration-desc">Maior duração</SelectItem>
-                <SelectItem value="rating">Melhor avaliação</SelectItem>
+                <SelectItem value="price-asc">{t("sortLowestPrice")}</SelectItem>
+                <SelectItem value="price-desc">{t("sortHighestPrice")}</SelectItem>
+                <SelectItem value="duration-asc">{t("sortShortestDuration")}</SelectItem>
+                <SelectItem value="duration-desc">{t("sortLongestDuration")}</SelectItem>
+                <SelectItem value="rating">{t("sortBestRating")}</SelectItem>
               </SelectContent>
             </Select>
 
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4 text-gray-500" />
               <span className="text-sm text-gray-600">
-                {filteredPackages.length} pacote{filteredPackages.length !== 1 ? "s" : ""} encontrado
-                {filteredPackages.length !== 1 ? "s" : ""}
+                {filteredPackages.length} {filteredPackages.length !== 1 ? t("packagesFoundPlural") : t("packagesFoundSingular")}
               </span>
             </div>
           </div>
@@ -217,8 +218,8 @@ export default function PackagesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {filteredPackages.length === 0 ? (
             <div className="text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum pacote encontrado</h3>
-              <p className="text-gray-600 mb-4">Tente ajustar os filtros ou buscar por outros termos.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">{t("noPackagesFiltered")}</h3>
+              <p className="text-gray-600 mb-4">{t("tryAdjustFilters")}</p>
               <Button
                 onClick={() => {
                   setSearchTerm("")
@@ -227,7 +228,7 @@ export default function PackagesPage() {
                 }}
                 variant="outline"
               >
-                Limpar filtros
+                {t("clearFilters")}
               </Button>
             </div>
           ) : (
@@ -290,7 +291,7 @@ export default function PackagesPage() {
                       <div className="flex flex-col gap-2">
                         <Link href={`/pacotes/${createSlug(pkg.title)}`}>
                           <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                            Ver Detalhes
+                            {t("seeDetails")}
                           </Button>
                         </Link>
                         {/*
@@ -299,7 +300,7 @@ export default function PackagesPage() {
                         */}
                         <WhatsAppCtaButton
                           message={`Olá! Vim do site Bonito ON e gostaria de reservar o pacote ${pkg.title}.`}
-                          label="Reservar pelo WhatsApp"
+                          label={t("bookWhatsApp")}
                           className="text-sm"
                         />
                       </div>
