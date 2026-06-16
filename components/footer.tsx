@@ -1,7 +1,8 @@
 "use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube, MessageCircle, Star, Award } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube, Star, Award } from "lucide-react"
+import { FaWhatsapp } from "react-icons/fa"
 import { useContactModal } from "@/hooks/use-contact-modal"
 import { useLanguage } from "@/contexts/language-context"
 
@@ -199,7 +200,7 @@ export function Footer() {
                   className="bg-transparent border border-white/30 text-white hover:bg-white/10 p-2"
                   onClick={() => window.open("https://wa.me/5567991395384", "_blank")}
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <FaWhatsapp className="w-4 h-4" />
                 </Button>
               </div>
             </div>
