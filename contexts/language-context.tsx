@@ -270,6 +270,114 @@ const translations: Translations = {
   closeCalendar: { pt: "Fechar Calendário", en: "Close Calendar", es: "Cerrar Calendário" },
   firstSemester: { pt: "Primeiro Semestre", en: "First Semester", es: "Primer Semestre" },
   secondSemester: { pt: "Segundo Semestre", en: "Second Semester", es: "Segundo Semestre" },
+
+  // WhatsApp button labels
+  bookWhatsApp: { pt: "Reservar pelo WhatsApp", en: "Book via WhatsApp", es: "Reservar por WhatsApp" },
+  consultWhatsApp: { pt: "Consultar pelo WhatsApp", en: "Consult via WhatsApp", es: "Consultar por WhatsApp" },
+  contactWhatsApp: { pt: "Fale Conosco pelo WhatsApp", en: "Contact Us via WhatsApp", es: "Contáctenos por WhatsApp" },
+
+  // Navigation / back buttons
+  backBtn: { pt: "Voltar", en: "Back", es: "Volver" },
+  backToTours: { pt: "Voltar aos Passeios", en: "Back to Tours", es: "Volver a los Paseos" },
+  backToPackages: { pt: "Voltar aos Pacotes", en: "Back to Packages", es: "Volver a los Paquetes" },
+  backToBlog: { pt: "Voltar ao Blog", en: "Back to Blog", es: "Volver al Blog" },
+
+  // Loading / not found
+  loadingLabel: { pt: "Carregando...", en: "Loading...", es: "Cargando..." },
+  loadingPackages: { pt: "Carregando pacotes...", en: "Loading packages...", es: "Cargando paquetes..." },
+  noPackageFound: { pt: "Pacote não encontrado", en: "Package not found", es: "Paquete no encontrado" },
+  itemNotFound: { pt: "Item não encontrado", en: "Item not found", es: "Elemento no encontrado" },
+  postNotFound: { pt: "Post não encontrado", en: "Post not found", es: "Publicación no encontrada" },
+  attractionNotFound: { pt: "Atração não encontrada", en: "Attraction not found", es: "Atracción no encontrada" },
+
+  // Tour card
+  freeUpToYear: { pt: "Grátis até:", en: "Free up to:", es: "Gratis hasta:" },
+
+  // Package card
+  perMonth: { pt: "/mês", en: "/month", es: "/mes" },
+
+  // Difficulty
+  difficultyLabel: { pt: "Dificuldade", en: "Difficulty", es: "Dificultad" },
+  difficultyEasy: { pt: "Fácil", en: "Easy", es: "Fácil" },
+  difficultyModerate: { pt: "Moderado", en: "Moderate", es: "Moderado" },
+  difficultyHard: { pt: "Difícil", en: "Difficult", es: "Difícil" },
+  difficultyUnknown: { pt: "Não informado", en: "Not informed", es: "No informado" },
+
+  // Package/tour detail — sidebar
+  reserveThisPackage: { pt: "Reserve este pacote", en: "Reserve this package", es: "Reserva este paquete" },
+  reserveThisTour: { pt: "Reserve este passeio", en: "Reserve this tour", es: "Reserva este paseo" },
+  durationLabel: { pt: "Duração", en: "Duration", es: "Duración" },
+  groupLabel: { pt: "Grupo", en: "Group", es: "Grupo" },
+  savingsOf: { pt: "Economia de", en: "Savings of", es: "Ahorro de" },
+  cancellationFree: { pt: "Cancelamento gratuito até 48h antes", en: "Free cancellation up to 48h before", es: "Cancelación gratuita hasta 48h antes" },
+  whatsappConfirmation: { pt: "Confirmação imediata por WhatsApp", en: "Immediate WhatsApp confirmation", es: "Confirmación inmediata por WhatsApp" },
+  certifiedGuides: { pt: "Guias especializados e certificados", en: "Certified specialist guides", es: "Guías especializados y certificados" },
+  personalAccident: { pt: "Seguro de acidentes pessoais incluído", en: "Personal accident insurance included", es: "Seguro de accidentes personales incluido" },
+  needHelp: { pt: "Precisa de ajuda?", en: "Need help?", es: "¿Necesita ayuda?" },
+  importantInfo: { pt: "Informações importantes", en: "Important information", es: "Información importante" },
+
+  // Package detail — sections
+  overview: { pt: "Visão Geral", en: "Overview", es: "Vista General" },
+  packageHighlights: { pt: "Destaques do Pacote", en: "Package Highlights", es: "Destacados del Paquete" },
+  whatsIncluded: { pt: "O que está incluído", en: "What's included", es: "Qué está incluido" },
+  bestSeasonVisit: { pt: "Melhor Época para Visitar", en: "Best Time to Visit", es: "Mejor Época para Visitar" },
+  detailedItinerary: { pt: "Roteiro Detalhado", en: "Detailed Itinerary", es: "Itinerario Detallado" },
+  dayLabel: { pt: "Dia", en: "Day", es: "Día" },
+  activitiesLabel: { pt: "Atividades", en: "Activities", es: "Actividades" },
+  mealsLabel: { pt: "Refeições", en: "Meals", es: "Comidas" },
+  accommodationLabel: { pt: "Acomodação", en: "Accommodation", es: "Alojamiento" },
+
+  // Packages listing page — filters
+  searchPackagesPlaceholder: { pt: "Buscar pacotes...", en: "Search packages...", es: "Buscar paquetes..." },
+  allCategories: { pt: "Todas as categorias", en: "All categories", es: "Todas las categorías" },
+  sortByLabel: { pt: "Ordenar por", en: "Sort by", es: "Ordenar por" },
+  sortLowestPrice: { pt: "Menor preço", en: "Lowest price", es: "Menor precio" },
+  sortHighestPrice: { pt: "Maior preço", en: "Highest price", es: "Mayor precio" },
+  sortShortestDuration: { pt: "Menor duração", en: "Shortest duration", es: "Menor duración" },
+  sortLongestDuration: { pt: "Maior duração", en: "Longest duration", es: "Mayor duración" },
+  sortBestRating: { pt: "Melhor avaliação", en: "Best rating", es: "Mejor valoración" },
+  packagesFoundPlural: { pt: "pacotes encontrados", en: "packages found", es: "paquetes encontrados" },
+  packagesFoundSingular: { pt: "pacote encontrado", en: "package found", es: "paquete encontrado" },
+  noPackagesFiltered: { pt: "Nenhum pacote encontrado", en: "No packages found", es: "No se encontraron paquetes" },
+  tryAdjustFilters: { pt: "Tente ajustar os filtros ou buscar por outros termos.", en: "Try adjusting the filters or searching for other terms.", es: "Intente ajustar los filtros o buscar otros términos." },
+  clearFilters: { pt: "Limpar filtros", en: "Clear filters", es: "Limpiar filtros" },
+  completePackagesTitle: { pt: "Pacotes Completos", en: "Complete Packages", es: "Paquetes Completos" },
+  completePackagesSubtitle: { pt: "Experiências completas em Bonito com hospedagem, passeios e refeições inclusos", en: "Complete experiences in Bonito with accommodation, tours and meals included", es: "Experiencias completas en Bonito con alojamiento, paseos y comidas incluidas" },
+  seeDetails: { pt: "Ver Detalhes", en: "See Details", es: "Ver Detalles" },
+
+  // Attraction detail
+  aboutSection: { pt: "Sobre", en: "About", es: "Sobre" },
+  highlightsSection: { pt: "Destaques", en: "Highlights", es: "Destacados" },
+  informationSection: { pt: "Informações", en: "Information", es: "Información" },
+  interestedTitle: { pt: "Interessado?", en: "Interested?", es: "¿Interesado?" },
+  interestedDesc: { pt: "Entre em contato para mais informações e reservas", en: "Get in touch for more information and bookings", es: "Contáctenos para más información y reservas" },
+  quickResponseGuaranteed: { pt: "Resposta rápida garantida", en: "Quick response guaranteed", es: "Respuesta rápida garantizada" },
+  priceLabel: { pt: "Preço", en: "Price", es: "Precio" },
+  capacityLabel: { pt: "Capacidade", en: "Capacity", es: "Capacidad" },
+  categoryColon: { pt: "Categoria:", en: "Category:", es: "Categoría:" },
+  ratingColon: { pt: "Avaliação:", en: "Rating:", es: "Valoración:" },
+  priceColon: { pt: "Preço:", en: "Price:", es: "Precio:" },
+  attrGastronomy: { pt: "Gastronomia", en: "Gastronomy", es: "Gastronomía" },
+  attrAccommodation: { pt: "Hospedagem", en: "Accommodation", es: "Alojamiento" },
+  attrTransport: { pt: "Transporte", en: "Transportation", es: "Transporte" },
+  attrEvents: { pt: "Eventos", en: "Events", es: "Eventos" },
+
+  // Blog post
+  imageGallery: { pt: "Galeria de Imagens", en: "Image Gallery", es: "Galería de Imágenes" },
+  sharePost: { pt: "Compartilhar", en: "Share", es: "Compartir" },
+  minReadLabel: { pt: "min de leitura", en: "min read", es: "min de lectura" },
+
+  // Passeio / valor-futuro detail (shared strings)
+  valoresTitle: { pt: "Valores", en: "Prices", es: "Precios" },
+  pricesMayChange: { pt: "Os preços podem sofrer alterações, fale com o agente.", en: "Prices may change, talk to an agent.", es: "Los precios pueden cambiar, consulte al agente." },
+  adultLabel: { pt: "Adulto", en: "Adult", es: "Adulto" },
+  childLowSeason: { pt: "Criança (Baixa Temporada)", en: "Child (Low Season)", es: "Niño (Temporada Baja)" },
+  descriptionSection: { pt: "Descrição", en: "Description", es: "Descripción" },
+  locationLabel: { pt: "Localização", en: "Location", es: "Ubicación" },
+  includedTransfer: { pt: "Disponível a contratação de transfer", en: "Transfer available upon request", es: "Disponible la contratación de transfer" },
+  includedGuide: { pt: "Guia especializado", en: "Specialist guide", es: "Guía especializado" },
+  includedEquipment: { pt: "Equipamentos necessários", en: "Necessary equipment", es: "Equipos necesarios" },
+  includedInsurance: { pt: "Seguro de acidentes pessoais", en: "Personal accident insurance", es: "Seguro de accidentes personales" },
 }
 
 interface LanguageContextType {
