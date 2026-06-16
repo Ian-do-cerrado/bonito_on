@@ -10,14 +10,15 @@ import Link from "next/link"
 import { SiteLayout } from "@/components/site-layout"
 import type { Package } from "@/types/package"
 import { packageService } from "@/services/supabase-packages"
-import { useContactModal } from "@/contexts/contact-modal-context";
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
+// SUSPENDED: import { useContactModal } from "@/contexts/contact-modal-context";
 
 interface PackageDetailPageProps {
   initialPackageData: Package | null;
 }
 
 export default function PackageDetailPage({ initialPackageData }: PackageDetailPageProps) {
-  const { openModal } = useContactModal();
+  // SUSPENDED: const { openModal } = useContactModal();
   const [packageData, setPackageData] = useState<Package | null>(initialPackageData)
   const [isLoading, setIsLoading] = useState(false) // No longer loading on client if initialPackageData is provided
 
@@ -367,21 +368,29 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
                 </div>
 
                 <div className="space-y-4 mb-6">
+                  {/*
+                  SUSPENDED:
                   <Button
                     onClick={() => openModal(packageData?.title)}
                     className="w-full bg-green-600 hover:bg-green-700 text-lg py-3 transition-transform duration-300 hover:scale-105"
                   >
                     Reservar Agora
                   </Button>
-
+                  */}
+                  {/*
+                  SUSPENDED:
                   <Link
-                    href={`https://wa.me/5567991395384?text=${encodeURIComponent(`Olá! Vim do site Bonito ON e gostaria de mais informações sobre o pacote ${packageData.title}.`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                    href={`https://wa.me/5567991395384?text=...`}
+                    className="...bg-orange-500..."
                   >
                     Fale Com um Especialista
                   </Link>
+                  */}
+                  <WhatsAppCtaButton
+                    message={`Olá! Vim do site Bonito ON e gostaria de reservar o pacote ${packageData.title}.`}
+                    label="Reservar pelo WhatsApp"
+                    className="text-lg py-3"
+                  />
                 </div>
 
                 <div className="border-t pt-6">
