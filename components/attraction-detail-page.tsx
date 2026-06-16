@@ -266,7 +266,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                 */}
                 <WhatsAppCtaButton
                   message={`Olá! Vim do site Bonito ON e gostaria de mais informações sobre ${attraction.title}.`}
-                  label="Reservar pelo WhatsApp"
+                  label="Consultar pelo WhatsApp"
                   className="py-3 text-base sm:text-lg"
                 />
 
