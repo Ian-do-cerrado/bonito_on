@@ -1,9 +1,11 @@
 "use client";
 
+import React from "react";
 import { Tour } from "@/types";
 import { SiteLayout } from "@/components/site-layout";
 import Image from "next/image";
 import { Star } from "lucide-react";
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button";
 
 interface TourDetailPageProps {
   tour: Tour;
@@ -57,12 +59,19 @@ const TourDetailPage: React.FC<TourDetailPageProps> = ({ tour }) => {
 
         {/* Reserve Button */}
         <div className="flex flex-col sm:flex-row gap-4">
+          {/*
+          SUSPENDED (no action):
           <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg transition-all shadow hover:shadow-md text-lg">
             Reservar Agora
           </button>
           <button className="bg-white border border-green-600 text-green-600 hover:bg-green-50 font-semibold px-6 py-3 rounded-lg transition-all shadow-sm text-lg">
             Falar com um agente
           </button>
+          */}
+          <WhatsAppCtaButton
+            message={`Olá! Vim do site Bonito ON e gostaria de reservar o passeio ${tour.title}.`}
+            label="Reservar pelo WhatsApp"
+          />
         </div>
       </section>
     </SiteLayout>
