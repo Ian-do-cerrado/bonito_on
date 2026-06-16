@@ -235,7 +235,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Copyright */}
             <div className="text-center md:text-left">
-              <p className="text-sm text-gray-300">{t("copyright")}</p>
+              <p className="text-sm text-gray-300">{t("copyright").replace("{year}", new Date().getFullYear().toString())}</p>
               <p className="text-xs text-gray-400 mt-1">CNPJ: 47.950.064/0001-17 | Cadastur: 47.950.064/0001-17</p>
               <p className="text-xs text-gray-500 mt-1">Site feito por Ian Yamaguchi</p>
             </div>

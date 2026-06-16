@@ -197,9 +197,9 @@ const translations: Translations = {
   },
   seeAllReviews: { pt: "Ver todas as avaliações", en: "See all reviews", es: "Ver todas las reseñas" },
   copyright: {
-    pt: "© 2024 BonitoON Turismo. Todos os direitos reservados.",
-    en: "© 2024 BonitoON Tourism. All rights reserved.",
-    es: "© 2024 BonitoON Turismo. Todos los derechos reservados.",
+    pt: "© {year} BonitoON Turismo. Todos os direitos reservados.",
+    en: "© {year} BonitoON Tourism. All rights reserved.",
+    es: "© {year} BonitoON Turismo. Todos los derechos reservados.",
   },
   privacyPolicy: { pt: "Política de Privacidade", en: "Privacy Policy", es: "Política de Privacidad" },
   termsOfUse: { pt: "Termos de Uso", en: "Terms of Use", es: "Términos de Uso" },
