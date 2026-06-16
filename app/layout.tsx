@@ -4,7 +4,7 @@ import Script from "next/script";
 import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/contexts/language-context";
 import { ContactModalProvider } from "@/contexts/contact-modal-context";
-import { ContactModal } from "@/components/contact-modal";
+// SUSPENDED: import { ContactModal } from "@/components/contact-modal";
 import "./globals.css";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import WhatsAppButton from "@/components/whatsapp-button";
@@ -60,7 +60,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <ContactModalProvider>
             {children}
             <Toaster />
-            <ContactModal />
+            {/* SUSPENDED: <ContactModal /> */}
             <WhatsAppButton />
           </ContactModalProvider>
         </LanguageProvider>
