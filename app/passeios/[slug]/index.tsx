@@ -9,9 +9,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { SiteLayout } from "@/components/site-layout"
 import { Tour2Data as TourData } from "@/lib/supabase/types"
-import { useContactModal } from "@/hooks/use-contact-modal"
+// SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 import { getTourBySlug } from "@/services/supabase-tours"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 
 interface TourDetailPageProps {
   initialTour: TourData | null;
@@ -218,7 +219,7 @@ function formatInlineText(text: string) {
 }
 
 export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
-  const { openModal } = useContactModal()
+  // SUSPENDED: const { openModal } = useContactModal()
   const [tour, setTour] = useState<TourData | null>(initialTour)
   const [isLoading, setIsLoading] = useState(false) // No longer loading on client if initialTour is provided
   const [activeImageIndex, setActiveImageIndex] = useState(0)
@@ -585,13 +586,20 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                 </div>
 
                 <div className="space-y-3 mb-6">
+                  {/*
+                  SUSPENDED:
                   <Button onClick={openModal} className="w-full bg-green-600 hover:bg-green-700 text-lg py-3">
                     Reservar Agora
                   </Button>
-
                   <Button onClick={openModal} variant="outline" className="w-full bg-transparent">
                     Falar com especialista
                   </Button>
+                  */}
+                  <WhatsAppCtaButton
+                    message={`Olá! Vim do site Bonito ON e gostaria de reservar o passeio ${tour.title}.`}
+                    label="Reservar pelo WhatsApp"
+                    className="text-lg py-3"
+                  />
                 </div>
 
                 <div className="border-t pt-6">
