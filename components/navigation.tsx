@@ -14,7 +14,7 @@ export function Navigation() {
   const { language, setLanguage, t } = useLanguage()
   const { toast } = useToast()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isSolid, setIsSolid] = useState(false)
   const [showNav, setShowNav] = useState(true)
 
   useEffect(() => {
@@ -22,7 +22,13 @@ export function Navigation() {
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY
-      setIsScrolled(currentScrollY > 50)
+
+      // Hysteresis: turn solid at 50px down, only go transparent back at <10px (top)
+      if (currentScrollY > 50) {
+        setIsSolid(true)
+      } else if (currentScrollY < 10) {
+        setIsSolid(false)
+      }
 
       if (
         currentScrollY < 10 || // muito no topo
@@ -97,16 +103,14 @@ export function Navigation() {
       <nav
         className={`fixed top-0 w-full z-[100] transition-all duration-300 transform ${
           showNav ? "translate-y-0" : "-translate-y-full"
-        } ${isScrolled ? "bg-white/95 backdrop-blur-md shadow-lg" : "bg-black/20 backdrop-blur-sm"}`}
+        } ${isSolid ? "bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] shadow-lg" : "bg-black/20 backdrop-blur-sm"}`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             <div className="flex items-center">
               <Link
                 href="/"
-                className={`block transition-colors duration-300 ${
-                  isScrolled ? "text-gray-900" : "text-white"
-                }`}
+                className="block text-white transition-colors duration-300"
               >
                 <Image
                   src="/images/logo-bonitoon.svg"
@@ -129,7 +133,7 @@ export function Navigation() {
                     key={href}
                     href={href}
                     className={`px-3 py-2 text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 ${
-                      isScrolled ? "text-gray-700 hover:text-green-600" : "text-white hover:text-green-400"
+                      "text-white hover:text-green-400"
                     }`}
                   >
                     {t(label).toUpperCase()}
@@ -138,7 +142,7 @@ export function Navigation() {
                 <button
                   onClick={() => scrollToSection("attractions", "gastronomy")}
                   className={`px-3 py-2 text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 ${
-                    isScrolled ? "text-gray-700 hover:text-green-600" : "text-white hover:text-green-400"
+                    "text-white hover:text-green-400"
                   }`}
                 >
                   {t("gastronomy").toUpperCase()}
@@ -146,7 +150,7 @@ export function Navigation() {
                 <button
                   onClick={() => scrollToSection("attractions", "accommodation")}
                   className={`px-3 py-2 text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 ${
-                    isScrolled ? "text-gray-700 hover:text-green-600" : "text-white hover:text-green-400"
+                    "text-white hover:text-green-400"
                   }`}
                 >
                   {t("accommodations").toUpperCase()}
@@ -154,7 +158,7 @@ export function Navigation() {
                 <button
                   onClick={() => scrollToSection("blog")}
                   className={`px-3 py-2 text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 ${
-                    isScrolled ? "text-gray-700 hover:text-green-600" : "text-white hover:text-green-400"
+                    "text-white hover:text-green-400"
                   }`}
                 >
                   {t("blog").toUpperCase()}
@@ -175,7 +179,7 @@ export function Navigation() {
                     onClick={() => handleLanguageChange(code as "pt" | "en" | "es")}
                     className={`text-sm transition-all duration-300 p-1.5 sm:p-2 rounded-lg hover:scale-110 ${
                       language === code ? "bg-green-500/20 scale-110" : ""
-                    } ${isScrolled ? "hover:bg-gray-100" : "hover:bg-white/10"}`}
+                    } ${"hover:bg-white/10"}`}
                     title={code}
                   >
                     {flag}
@@ -187,7 +191,7 @@ export function Navigation() {
                 variant="ghost"
                 size="sm"
                 className={`lg:hidden transition-colors duration-300 p-2 ${
-                  isScrolled ? "text-gray-900 hover:bg-gray-100" : "text-white hover:bg-white/10"
+                  "text-white hover:bg-white/10"
                 }`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
