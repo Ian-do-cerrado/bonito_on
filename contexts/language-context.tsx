@@ -274,7 +274,7 @@ const translations: Translations = {
   // WhatsApp button labels
   bookWhatsApp: { pt: "Reservar pelo WhatsApp", en: "Book via WhatsApp", es: "Reservar por WhatsApp" },
   consultWhatsApp: { pt: "Consultar pelo WhatsApp", en: "Consult via WhatsApp", es: "Consultar por WhatsApp" },
-  contactWhatsApp: { pt: "Fale Conosco pelo WhatsApp", en: "Contact Us via WhatsApp", es: "Contáctenos por WhatsApp" },
+  contactWhatsApp: { pt: "Fale Conosco pelo WhatsApp", en: "Contact Us via WhatsApp", es: "Contáctanos por WhatsApp" },
 
   // Navigation / back buttons
   backBtn: { pt: "Voltar", en: "Back", es: "Volver" },
@@ -301,7 +301,7 @@ const translations: Translations = {
   difficultyEasy: { pt: "Fácil", en: "Easy", es: "Fácil" },
   difficultyModerate: { pt: "Moderado", en: "Moderate", es: "Moderado" },
   difficultyHard: { pt: "Difícil", en: "Difficult", es: "Difícil" },
-  difficultyUnknown: { pt: "Não informado", en: "Not informed", es: "No informado" },
+  difficultyUnknown: { pt: "Não informado", en: "Not specified", es: "No informado" },
 
   // Package/tour detail — sidebar
   reserveThisPackage: { pt: "Reserve este pacote", en: "Reserve this package", es: "Reserva este paquete" },
@@ -350,7 +350,7 @@ const translations: Translations = {
   highlightsSection: { pt: "Destaques", en: "Highlights", es: "Destacados" },
   informationSection: { pt: "Informações", en: "Information", es: "Información" },
   interestedTitle: { pt: "Interessado?", en: "Interested?", es: "¿Interesado?" },
-  interestedDesc: { pt: "Entre em contato para mais informações e reservas", en: "Get in touch for more information and bookings", es: "Contáctenos para más información y reservas" },
+  interestedDesc: { pt: "Entre em contato para mais informações e reservas", en: "Get in touch for more information and bookings", es: "Contáctanos para más información y reservas" },
   quickResponseGuaranteed: { pt: "Resposta rápida garantida", en: "Quick response guaranteed", es: "Respuesta rápida garantizada" },
   priceLabel: { pt: "Preço", en: "Price", es: "Precio" },
   capacityLabel: { pt: "Capacidade", en: "Capacity", es: "Capacidad" },
@@ -365,7 +365,6 @@ const translations: Translations = {
   // Blog post
   imageGallery: { pt: "Galeria de Imagens", en: "Image Gallery", es: "Galería de Imágenes" },
   sharePost: { pt: "Compartilhar", en: "Share", es: "Compartir" },
-  minReadLabel: { pt: "min de leitura", en: "min read", es: "min de lectura" },
 
   // Passeio / valor-futuro detail (shared strings)
   valoresTitle: { pt: "Valores", en: "Prices", es: "Precios" },
