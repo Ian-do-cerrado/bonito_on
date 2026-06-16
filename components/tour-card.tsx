@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import type { DatabaseTour as TourData } from "@/lib/supabase/types"
 import { PencilIcon, TrashIcon } from "lucide-react"
+import { useLanguage } from "@/contexts/language-context"
 
 interface TourCardProps {
   tour: TourData
@@ -16,6 +17,7 @@ interface TourCardProps {
 }
 
 export function TourCard({ tour, onEdit, onDelete, basePath = "/passeios" }: TourCardProps) {
+  const { t } = useLanguage()
   const price =
     typeof tour.price === "number"
       ? `R$ ${tour.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
@@ -59,7 +61,7 @@ export function TourCard({ tour, onEdit, onDelete, basePath = "/passeios" }: Tou
           <div className="text-xs text-gray-500">por pessoa</div>
           {tour.min_child_age && tour.min_child_age > 0 && (
             <div className="text-xs text-gray-500 mt-1">
-              Grátis até: {tour.min_child_age} ano(s)
+              {t("freeUpToYear")} {tour.min_child_age} ano(s)
             </div>
           )}
         </div>
@@ -70,7 +72,7 @@ export function TourCard({ tour, onEdit, onDelete, basePath = "/passeios" }: Tou
             className="w-full"
           >
             <Button variant="outline" size="sm" className="text-sm w-full">
-              Saber mais
+              {t("knowMore")}
             </Button>
           </Link>
           {/*
@@ -100,7 +102,7 @@ export function TourCard({ tour, onEdit, onDelete, basePath = "/passeios" }: Tou
         */}
         <WhatsAppCtaButton
           message={`Olá! Vim do site Bonito ON e gostaria de reservar o passeio ${tour.title}.`}
-          label="Reservar pelo WhatsApp"
+          label={t("bookWhatsApp")}
           className="mt-2 text-sm"
         />
       </CardContent>
