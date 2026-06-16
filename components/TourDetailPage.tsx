@@ -6,12 +6,14 @@ import { SiteLayout } from "@/components/site-layout";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button";
+import { useLanguage } from "@/contexts/language-context";
 
 interface TourDetailPageProps {
   tour: Tour;
 }
 
 const TourDetailPage: React.FC<TourDetailPageProps> = ({ tour }) => {
+  const { t } = useLanguage();
   return (
     <SiteLayout>
       {/* Hero Section */}
@@ -70,7 +72,7 @@ const TourDetailPage: React.FC<TourDetailPageProps> = ({ tour }) => {
           */}
           <WhatsAppCtaButton
             message={`Olá! Vim do site Bonito ON e gostaria de reservar o passeio ${tour.title}.`}
-            label="Reservar pelo WhatsApp"
+            label={t("bookWhatsApp")}
           />
         </div>
       </section>
