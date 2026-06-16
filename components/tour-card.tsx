@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import type { DatabaseTour as TourData } from "@/lib/supabase/types"
 import { PencilIcon, TrashIcon } from "lucide-react"
 
@@ -72,15 +73,20 @@ export function TourCard({ tour, onEdit, onDelete, basePath = "/passeios" }: Tou
               Saber mais
             </Button>
           </Link>
+          {/*
+          SUSPENDED:
           <Button
             size="sm"
             className="bg-green-600 hover:bg-green-700 text-white text-sm w-full"
-            onClick={() => (window as any)?.openModal?.() /* ou seu hook openModal() */}
+            onClick={() => (window as any)?.openModal?.()}
           >
             Reservar
           </Button>
+          */}
         </div>
 
+        {/*
+        SUSPENDED:
         <a
           href={`https://wa.me/5567991395384?text=${encodeURIComponent(
             `Olá! Vim do site Bonito ON e gostaria de mais informações sobre o passeio ${tour.title}.`,
@@ -91,6 +97,12 @@ export function TourCard({ tour, onEdit, onDelete, basePath = "/passeios" }: Tou
         >
           Fale Com um Especialista
         </a>
+        */}
+        <WhatsAppCtaButton
+          message={`Olá! Vim do site Bonito ON e gostaria de reservar o passeio ${tour.title}.`}
+          label="Reservar pelo WhatsApp"
+          className="mt-2 text-sm"
+        />
       </CardContent>
 
       {(onEdit || onDelete) && (
