@@ -1,8 +1,9 @@
 "use client"
 
 import type React from "react"
-import { Button } from "@/components/ui/button"
-import { useContactModal } from "@/contexts/contact-modal-context"
+// SUSPENDED: import { Button } from "@/components/ui/button"
+// SUSPENDED: import { useContactModal } from "@/contexts/contact-modal-context"
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 
 interface PackageCardProps {
   title: string
@@ -12,7 +13,7 @@ interface PackageCardProps {
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({ title, description, price, features }) => {
-  const { openModal } = useContactModal()
+  // SUSPENDED: const { openModal } = useContactModal()
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -27,12 +28,17 @@ const PackageCard: React.FC<PackageCardProps> = ({ title, description, price, fe
           <li key={index}>{feature}</li>
         ))}
       </ul>
+      {/*
+      SUSPENDED:
       <Button
         onClick={() => openModal(title)}
         className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
       >
         Reservar
       </Button>
+      */}
+      {/*
+      SUSPENDED:
       <a
         href={`https://wa.me/5567991395384?text=${encodeURIComponent(`Olá! Vim do site Bonito ON e gostaria de mais informações sobre o pacote ${title}.`)}`}
         target="_blank"
@@ -41,6 +47,11 @@ const PackageCard: React.FC<PackageCardProps> = ({ title, description, price, fe
       >
         Fale Com um Especialista
       </a>
+      */}
+      <WhatsAppCtaButton
+        message={`Olá! Vim do site Bonito ON e gostaria de reservar o pacote ${title}.`}
+        label="Reservar pelo WhatsApp"
+      />
     </div>
   )
 }
