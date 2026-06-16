@@ -1,14 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { MessageCircle, ChevronDown } from "lucide-react"
-import { useContactModal } from "@/contexts/contact-modal-context"
-import { useLanguage } from "@/contexts/language-context"
+import { ChevronDown } from "lucide-react"
+// SUSPENDED: import { Button } from "@/components/ui/button"
+// SUSPENDED: import { MessageCircle } from "lucide-react"
+// SUSPENDED: import { useContactModal } from "@/contexts/contact-modal-context"
+// SUSPENDED: import { useLanguage } from "@/contexts/language-context"
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 
 export function HeroSection() {
-  const { openModal } = useContactModal()
-  const { t } = useLanguage()
+  // SUSPENDED: const { openModal } = useContactModal()
+  // SUSPENDED: const { t } = useLanguage()
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
 
   useEffect(() => {
@@ -69,6 +71,8 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col items-center animate-fade-in-up animation-delay-700 opacity-0 px-4">
+            {/*
+            SUSPENDED:
             <Button
               onClick={() => openModal()}
               size="lg"
@@ -77,6 +81,12 @@ export function HeroSection() {
               <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2 group-hover:animate-bounce" />
               Fale Conosco
             </Button>
+            */}
+            <WhatsAppCtaButton
+              message="Olá! Vim do site Bonito ON e gostaria de mais informações sobre os passeios."
+              label="Fale Conosco pelo WhatsApp"
+              className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full shadow-2xl hover:scale-105 z-[4] relative w-full max-w-xs sm:w-auto"
+            />
           </div>
 
           {/* Stats */}
