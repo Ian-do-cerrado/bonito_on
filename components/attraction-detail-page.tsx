@@ -26,6 +26,7 @@ import {
 import Link from "next/link"
 import type { Attraction } from "@/services/supabase-attractions"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
+import { useLanguage } from "@/contexts/language-context"
 
 interface AttractionDetailPageProps {
   attraction: Attraction
@@ -33,6 +34,7 @@ interface AttractionDetailPageProps {
 
 export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) {
   // SUSPENDED: const contactModal = useContactModal()
+  const { t } = useLanguage()
   const [isFavorited, setIsFavorited] = useState(false)
 
   const getCategoryIcon = (category: string) => {
@@ -53,15 +55,15 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case "gastronomia":
-        return "Gastronomia"
+        return t("attrGastronomy")
       case "hospedagem":
-        return "Hospedagem"
+        return t("attrAccommodation")
       case "transporte":
-        return "Transporte"
+        return t("attrTransport")
       case "eventos":
-        return "Eventos"
+        return t("attrEvents")
       default:
-        return "Gastronomia"
+        return t("attrGastronomy")
     }
   }
 
@@ -105,7 +107,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
           <Link href="/#attractions">
             <Button variant="secondary" size="sm" className="bg-white/90 hover:bg-white text-sm">
               <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Voltar</span>
+              <span className="hidden sm:inline">{t("backBtn")}</span>
             </Button>
           </Link>
         </div>
@@ -156,14 +158,14 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
           <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             {/* Description */}
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Sobre</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{t("aboutSection")}</h2>
               <p className="text-gray-600 text-base sm:text-lg leading-relaxed">{attraction.description}</p>
             </div>
 
             {/* Highlights */}
             {attraction.highlights && attraction.highlights.length > 0 && (
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Destaques</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{t("highlightsSection")}</h2>
                 <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   {attraction.highlights.map((highlight, index) => (
                     <div key={index} className="flex items-center gap-3 p-3 sm:p-4 bg-green-50 rounded-lg">
@@ -177,13 +179,13 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
 
             {/* Details Grid */}
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Informações</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{t("informationSection")}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {attraction.duration && (
                   <div className="flex items-center gap-3 p-3 sm:p-4 border rounded-lg">
                     <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold text-gray-900 text-sm sm:text-base">Duração</div>
+                      <div className="font-semibold text-gray-900 text-sm sm:text-base">{t("durationLabel")}</div>
                       <div className="text-gray-600 text-sm">{attraction.duration}</div>
                     </div>
                   </div>
@@ -193,7 +195,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                   <div className="flex items-center gap-3 p-3 sm:p-4 border rounded-lg">
                     <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold text-gray-900 text-sm sm:text-base">Capacidade</div>
+                      <div className="font-semibold text-gray-900 text-sm sm:text-base">{t("capacityLabel")}</div>
                       <div className="text-gray-600 text-sm">{attraction.capacity}</div>
                     </div>
                   </div>
@@ -203,7 +205,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                   <div className="flex items-center gap-3 p-3 sm:p-4 border rounded-lg">
                     <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0" />
                     <div>
-                      <div className="font-semibold text-gray-900 text-sm sm:text-base">Preço</div>
+                      <div className="font-semibold text-gray-900 text-sm sm:text-base">{t("priceLabel")}</div>
                       <div className="text-gray-600 text-sm">{attraction.price}</div>
                     </div>
                   </div>
@@ -212,7 +214,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                 <div className="flex items-center gap-3 p-3 sm:p-4 border rounded-lg">
                   <Star className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0" />
                   <div>
-                    <div className="font-semibold text-gray-900 text-sm sm:text-base">Avaliação</div>
+                    <div className="font-semibold text-gray-900 text-sm sm:text-base">{t("ratingColon").replace(":", "")}</div>
                     <div className="text-gray-600 text-sm">{attraction.rating}/5.0</div>
                   </div>
                 </div>
@@ -226,9 +228,9 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
             <Card className="lg:sticky lg:top-6">
               <CardContent className="p-4 sm:p-6">
                 <div className="text-center mb-4 sm:mb-6">
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Interessado?</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t("interestedTitle")}</h3>
                   <p className="text-gray-600 text-sm sm:text-base">
-                    Entre em contato para mais informações e reservas
+                    {t("interestedDesc")}
                   </p>
                 </div>
 
@@ -236,11 +238,11 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
 
                 <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600 text-sm">Categoria:</span>
+                    <span className="text-gray-600 text-sm">{t("categoryColon")}</span>
                     <span className="font-semibold text-sm">{getCategoryLabel(attraction.category)}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600 text-sm">Avaliação:</span>
+                    <span className="text-gray-600 text-sm">{t("ratingColon")}</span>
                     <div className="flex items-center gap-1">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                       <span className="font-semibold text-sm">{attraction.rating}</span>
@@ -248,7 +250,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                   </div>
                   {attraction.price && (
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600 text-sm">Preço:</span>
+                      <span className="text-gray-600 text-sm">{t("priceColon")}</span>
                       <span className="font-semibold text-green-600 text-sm">{attraction.price}</span>
                     </div>
                   )}
@@ -266,18 +268,18 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                 */}
                 <WhatsAppCtaButton
                   message={`Olá! Vim do site Bonito ON e gostaria de mais informações sobre ${attraction.title}.`}
-                  label="Consultar pelo WhatsApp"
+                  label={t("consultWhatsApp")}
                   className="py-3 text-base sm:text-lg"
                 />
 
-                <p className="text-xs text-gray-500 text-center mt-3">Resposta rápida garantida</p>
+                <p className="text-xs text-gray-500 text-center mt-3">{t("quickResponseGuaranteed")}</p>
               </CardContent>
             </Card>
 
             {/* Contact Info */}
             <Card>
               <CardContent className="p-4 sm:p-6">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">Precisa de ajuda?</h3>
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">{t("needHelp")}</h3>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-gray-600">
                     <Phone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
