@@ -11,6 +11,7 @@ import { SiteLayout } from "@/components/site-layout"
 import type { Package } from "@/types/package"
 import { packageService } from "@/services/supabase-packages"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
+import { useLanguage } from "@/contexts/language-context"
 // SUSPENDED: import { useContactModal } from "@/contexts/contact-modal-context";
 
 interface PackageDetailPageProps {
@@ -18,6 +19,7 @@ interface PackageDetailPageProps {
 }
 
 export default function PackageDetailPage({ initialPackageData }: PackageDetailPageProps) {
+  const { t } = useLanguage()
   // SUSPENDED: const { openModal } = useContactModal();
   const [packageData, setPackageData] = useState<Package | null>(initialPackageData)
   const [isLoading, setIsLoading] = useState(false) // No longer loading on client if initialPackageData is provided
@@ -26,7 +28,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
     return title
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[̀-ͯ]/g, "")
       .replace(/[^a-z0-9\s-]/g, "")
       .trim()
       .replace(/\s+/g, "-")
@@ -84,10 +86,10 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
 
   const getDifficultyLabel = (difficulty: string) => {
     switch (difficulty) {
-      case "facil": return "Fácil"
-      case "moderado": return "Moderado"
-      case "dificil": return "Difícil"
-      default: return "Não informado"
+      case "facil": return t("difficultyEasy")
+      case "moderado": return t("difficultyModerate")
+      case "dificil": return t("difficultyHard")
+      default: return t("difficultyUnknown")
     }
   }
 
@@ -106,7 +108,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Carregando...</p>
+            <p className="text-gray-600">{t("loadingLabel")}</p>
           </div>
         </div>
       </SiteLayout>
@@ -118,11 +120,11 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
       <SiteLayout>
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Pacote não encontrado</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">{t("noPackageFound")}</h1>
             <Link href="/pacotes">
               <Button className="bg-green-600 hover:bg-green-700">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar aos Pacotes
+                {t("backToPackages")}
               </Button>
             </Link>
           </div>
@@ -135,11 +137,11 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
     <SiteLayout>
       {/* Hero Section */}
       <section className="relative h-96 pt-16">
-        <Image 
-          src={packageData.image || "/placeholder.svg"} 
-          alt={packageData.title} 
-          fill 
-          className="object-cover" 
+        <Image
+          src={packageData.image || "/placeholder.svg"}
+          alt={packageData.title}
+          fill
+          className="object-cover"
           priority
         />
         <div className="absolute inset-0 bg-black/40" />
@@ -169,7 +171,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
           <Link href="/pacotes">
             <Button variant="outline" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar aos Pacotes
+              {t("backToPackages")}
             </Button>
           </Link>
         </div>
@@ -181,7 +183,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  <span>Visão Geral</span>
+                  <span>{t("overview")}</span>
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
@@ -204,7 +206,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
                   <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-green-600" />
                     <div>
-                      <p className="font-semibold">Duração</p>
+                      <p className="font-semibold">{t("durationLabel")}</p>
                       <p className="text-gray-600">{packageData.duration}</p>
                     </div>
                   </div>
@@ -212,7 +214,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
                   <div className="flex items-center gap-3">
                     <Users className="w-5 h-5 text-green-600" />
                     <div>
-                      <p className="font-semibold">Grupo</p>
+                      <p className="font-semibold">{t("groupLabel")}</p>
                       <p className="text-gray-600">Até {packageData.maxPeople} pessoas</p>
                     </div>
                   </div>
@@ -220,7 +222,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
                   <div className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-green-600" />
                     <div>
-                      <p className="font-semibold">Dificuldade</p>
+                      <p className="font-semibold">{t("difficultyLabel")}</p>
                       <p className={getDifficultyColor(packageData.difficulty)}>
                         {getDifficultyLabel(packageData.difficulty)}
                       </p>
@@ -233,7 +235,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
             {/* Highlights Card */}
             <Card>
               <CardHeader>
-                <CardTitle>Destaques do Pacote</CardTitle>
+                <CardTitle>{t("packageHighlights")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -250,7 +252,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
             {/* Included Card */}
             <Card>
               <CardHeader>
-                <CardTitle>O que está incluído</CardTitle>
+                <CardTitle>{t("whatsIncluded")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -269,7 +271,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Calendar className="w-5 h-5" />
-                  Melhor Época para Visitar
+                  {t("bestSeasonVisit")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -286,7 +288,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
             {/* Itinerary Card */}
             <Card>
               <CardHeader>
-                <CardTitle>Roteiro Detalhado</CardTitle>
+                <CardTitle>{t("detailedItinerary")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
@@ -306,7 +308,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
 
                           {day.activities.length > 0 && (
                             <div className="mb-3">
-                              <h5 className="font-semibold text-gray-700 mb-2">Atividades:</h5>
+                              <h5 className="font-semibold text-gray-700 mb-2">{t("activitiesLabel")}:</h5>
                               <ul className="space-y-1">
                                 {day.activities.map((activity, actIndex) => (
                                   <li key={actIndex} className="flex items-center gap-2 text-gray-600">
@@ -319,19 +321,22 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
                           )}
 
                           {day.meals.length > 0 && (
-                            <ul className="space-y-1 mb-3">
-                              {day.meals.map((meal, mealIndex) => (
-                                <li key={mealIndex} className="flex items-center gap-2 text-gray-600">
-                                  <ChevronRight className="w-4 h-4 text-green-600" />
-                                  {meal}
-                                </li>
-                              ))}
-                            </ul>
+                            <div className="mb-3">
+                              <h5 className="font-semibold text-gray-700 mb-2">{t("mealsLabel")}:</h5>
+                              <ul className="space-y-1">
+                                {day.meals.map((meal, mealIndex) => (
+                                  <li key={mealIndex} className="flex items-center gap-2 text-gray-600">
+                                    <ChevronRight className="w-4 h-4 text-green-600" />
+                                    {meal}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
                           )}
 
                           {day.accommodation && (
                             <div>
-                              <h5 className="font-semibold text-gray-700 mb-1">Acomodação:</h5>
+                              <h5 className="font-semibold text-gray-700 mb-1">{t("accommodationLabel")}:</h5>
                               <p className="text-gray-600">{day.accommodation}</p>
                             </div>
                           )}
@@ -348,7 +353,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Reserve este pacote</h3>
+                <h3 className="text-xl font-semibold mb-4">{t("reserveThisPackage")}</h3>
 
                 <div className="mb-6">
                   {packageData.originalPrice && (
@@ -359,10 +364,10 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
                   <div className="text-3xl font-bold text-green-600 mb-2">
                     R$ {packageData.price.toFixed(2).replace(".", ",")}
                   </div>
-                  <p className="text-gray-600">por pessoa</p>
+                  <p className="text-gray-600">{t("perPerson")}</p>
                   {packageData.originalPrice && (
                     <p className="text-sm text-green-600 font-medium">
-                      Economia de R$ {(packageData.originalPrice - packageData.price).toFixed(2).replace(".", ",")}
+                      {t("savingsOf")} R$ {(packageData.originalPrice - packageData.price).toFixed(2).replace(".", ",")}
                     </p>
                   )}
                 </div>
@@ -388,13 +393,13 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
                   */}
                   <WhatsAppCtaButton
                     message={`Olá! Vim do site Bonito ON e gostaria de reservar o pacote ${packageData.title}.`}
-                    label="Reservar pelo WhatsApp"
+                    label={t("bookWhatsApp")}
                     className="text-lg py-3"
                   />
                 </div>
 
                 <div className="border-t pt-6">
-                  <h4 className="font-semibold mb-3">Precisa de ajuda?</h4>
+                  <h4 className="font-semibold mb-3">{t("needHelp")}</h4>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <Phone className="w-4 h-4 text-green-600" />
@@ -408,12 +413,12 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
                 </div>
 
                 <div className="border-t pt-6 mt-6">
-                  <h4 className="font-semibold mb-3">Informações importantes</h4>
+                  <h4 className="font-semibold mb-3">{t("importantInfo")}</h4>
                   <ul className="text-sm text-gray-600 space-y-2">
-                    <li>• Cancelamento gratuito até 48h antes</li>
-                    <li>• Confirmação imediata por WhatsApp</li>
-                    <li>• Guias especializados e certificados</li>
-                    <li>• Seguro de acidentes pessoais incluído</li>
+                    <li>• {t("cancellationFree")}</li>
+                    <li>• {t("whatsappConfirmation")}</li>
+                    <li>• {t("certifiedGuides")}</li>
+                    <li>• {t("personalAccident")}</li>
                   </ul>
                 </div>
               </CardContent>
