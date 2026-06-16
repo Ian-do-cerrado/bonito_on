@@ -3,6 +3,7 @@
 import type React from "react"
 // SUSPENDED: import { Button } from "@/components/ui/button"
 // SUSPENDED: import { useContactModal } from "@/contexts/contact-modal-context"
+import { useLanguage } from "@/contexts/language-context"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 
 interface PackageCardProps {
@@ -13,6 +14,7 @@ interface PackageCardProps {
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({ title, description, price, features }) => {
+  const { t } = useLanguage()
   // SUSPENDED: const { openModal } = useContactModal()
 
   return (
@@ -21,7 +23,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ title, description, price, fe
       <p className="text-gray-600 mb-4">{description}</p>
       <div className="flex items-center mb-4">
         <span className="text-2xl font-bold text-green-600">{price}</span>
-        <span className="text-gray-500">/mes</span>
+        <span className="text-gray-500">{t("perMonth")}</span>
       </div>
       <ul className="list-disc list-inside text-gray-700 mb-4">
         {features.map((feature, index) => (
@@ -50,7 +52,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ title, description, price, fe
       */}
       <WhatsAppCtaButton
         message={`Olá! Vim do site Bonito ON e gostaria de reservar o pacote ${title}.`}
-        label="Reservar pelo WhatsApp"
+        label={t("bookWhatsApp")}
       />
     </div>
   )
