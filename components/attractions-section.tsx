@@ -114,15 +114,15 @@ export function AttractionsSection() {
   const getCategoryLabel = (category: Attraction["category"]) => {
     switch (category) {
       case "gastronomy":
-        return "Gastronomia"
+        return t("attrGastronomy")
       case "accommodation":
-        return "Hospedagem"
+        return t("attrAccommodation")
       case "transport":
-        return "Transporte"
+        return t("attrTransport")
       case "events":
-        return "Eventos"
+        return t("attrEvents")
       default:
-        return "Gastronomia"
+        return t("attrGastronomy")
     }
   }
 
@@ -227,7 +227,7 @@ export function AttractionsSection() {
                 <div className="flex gap-2 mb-3">
                   <Link href={`/atracoes/${attraction.slug}`} className="flex-1">
                     <Button variant="outline" size="sm" className="w-full">
-                      Saiba Mais
+                      {t("learnMore")}
                     </Button>
                   </Link>
                 </div>
@@ -243,7 +243,7 @@ export function AttractionsSection() {
                 */}
                 <WhatsAppCtaButton
                   message={`Olá! Vim do site Bonito ON e gostaria de reservar ${attraction.title}.`}
-                  label="Reservar pelo WhatsApp"
+                  label={t("bookWhatsApp")}
                   className="text-sm"
                 />
               </CardContent>

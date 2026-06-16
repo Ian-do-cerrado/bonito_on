@@ -126,7 +126,7 @@ export function PackagesSection() {
               */}
               <WhatsAppCtaButton
                 message="Olá! Vim do site Bonito ON e gostaria de informações sobre os pacotes disponíveis."
-                label="Fale Conosco pelo WhatsApp"
+                label={t("contactWhatsApp")}
                 className="max-w-xs"
               />
             </div>
@@ -247,7 +247,7 @@ export function PackagesSection() {
                         */}
                         <WhatsAppCtaButton
                           message={`Olá! Vim do site Bonito ON e gostaria de reservar o pacote ${pkg.title}.`}
-                          label="Reservar pelo WhatsApp"
+                          label={t("bookWhatsApp")}
                           className="text-sm"
                         />
                       </div>
