@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { useContactModal } from "@/hooks/use-contact-modal"
+// SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 import {
   MapPin,
   Clock,
@@ -25,13 +25,14 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import type { Attraction } from "@/services/supabase-attractions"
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 
 interface AttractionDetailPageProps {
   attraction: Attraction
 }
 
 export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) {
-  const contactModal = useContactModal()
+  // SUSPENDED: const contactModal = useContactModal()
   const [isFavorited, setIsFavorited] = useState(false)
 
   const getCategoryIcon = (category: string) => {
@@ -64,9 +65,10 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
     }
   }
 
-  const handleReserveClick = () => {
-    contactModal.openModal(attraction.title)
-  }
+  // SUSPENDED:
+  // const handleReserveClick = () => {
+  //   contactModal.openModal(attraction.title)
+  // }
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -252,6 +254,8 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                   )}
                 </div>
 
+                {/*
+                SUSPENDED:
                 <Button
                   onClick={handleReserveClick}
                   className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-base sm:text-lg font-semibold"
@@ -259,6 +263,12 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
                 >
                   Consultar Preços
                 </Button>
+                */}
+                <WhatsAppCtaButton
+                  message={`Olá! Vim do site Bonito ON e gostaria de mais informações sobre ${attraction.title}.`}
+                  label="Reservar pelo WhatsApp"
+                  className="py-3 text-base sm:text-lg"
+                />
 
                 <p className="text-xs text-gray-500 text-center mt-3">Resposta rápida garantida</p>
               </CardContent>
