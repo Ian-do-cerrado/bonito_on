@@ -12,12 +12,13 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { SiteLayout } from "@/components/site-layout"
 import type { Package } from "@/types/package"
-import { useContactModal } from "@/hooks/use-contact-modal"
+// SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { packageService } from "@/services/supabase-packages"
 
 export default function PackagesPage() {
   const router = useRouter()
-  const { openModal } = useContactModal()
+  // SUSPENDED: const { openModal } = useContactModal()
   const [packages, setPackages] = useState<Package[]>([])
   const [filteredPackages, setFilteredPackages] = useState<Package[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -292,14 +293,15 @@ export default function PackagesPage() {
                             Ver Detalhes
                           </Button>
                         </Link>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={openModal}
-                          className="text-green-600 border-green-600 hover:bg-green-50"
-                        >
-                          Reservar
-                        </Button>
+                        {/*
+                        SUSPENDED:
+                        <Button size="sm" variant="outline" onClick={openModal} ...>Reservar</Button>
+                        */}
+                        <WhatsAppCtaButton
+                          message={`Olá! Vim do site Bonito ON e gostaria de reservar o pacote ${pkg.title}.`}
+                          label="Reservar pelo WhatsApp"
+                          className="text-sm"
+                        />
                       </div>
                     </div>
                   </CardContent>

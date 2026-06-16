@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Star, Quote, ExternalLink, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react"
+import { Star, Quote, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
-import { useContactModal } from "@/hooks/use-contact-modal"
+// SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
+// SUSPENDED: import { ContactModalContext } from "@/contexts/contact-modal-context";
+// SUSPENDED: import { useContext } from "react";
 import { useLanguage } from "@/contexts/language-context";
-import { ContactModalContext } from "@/contexts/contact-modal-context";
-import { useContext } from "react";
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 
 interface Review {
 id: string
@@ -20,7 +21,7 @@ comment: string
 }
 
 export function ReviewsSection() {
-  const { openModal } = useContext(ContactModalContext) as any;
+  // SUSPENDED: const { openModal } = useContext(ContactModalContext) as any;
   const { t } = useLanguage();
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
   const [reviews] = useState<Review[]>([
@@ -228,16 +229,17 @@ export function ReviewsSection() {
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8 max-w-2xl mx-auto border border-white/20">
             <h3 className="text-2xl font-bold text-white mb-4">{t("joinStories")}</h3>
             <p className="text-green-100 mb-6">{t("joinStoriesDesc")}</p>
-            <Button
-              onClick={() => {
-                console.log("Button clicked");
-                openModal();
-              }}
-              className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 text-lg shadow-lg btn-mobile-full"
-            >
-              <MessageCircle className="w-5 h-5 mr-2" />
-              {t("heroButton")}
+            {/*
+            SUSPENDED:
+            <Button onClick={() => { openModal(); }} className="bg-green-500 ...">
+              <MessageCircle /> {t("heroButton")}
             </Button>
+            */}
+            <WhatsAppCtaButton
+              message="Olá! Vim do site Bonito ON e gostaria de reservar uma experiência em Bonito."
+              label="Reservar pelo WhatsApp"
+              className="max-w-xs mx-auto px-8 py-3 text-lg"
+            />
           </div>
         </div>
       </div>

@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/contexts/language-context"
-import { useContactModal } from "@/hooks/use-contact-modal"
+// SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { MapPin, Clock, Users, Star, Utensils, Bed, Car, Calendar } from "lucide-react"
 import Image from "next/image"
 import { getAllAttractions, Attraction as SupabaseAttraction } from "@/services/supabase-attractions"
@@ -74,7 +75,7 @@ const defaultAttractions: AttractionProps[] = [
 
 export function AttractionsSection() {
   const { t } = useLanguage()
-  const contactModal = useContactModal()
+  // SUSPENDED: const contactModal = useContactModal()
   const [activeTab, setActiveTab] = useState<Attraction["category"]>("gastronomy")
   const [attractions, setAttractions] = useState<Attraction[]>([])
 
@@ -125,9 +126,7 @@ export function AttractionsSection() {
     }
   }
 
-  const handleReserveClick = () => {
-    contactModal.openModal()
-  }
+  // SUSPENDED: const handleReserveClick = () => { contactModal.openModal() }
 
   return (
     <section id="attractions" className="py-20 bg-gradient-to-b from-gray-50 to-white">
@@ -225,24 +224,28 @@ export function AttractionsSection() {
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <Link href={`/atracoes/${attraction.slug}`}>
-                    <Button variant="outline" size="sm" className="flex-1">
+                <div className="flex gap-2 mb-3">
+                  <Link href={`/atracoes/${attraction.slug}`} className="flex-1">
+                    <Button variant="outline" size="sm" className="w-full">
                       Saiba Mais
                     </Button>
                   </Link>
-                  <Button onClick={handleReserveClick} size="sm" className="flex-1 bg-green-600 hover:bg-green-700">
-                    Reservar
-                  </Button>
                 </div>
-                <a
-                  href={`https://wa.me/5567991395384?text=${encodeURIComponent(`Olá! Vim do site Bonito ON e gostaria de mais informações sobre ${attraction.title}.`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full mt-4 inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-                >
-                  Fale Com um Especialista
-                </a>
+                {/*
+                SUSPENDED:
+                <Button onClick={handleReserveClick} size="sm" className="flex-1 bg-green-600 hover:bg-green-700">
+                  Reservar
+                </Button>
+                */}
+                {/*
+                SUSPENDED:
+                <a href={`https://wa.me/...`} className="...bg-orange-500...">Fale Com um Especialista</a>
+                */}
+                <WhatsAppCtaButton
+                  message={`Olá! Vim do site Bonito ON e gostaria de reservar ${attraction.title}.`}
+                  label="Reservar pelo WhatsApp"
+                  className="text-sm"
+                />
               </CardContent>
             </Card>
           ))}

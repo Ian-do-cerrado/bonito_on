@@ -9,7 +9,8 @@ import Link from "next/link"
 import { useLanguage } from "@/contexts/language-context"
 import type { Package } from "@/types/package"
 import { getAllPackages } from "@/services/supabase-packages"
-import { useContactModal } from "@/contexts/contact-modal-context"
+// SUSPENDED: import { useContactModal } from "@/contexts/contact-modal-context"
+import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 
 export function PackagesSection() {
   const { t } = useLanguage()
@@ -18,7 +19,7 @@ export function PackagesSection() {
   const [canScrollRight, setCanScrollRight] = useState(true)
   const [packages, setPackages] = useState<Package[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const { openModal } = useContactModal()
+  // SUSPENDED: const { openModal } = useContactModal()
 
   useEffect(() => {
     const loadPackages = async () => {
@@ -119,7 +120,15 @@ export function PackagesSection() {
           {!isLoading && packages.length === 0 && (
             <div className="flex flex-col justify-center items-center min-h-[400px] text-center">
               <p className="text-gray-500 text-lg mb-4">{t("noPackagesFound")}</p>
+              {/*
+              SUSPENDED:
               <Button onClick={() => openModal()}>{t("contactUs")}</Button>
+              */}
+              <WhatsAppCtaButton
+                message="Olá! Vim do site Bonito ON e gostaria de informações sobre os pacotes disponíveis."
+                label="Fale Conosco pelo WhatsApp"
+                className="max-w-xs"
+              />
             </div>
           )}
 
@@ -212,33 +221,35 @@ export function PackagesSection() {
 
                       {/* Actions */}
                       <div className="flex flex-col gap-2 pt-2">
-                        <div className="flex gap-2">
-                          <Link
-                            href={`/pacotes/${pkg.slug || createSlug(pkg.title)}`}
-                            className="flex-1"
-                          >
-                            <Button variant="outline" size="sm" className="w-full">
-                              {t("learnMore")}
-                            </Button>
-                          </Link>
-                          <Button
-                            onClick={() => openModal(pkg.title)}
-                            size="sm"
-                            className="flex-1 bg-green-600 hover:bg-green-700"
-                          >
-                            {t("bookNow")}
-                          </Button>
-                        </div>
-                        <a
-                          href={`https://wa.me/5567991395384?text=${encodeURIComponent(
-                            `Olá! Vim do site Bonito ON e gostaria de mais informações sobre o pacote ${pkg.title}.`,
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-full mt-2 inline-flex items-center justify-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                        <Link
+                          href={`/pacotes/${pkg.slug || createSlug(pkg.title)}`}
+                          className="w-full"
                         >
+                          <Button variant="outline" size="sm" className="w-full">
+                            {t("learnMore")}
+                          </Button>
+                        </Link>
+                        {/*
+                        SUSPENDED:
+                        <Button
+                          onClick={() => openModal(pkg.title)}
+                          size="sm"
+                          className="flex-1 bg-green-600 hover:bg-green-700"
+                        >
+                          {t("bookNow")}
+                        </Button>
+                        */}
+                        {/*
+                        SUSPENDED:
+                        <a href={`https://wa.me/5567991395384?text=...`} className="...bg-orange-500...">
                           Fale Com um Especialista
                         </a>
+                        */}
+                        <WhatsAppCtaButton
+                          message={`Olá! Vim do site Bonito ON e gostaria de reservar o pacote ${pkg.title}.`}
+                          label="Reservar pelo WhatsApp"
+                          className="text-sm"
+                        />
                       </div>
                     </div>
                   </CardContent>
