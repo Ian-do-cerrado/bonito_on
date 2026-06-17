@@ -8,6 +8,7 @@ import { ArrowLeft, Clock, User, Calendar, Share2, ChevronLeft, ChevronRight } f
 import Image from "next/image"
 import Link from "next/link"
 import { Navigation } from "@/components/navigation"
+import { useLanguage } from "@/contexts/language-context"
 import type { BlogPost } from "@/types/index"
 import { getBlogPostBySlug } from "@/services/supabase-blog"
 import he from "he"
@@ -17,6 +18,7 @@ interface BlogPostPageProps {
 }
 
 export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
+  const { t } = useLanguage()
   const params = useParams()
   const slug = Array.isArray(params?.slug) ? params.slug[0] : (params?.slug as string | undefined)
 
@@ -98,7 +100,7 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4" />
-            <p className="text-gray-600">Carregando...</p>
+            <p className="text-gray-600">{t("loadingLabel")}</p>
           </div>
         </div>
       </div>
@@ -111,11 +113,11 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
         <Navigation />
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Post não encontrado</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">{t("postNotFound")}</h1>
             <Button asChild className="bg-green-600 hover:bg-green-700">
               <Link href="/">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar ao Início
+                {t("backToHome")}
               </Link>
             </Button>
           </div>
@@ -137,7 +139,7 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
           <Button asChild variant="outline" size="sm">
             <Link href="/">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
+              {t("backBtn")}
             </Link>
           </Button>
         </div>
@@ -173,13 +175,13 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
               {post.readTime && (
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" />
-                  <span>{post.readTime} min de leitura</span>
+                  <span>{post.readTime} {t("readTime")}</span>
                 </div>
               )}
 
-              <Button variant="outline" size="sm" type="button" aria-label="Compartilhar">
+              <Button variant="outline" size="sm" type="button" aria-label={t("sharePost")}>
                 <Share2 className="w-4 h-4 mr-2" />
-                Compartilhar
+                {t("sharePost")}
               </Button>
             </div>
 
@@ -196,7 +198,7 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
 
           {post.gallery?.length ? (
             <div className="my-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Galeria de Imagens</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">{t("imageGallery")}</h2>
 
               <div className="relative h-96 mb-4 rounded-lg overflow-hidden">
                 <Image
