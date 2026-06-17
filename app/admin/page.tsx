@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { AdminBlogCard } from "@/components/admin-blog-card"
 import { AdminPackageCard } from "@/components/admin-package-card"
 import { AdminAttractionCard } from "@/components/admin-attraction-card"
@@ -9,7 +9,7 @@ import { AddPackageDialog } from "@/components/add-package-dialog"
 import { AddAttractionDialog } from "@/components/add-attraction-dialog"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Plus, ArrowLeft, LogOut, BarChart3, Users, MapPin, Calendar, RefreshCw } from "lucide-react"
+import { Plus, ArrowLeft, LogOut, BarChart3, Users, MapPin, Calendar, RefreshCw, Menu, X, UserCircle, BookOpen, Package, ChevronLeft, ChevronRight } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
 import type { BlogPost } from "@/types/index"
@@ -58,6 +58,24 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<"tours" | "blog" | "packages" | "attractions" | "next-semester">("tours")
   const [activeCategory, setActiveCategory] = useState<DatabaseTour["category"]>("all") // Category type also updated
   const [activeAttractionCategory, setActiveAttractionCategory] = useState<Attraction["category"]>("gastronomy")
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const tourFilterRef = useRef<HTMLDivElement>(null)
+  const attrFilterRef = useRef<HTMLDivElement>(null)
+
+  const scrollFilter = (ref: React.RefObject<HTMLDivElement>, dir: "left" | "right") => {
+    const el = ref.current
+    if (!el) return
+    const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 4
+    const atStart = el.scrollLeft <= 4
+    if (dir === "right") {
+      if (atEnd) el.scrollTo({ left: 0, behavior: "smooth" })
+      else el.scrollBy({ left: 200, behavior: "smooth" })
+    } else {
+      if (atStart) el.scrollTo({ left: el.scrollWidth, behavior: "smooth" })
+      else el.scrollBy({ left: -200, behavior: "smooth" })
+    }
+  }
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -364,229 +382,217 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <Link href="/">
-                <Button variant="outline" size="sm" className="hover:scale-105 transition-transform shrink-0">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Voltar ao Site
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Painel Administrativo</h1>
-                <p className="text-sm text-gray-600 hidden sm:block">Gerencie todo o conteúdo do site</p>
-              </div>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Painel Administrativo</h1>
+              <p className="text-sm text-gray-600">Gerencie todo o conteúdo do site</p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-              {/* Stats */}
-              <div className="hidden lg:flex items-center space-x-6 text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <span className="text-green-600 font-medium">{user.email}</span>
-                </div>
-                <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              {/* Métricas — visível em lg+, com wrap permitido */}
+              <div className="hidden lg:flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                <span className="flex items-center gap-1.5 text-green-600 font-medium">
+                  <UserCircle className="w-4 h-4" />
+                  {user.email}
+                </span>
+                <div className="flex items-center gap-1">
                   <BarChart3 className="w-4 h-4" />
                   <span>{tours.length} Passeios</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <MapPin className="w-4 h-4" />
                   <span>{attractions.length} Atrações</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <Users className="w-4 h-4" />
                   <span>{packages.length} Pacotes</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
                   <span>{blogPosts.length} Posts</span>
                 </div>
               </div>
 
-              {/* Refresh Button */}
-              <Button
-                onClick={loadData}
-                disabled={isRefreshing}
-                variant="outline"
-                size="sm"
-                className="hover:scale-105 transition-transform"
+              {/* Hamburguer — visível abaixo de lg */}
+              <button
+                className="lg:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                aria-label="Menu de métricas"
               >
-                <RefreshCw className={`w-4 h-4 sm:mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
-                <span className="hidden sm:inline">Atualizar</span>
+                {isMobileMenuOpen ? <X className="w-5 h-5 text-gray-600" /> : <Menu className="w-5 h-5 text-gray-600" />}
+              </button>
+
+              {/* Atualizar e Sair — só no desktop */}
+              <Button onClick={loadData} disabled={isRefreshing} variant="outline" size="sm" className="hidden lg:flex hover:scale-105 transition-transform">
+                <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+                Atualizar
               </Button>
-
-              {/* Add Button */}
-              {activeTab === "tours" ? (
-                <Button
-                  onClick={() => setIsAddTourDialogOpen(true)}
-                  className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all"
-                  size="sm"
-                >
-                  <Plus className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Adicionar Passeio</span>
-                </Button>
-              ) : activeTab === "blog" ? (
-                <Button
-                  onClick={() => setIsAddBlogDialogOpen(true)}
-                  className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all"
-                  size="sm"
-                >
-                  <Plus className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Escrever Post</span>
-                </Button>
-              ) : activeTab === "packages" ? (
-                <Button
-                  onClick={() => setIsAddPackageDialogOpen(true)}
-                  className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all"
-                  size="sm"
-                >
-                  <Plus className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Adicionar Pacote</span>
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => setIsAddAttractionDialogOpen(true)}
-                  className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all"
-                  size="sm"
-                >
-                  <Plus className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Adicionar Atração</span>
-                </Button>
-              )}
-
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                size="sm"
-                className="hover:scale-105 transition-transform"
-              >
-                <LogOut className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Sair</span>
+              <Button onClick={handleLogout} variant="outline" size="sm" className="hidden lg:flex hover:scale-105 transition-transform">
+                <LogOut className="w-4 h-4 mr-2" />
+                Sair
               </Button>
             </div>
           </div>
         </div>
+
+        {/* Painel mobile de métricas */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden absolute top-full right-0 left-0 z-50 border-t bg-white shadow-lg px-4 sm:px-6 py-4 space-y-4">
+            <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+              <div className="w-full text-green-600 font-medium">{user.email}</div>
+              <div className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 shadow-sm">
+                <BarChart3 className="w-4 h-4 text-green-600" />
+                <span className="font-medium">{tours.length}</span>
+                <span>Passeios</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 shadow-sm">
+                <MapPin className="w-4 h-4 text-green-600" />
+                <span className="font-medium">{attractions.length}</span>
+                <span>Atrações</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 shadow-sm">
+                <Users className="w-4 h-4 text-green-600" />
+                <span className="font-medium">{packages.length}</span>
+                <span>Pacotes</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 shadow-sm">
+                <Calendar className="w-4 h-4 text-green-600" />
+                <span className="font-medium">{blogPosts.length}</span>
+                <span>Posts</span>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={loadData} disabled={isRefreshing} variant="outline" size="sm" className="flex-1">
+                <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+                Atualizar
+              </Button>
+              <Button onClick={handleLogout} variant="outline" size="sm" className="flex-1">
+                <LogOut className="w-4 h-4 mr-2" />
+                Sair
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="mb-8">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 bg-white shadow-lg rounded-xl p-2">
-            <TabsTrigger
-              value="tours"
-              className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
-            >
-              Gerenciar Passeios
-            </TabsTrigger>
-            <TabsTrigger
-              value="attractions"
-              className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
-            >
-              Gerenciar Atrações
-            </TabsTrigger>
-            <TabsTrigger
-              value="packages"
-              className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
-            >
-              Gerenciar Pacotes
-            </TabsTrigger>
-            <TabsTrigger
-              value="blog"
-              className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
-            >
-              Gerenciar Blog
-            </TabsTrigger>
-            <TabsTrigger
-              value="next-semester"
-              className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
-            >
-              <Link href="/admin/valor-futuro">Editar para o próximo semestre</Link>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {/* Botão Adicionar — alinhado à direita, acima das tabs */}
+        <div className="flex justify-end mb-4">
+          {activeTab === "tours" ? (
+            <Button onClick={() => setIsAddTourDialogOpen(true)} className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all">
+              <Plus className="w-4 h-4 mr-2" />
+              Adicionar Passeio
+            </Button>
+          ) : activeTab === "blog" ? (
+            <Button onClick={() => setIsAddBlogDialogOpen(true)} className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all">
+              <Plus className="w-4 h-4 mr-2" />
+              Escrever Post
+            </Button>
+          ) : activeTab === "packages" ? (
+            <Button onClick={() => setIsAddPackageDialogOpen(true)} className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all">
+              <Plus className="w-4 h-4 mr-2" />
+              Adicionar Pacote
+            </Button>
+          ) : (
+            <Button onClick={() => setIsAddAttractionDialogOpen(true)} className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all">
+              <Plus className="w-4 h-4 mr-2" />
+              Adicionar Atração
+            </Button>
+          )}
+        </div>
+
+        {/* Navegação principal — underline style, scrollável */}
+        <div className="bg-white rounded-xl shadow-sm mb-8 overflow-hidden">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+            <TabsList className="flex w-full overflow-x-auto scrollbar-hide bg-transparent border-b border-gray-200 p-0 h-auto rounded-none gap-0">
+              <TabsTrigger
+                value="tours"
+                className="flex-shrink-0 flex items-center gap-2 px-5 py-4 text-sm font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-green-600 data-[state=active]:text-green-600 text-gray-500 hover:text-gray-700 bg-transparent transition-colors whitespace-nowrap"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Passeios
+              </TabsTrigger>
+              <TabsTrigger
+                value="attractions"
+                className="flex-shrink-0 flex items-center gap-2 px-5 py-4 text-sm font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-green-600 data-[state=active]:text-green-600 text-gray-500 hover:text-gray-700 bg-transparent transition-colors whitespace-nowrap"
+              >
+                <MapPin className="w-4 h-4" />
+                Atrações
+              </TabsTrigger>
+              <TabsTrigger
+                value="packages"
+                className="flex-shrink-0 flex items-center gap-2 px-5 py-4 text-sm font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-green-600 data-[state=active]:text-green-600 text-gray-500 hover:text-gray-700 bg-transparent transition-colors whitespace-nowrap"
+              >
+                <Package className="w-4 h-4" />
+                Pacotes
+              </TabsTrigger>
+              <TabsTrigger
+                value="blog"
+                className="flex-shrink-0 flex items-center gap-2 px-5 py-4 text-sm font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-green-600 data-[state=active]:text-green-600 text-gray-500 hover:text-gray-700 bg-transparent transition-colors whitespace-nowrap"
+              >
+                <BookOpen className="w-4 h-4" />
+                Blog
+              </TabsTrigger>
+              <TabsTrigger
+                value="next-semester"
+                className="flex-shrink-0 flex items-center gap-2 px-5 py-4 text-sm font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-green-600 data-[state=active]:text-green-600 text-gray-500 hover:text-gray-700 bg-transparent transition-colors whitespace-nowrap"
+              >
+                <Link href="/admin/valor-futuro">Próximo Semestre</Link>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
 
         {activeTab === "tours" && (
           <>
-            <Tabs
-              value={activeCategory}
-              onValueChange={(value) => setActiveCategory(value as DatabaseTour["category"])}
-              className="mb-8"
-            >
-              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 gap-1 bg-white shadow-md rounded-xl p-2">
-                <TabsTrigger
-                  value="all"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+            {/* Filtro de categoria — pills scrolláveis com setas em loop */}
+            <div className="mb-6">
+              <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 block">Filtrar por categoria</span>
+              <div className="relative flex items-center gap-2">
+                <button
+                  onClick={() => scrollFilter(tourFilterRef, "left")}
+                  className="flex-shrink-0 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-50 transition-colors z-10"
                 >
-                  {t("all")} ({tours.length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="adventure"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
+                  <ChevronLeft className="w-4 h-4 text-gray-600" />
+                </button>
+                <div ref={tourFilterRef} className="flex overflow-x-auto scrollbar-hide gap-2 py-1 flex-1">
+                  {([
+                    ["all", t("all"), tours.length],
+                    ["adventure", t("adventure"), tours.filter((t) => t.category === "adventure").length],
+                    ["contemplation", t("contemplation"), tours.filter((t) => t.category === "contemplation").length],
+                    ["cave", t("cave"), tours.filter((t) => t.category === "cave").length],
+                    ["waterfall", t("waterfall"), tours.filter((t) => t.category === "waterfall").length],
+                    ["rappelling", t("rappelling"), tours.filter((t) => t.category === "rappelling").length],
+                    ["horseback", t("horseback"), tours.filter((t) => t.category === "horseback").length],
+                    ["biking", t("biking"), tours.filter((t) => t.category === "biking").length],
+                    ["scubaDiving", t("scubaDiving"), tours.filter((t) => t.category === "scubaDiving").length],
+                    ["resort", t("resort"), tours.filter((t) => t.category === "resort").length],
+                    ["floating", t("floating"), tours.filter((t) => t.category === "floating").length],
+                    ["pantanal", t("pantanal"), tours.filter((t) => t.category === "pantanal").length],
+                  ] as [string, string, number][]).map(([value, label, count]) => (
+                    <button
+                      key={value}
+                      onClick={() => setActiveCategory(value as DatabaseTour["category"])}
+                      className={`flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full border transition-all whitespace-nowrap shadow-sm ${
+                        activeCategory === value
+                          ? "bg-green-600 text-white border-green-600"
+                          : "bg-white text-gray-600 border-gray-200 hover:border-green-300 hover:text-green-700"
+                      }`}
+                    >
+                      {label} <span className="ml-1 opacity-70">({count})</span>
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => scrollFilter(tourFilterRef, "right")}
+                  className="flex-shrink-0 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-50 transition-colors z-10"
                 >
-                  {t("adventure")} ({tours.filter((t) => t.category === "adventure").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="contemplation"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("contemplation")} ({tours.filter((t) => t.category === "contemplation").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="cave"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("cave")} ({tours.filter((t) => t.category === "cave").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="waterfall"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("waterfall")} ({tours.filter((t) => t.category === "waterfall").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="rappelling"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("rappelling")} ({tours.filter((t) => t.category === "rappelling").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="horseback"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("horseback")} ({tours.filter((t) => t.category === "horseback").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="biking"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("biking")} ({tours.filter((t) => t.category === "biking").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="scubaDiving"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("scubaDiving")} ({tours.filter((t) => t.category === "scubaDiving").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="resort"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("resort")} ({tours.filter((t) => t.category === "resort").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="floating"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("floating")} ({tours.filter((t) => t.category === "floating").length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="pantanal"
-                  className="text-xs lg:text-sm rounded-lg text-black data-[state=active]:text-white data-[state=active]:bg-green-600 transition-all hover:scale-105"
-                >
-                  {t("pantanal")} ({tours.filter((t) => t.category === "pantanal").length})
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+                  <ChevronRight className="w-4 h-4 text-gray-600" />
+                </button>
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTours.map((tour, index) => (
@@ -613,26 +619,43 @@ export default function AdminPage() {
 
         {activeTab === "attractions" && (
           <>
-            <Tabs
-              value={activeAttractionCategory}
-              onValueChange={(value) => setActiveAttractionCategory(value as Attraction["category"])}
-              className="mb-8"
-            >
-              <TabsList className="grid w-full grid-cols-4 gap-1 bg-white shadow-md rounded-xl p-2">
-                <TabsTrigger value="gastronomy" className="text-sm rounded-lg">
-                  Gastronomia ({attractions.filter((a) => a.category === "gastronomy").length})
-                </TabsTrigger>
-                <TabsTrigger value="accommodation" className="text-sm rounded-lg">
-                  Hospedagem ({attractions.filter((a) => a.category === "accommodation").length})
-                </TabsTrigger>
-                <TabsTrigger value="transport" className="text-sm rounded-lg">
-                  Transporte ({attractions.filter((a) => a.category === "transport").length})
-                </TabsTrigger>
-                <TabsTrigger value="events" className="text-sm rounded-lg">
-                  Eventos ({attractions.filter((a) => a.category === "events").length})
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <div className="mb-6">
+              <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 block">Filtrar por categoria</span>
+              <div className="relative flex items-center gap-2">
+                <button
+                  onClick={() => scrollFilter(attrFilterRef, "left")}
+                  className="flex-shrink-0 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-50 transition-colors z-10"
+                >
+                  <ChevronLeft className="w-4 h-4 text-gray-600" />
+                </button>
+                <div ref={attrFilterRef} className="flex overflow-x-auto scrollbar-hide gap-2 py-1 flex-1">
+                  {([
+                    ["gastronomy", "Gastronomia", attractions.filter((a) => a.category === "gastronomy").length],
+                    ["accommodation", "Hospedagem", attractions.filter((a) => a.category === "accommodation").length],
+                    ["transport", "Transporte", attractions.filter((a) => a.category === "transport").length],
+                    ["events", "Eventos", attractions.filter((a) => a.category === "events").length],
+                  ] as [string, string, number][]).map(([value, label, count]) => (
+                    <button
+                      key={value}
+                      onClick={() => setActiveAttractionCategory(value as Attraction["category"])}
+                      className={`flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full border transition-all whitespace-nowrap shadow-sm ${
+                        activeAttractionCategory === value
+                          ? "bg-green-600 text-white border-green-600"
+                          : "bg-white text-gray-600 border-gray-200 hover:border-green-300 hover:text-green-700"
+                      }`}
+                    >
+                      {label} <span className="ml-1 opacity-70">({count})</span>
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => scrollFilter(attrFilterRef, "right")}
+                  className="flex-shrink-0 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-50 transition-colors z-10"
+                >
+                  <ChevronRight className="w-4 h-4 text-gray-600" />
+                </button>
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAttractions.map((attraction, index) => (
