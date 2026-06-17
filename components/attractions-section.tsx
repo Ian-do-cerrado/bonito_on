@@ -1,16 +1,24 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/contexts/language-context"
 // SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
-import { MapPin, Clock, Users, Star, Utensils, Bed, Car, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
+import { MapPin, Clock, Users, Star, Utensils, Bed, Car, Calendar } from "lucide-react"
 import Image from "next/image"
 import { getAllAttractions, Attraction as SupabaseAttraction } from "@/services/supabase-attractions"
 import Link from "next/link"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  type CarouselApi,
+} from "@/components/ui/carousel"
 
 export type Attraction = SupabaseAttraction
 
@@ -78,10 +86,9 @@ export function AttractionsSection() {
   // SUSPENDED: const contactModal = useContactModal()
   const [activeTab, setActiveTab] = useState<Attraction["category"]>("gastronomy")
   const [attractions, setAttractions] = useState<Attraction[]>([])
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(false)
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>()
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [count, setCount] = useState(0)
 
   useEffect(() => {
     const loadAttractions = async () => {
@@ -100,32 +107,28 @@ export function AttractionsSection() {
 
   const filteredAttractions = attractions.filter((attraction) => attraction.category === activeTab)
 
-  const handleScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
-      setCanScrollLeft(scrollLeft > 0)
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10)
-      if (filteredAttractions.length > 0) {
-        setCurrentIndex(Math.round(scrollLeft / (scrollWidth / filteredAttractions.length)))
-      }
-    }
-  }
-
-  const scrollCarousel = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollRef.current.clientWidth : scrollRef.current.clientWidth,
-        behavior: "smooth",
-      })
-    }
-  }
+  useEffect(() => {
+    carouselApi?.scrollTo(0)
+    setCurrentIndex(0)
+  }, [activeTab, attractions, carouselApi])
 
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTo({ left: 0 })
-    setCurrentIndex(0)
-    setCanScrollLeft(false)
-    requestAnimationFrame(() => handleScroll())
-  }, [activeTab, attractions])
+    if (!carouselApi) return
+
+    const updateCarouselState = () => {
+      setCount(carouselApi.scrollSnapList().length)
+      setCurrentIndex(carouselApi.selectedScrollSnap())
+    }
+
+    updateCarouselState()
+    carouselApi.on("select", updateCarouselState)
+    carouselApi.on("reInit", updateCarouselState)
+
+    return () => {
+      carouselApi.off("select", updateCarouselState)
+      carouselApi.off("reInit", updateCarouselState)
+    }
+  }, [carouselApi])
 
   const getCategoryIcon = (category: Attraction["category"]) => {
     switch (category) {
@@ -190,51 +193,36 @@ export function AttractionsSection() {
 
         {/* Attractions Carousel / Grid */}
         <div className="relative">
-          <button
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300 md:hidden"
-            onClick={() => scrollCarousel("left")}
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
-          </button>
+          <Carousel opts={{ loop: true, align: "center" }} setApi={setCarouselApi}>
+            <CarouselContent className="-ml-6 md:-ml-8">
+              {filteredAttractions.map((attraction, index) => (
+                <CarouselItem
+                  key={attraction.id}
+                  className="pl-6 md:pl-8 basis-[82vw] md:basis-1/2 lg:basis-1/3"
+                >
+                  <Card
+                    className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="relative h-64">
+                      <Image
+                        src={attraction.image || "/placeholder.svg"}
+                        alt={attraction.title}
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <Badge className="bg-white/90 text-gray-800">{getCategoryLabel(attraction.category)}</Badge>
+                      </div>
+                      <div className="absolute top-4 right-4 bg-white/90 rounded-full px-2 py-1 flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-semibold">{attraction.rating}</span>
+                      </div>
+                    </div>
 
-          <button
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300 md:hidden"
-            onClick={() => scrollCarousel("right")}
-          >
-            <ChevronRight className="w-5 h-5 text-gray-700" />
-          </button>
-
-        <div
-          ref={scrollRef}
-          className="flex md:grid overflow-x-auto md:overflow-visible md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 snap-x snap-mandatory md:snap-none scrollbar-hide pb-4 md:pb-0 pl-[calc(50%-41vw)] pr-[calc(50%-41vw)] md:pl-0 md:pr-0"
-          onScroll={handleScroll}
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {filteredAttractions.map((attraction, index) => (
-            <Card
-              key={attraction.id}
-              className="flex-shrink-0 w-[82vw] md:w-auto overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up snap-center"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="relative h-64">
-                <Image
-                  src={attraction.image || "/placeholder.svg"}
-                  alt={attraction.title}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute top-4 left-4">
-                  <Badge className="bg-white/90 text-gray-800">{getCategoryLabel(attraction.category)}</Badge>
-                </div>
-                <div className="absolute top-4 right-4 bg-white/90 rounded-full px-2 py-1 flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-semibold">{attraction.rating}</span>
-                </div>
-              </div>
-
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-2">{attraction.title}</h3>
-                <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed">{attraction.description}</p>
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-2">{attraction.title}</h3>
+                      <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed">{attraction.description}</p>
 
                 {/* Details */}
                 <div className="space-y-2 mb-4">
@@ -297,27 +285,28 @@ export function AttractionsSection() {
                   label={t("bookWhatsApp")}
                   className="text-sm"
                 />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -left-4 w-10 h-10 hover:bg-white md:hidden" />
+            <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -right-4 w-10 h-10 hover:bg-white md:hidden" />
+          </Carousel>
 
-          <div className="flex justify-center mt-4 gap-2 md:hidden">
-            {filteredAttractions.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  if (scrollRef.current && filteredAttractions.length > 0) {
-                    const cardWidth = scrollRef.current.scrollWidth / filteredAttractions.length
-                    scrollRef.current.scrollTo({ left: index * cardWidth, behavior: "smooth" })
-                  }
-                }}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                  index === currentIndex ? "bg-green-500" : "bg-gray-300"
-                }`}
-              />
-            ))}
-          </div>
+          {count > 1 && (
+            <div className="flex justify-center mt-4 gap-2 md:hidden">
+              {Array.from({ length: count }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => carouselApi?.scrollTo(index)}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                    index === currentIndex ? "bg-green-500" : "bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Empty State */}

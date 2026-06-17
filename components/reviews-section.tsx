@@ -1,15 +1,23 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Star, Quote, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react"
+import { Star, Quote, ExternalLink } from "lucide-react"
 import Image from "next/image"
 // SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 // SUSPENDED: import { ContactModalContext } from "@/contexts/contact-modal-context";
 // SUSPENDED: import { useContext } from "react";
 import { useLanguage } from "@/contexts/language-context";
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  type CarouselApi,
+} from "@/components/ui/carousel"
 
 interface Review {
 id: string
@@ -23,8 +31,9 @@ comment: string
 export function ReviewsSection() {
   // SUSPENDED: const { openModal } = useContext(ContactModalContext) as any;
   const { t } = useLanguage();
-  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>()
+  const [current, setCurrent] = useState(0)
+  const [count, setCount] = useState(0)
   const [reviews] = useState<Review[]>([
     {
       id: "1",
@@ -82,34 +91,31 @@ export function ReviewsSection() {
     },
   ])
 
-  const scrollToIndex = (index: number) => {
-    if (scrollRef.current) {
-      const cardWidth = scrollRef.current.scrollWidth / reviews.length
-      scrollRef.current.scrollTo({ left: index * cardWidth, behavior: "smooth" })
-    }
-  }
-
-  const nextReview = () => {
-    setCurrentReviewIndex((prev) => {
-      const next = (prev + 1) % reviews.length
-      scrollToIndex(next)
-      return next
-    })
-  }
-
-  const prevReview = () => {
-    setCurrentReviewIndex((prev) => {
-      const next = (prev - 1 + reviews.length) % reviews.length
-      scrollToIndex(next)
-      return next
-    })
-  }
-
-  // Auto-advance reviews every 5 seconds
   useEffect(() => {
-    const interval = setInterval(nextReview, 5000)
+    if (!carouselApi) return
+
+    const updateCarouselState = () => {
+      setCount(carouselApi.scrollSnapList().length)
+      setCurrent(carouselApi.selectedScrollSnap())
+    }
+
+    updateCarouselState()
+    carouselApi.on("select", updateCarouselState)
+    carouselApi.on("reInit", updateCarouselState)
+
+    return () => {
+      carouselApi.off("select", updateCarouselState)
+      carouselApi.off("reInit", updateCarouselState)
+    }
+  }, [carouselApi])
+
+  useEffect(() => {
+    if (!carouselApi) return
+    const interval = setInterval(() => {
+      carouselApi.scrollNext()
+    }, 5000)
     return () => clearInterval(interval)
-  }, [])
+  }, [carouselApi])
 
   const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
   const totalReviews = reviews.length
@@ -166,77 +172,60 @@ export function ReviewsSection() {
 
         {/* Reviews Carousel */}
         <div className="relative">
-          <div
-            ref={scrollRef}
-            className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory sm:snap-none pl-[calc(50%-41vw)] pr-[calc(50%-41vw)] sm:pl-0 sm:pr-0"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {reviews.map((review) => (
-              <div key={review.id} className="flex-shrink-0 w-[82vw] sm:w-[calc(33.333%-16px)] snap-center">
-                <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-0 h-full">
-                  <CardContent className="p-6 sm:p-8">
-                    <div className="flex items-center mb-6">
-                      <div className="relative w-16 h-16 mr-4">
-                        <Image
-                          src={review.avatar || "/placeholder.svg"}
-                          alt={review.name}
-                          fill
-                          className="object-cover rounded-full border-2 border-green-200"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-lg text-gray-900">{review.name}</h4>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-                              />
-                            ))}
+          <Carousel opts={{ loop: true, align: "center" }} setApi={setCarouselApi}>
+            <CarouselContent className="-ml-4">
+              {reviews.map((review) => (
+                <CarouselItem key={review.id} className="pl-4 basis-[82vw] sm:basis-1/3">
+                  <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-0 h-full">
+                    <CardContent className="p-6 sm:p-8">
+                      <div className="flex items-center mb-6">
+                        <div className="relative w-16 h-16 mr-4">
+                          <Image
+                            src={review.avatar || "/placeholder.svg"}
+                            alt={review.name}
+                            fill
+                            className="object-cover rounded-full border-2 border-green-200"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-lg text-gray-900">{review.name}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <div className="flex items-center">
+                              {[...Array(5)].map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`w-4 h-4 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm text-gray-500">{review.date}</span>
                           </div>
-                          <span className="text-sm text-gray-500">{review.date}</span>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="relative">
-                      <Quote className="absolute -top-2 -left-2 w-8 h-8 text-green-200" />
-                      <p className="text-gray-700 text-base leading-relaxed pl-6 italic">"{review.comment}"</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
-          </div>
-
-          {/* Navigation Buttons */}
-          <button
-            onClick={prevReview}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300"
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
-          </button>
-
-          <button
-            onClick={nextReview}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300"
-          >
-            <ChevronRight className="w-5 h-5 text-gray-700" />
-          </button>
-
-          {/* Dots Indicator */}
-          <div className="flex justify-center mt-8 gap-2">
-            {reviews.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => { setCurrentReviewIndex(index); scrollToIndex(index) }}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentReviewIndex ? "bg-green-400" : "bg-white/50"
-                }`}
-              />
-            ))}
-          </div>
+                      <div className="relative">
+                        <Quote className="absolute -top-2 -left-2 w-8 h-8 text-green-200" />
+                        <p className="text-gray-700 text-base leading-relaxed pl-6 italic">"{review.comment}"</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -left-4 w-10 h-10 hover:bg-white" />
+            <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -right-4 w-10 h-10 hover:bg-white" />
+          </Carousel>
+          {count > 1 && (
+            <div className="flex justify-center mt-4 gap-2">
+              {Array.from({ length: count }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => carouselApi?.scrollTo(i)}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${i === current ? "bg-green-500" : "bg-gray-300"}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Call to Action */}

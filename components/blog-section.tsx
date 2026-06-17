@@ -1,22 +1,28 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { BlogCard } from "@/components/blog-card"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import type { BlogPost } from "@/types/index"
 import { getAllBlogPosts } from "@/services/supabase-blog"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  type CarouselApi,
+} from "@/components/ui/carousel"
 
 export function BlogSection() {
   const { t } = useLanguage()
   const [posts, setPosts] = useState<BlogPost[]>([])
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(false)
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>()
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [count, setCount] = useState(0)
 
   useEffect(() => {
     const loadBlogPosts = async () => {
@@ -26,28 +32,23 @@ export function BlogSection() {
     loadBlogPosts()
   }, [])
 
-  const handleScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
-      setCanScrollLeft(scrollLeft > 0)
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10)
-      const total = Math.min(posts.length, 8)
-      if (total > 0) setCurrentIndex(Math.round(scrollLeft / (scrollWidth / total)))
-    }
-  }
-
-  const scrollCarousel = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollRef.current.clientWidth : scrollRef.current.clientWidth,
-        behavior: "smooth",
-      })
-    }
-  }
-
   useEffect(() => {
-    requestAnimationFrame(() => handleScroll())
-  }, [posts])
+    if (!carouselApi) return
+
+    const updateCarouselState = () => {
+      setCount(carouselApi.scrollSnapList().length)
+      setCurrentIndex(carouselApi.selectedScrollSnap())
+    }
+
+    updateCarouselState()
+    carouselApi.on("select", updateCarouselState)
+    carouselApi.on("reInit", updateCarouselState)
+
+    return () => {
+      carouselApi.off("select", updateCarouselState)
+      carouselApi.off("reInit", updateCarouselState)
+    }
+  }, [carouselApi])
 
   return (
     <section id="blog" className="py-16 bg-white">
@@ -58,50 +59,31 @@ export function BlogSection() {
         </div>
 
         <div className="relative">
-          <button
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300 md:hidden"
-            onClick={() => scrollCarousel("left")}
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
-          </button>
+          <Carousel opts={{ loop: true, align: "center" }} setApi={setCarouselApi}>
+            <CarouselContent className="-ml-6 md:-ml-8">
+              {posts.slice(0, 8).map((post) => (
+                <CarouselItem key={post.id} className="pl-6 md:pl-8 basis-[82vw] md:basis-1/2 lg:basis-1/3">
+                  <BlogCard post={post} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -left-4 w-10 h-10 hover:bg-white md:hidden" />
+            <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -right-4 w-10 h-10 hover:bg-white md:hidden" />
+          </Carousel>
 
-          <button
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300 md:hidden"
-            onClick={() => scrollCarousel("right")}
-          >
-            <ChevronRight className="w-5 h-5 text-gray-700" />
-          </button>
-
-          <div
-            ref={scrollRef}
-            className="flex md:grid overflow-x-auto md:overflow-visible md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 snap-x snap-mandatory md:snap-none scrollbar-hide pb-4 md:pb-0 pl-[calc(50%-41vw)] pr-[calc(50%-41vw)] md:pl-0 md:pr-0"
-            onScroll={handleScroll}
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {posts.slice(0, 8).map((post) => (
-              <div key={post.id} className="flex-shrink-0 w-[82vw] md:w-auto snap-center">
-                <BlogCard post={post} />
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-center mt-4 gap-2 md:hidden">
-            {posts.slice(0, 8).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  if (scrollRef.current && posts.length > 0) {
-                    const total = Math.min(posts.length, 8)
-                    const cardWidth = scrollRef.current.scrollWidth / total
-                    scrollRef.current.scrollTo({ left: index * cardWidth, behavior: "smooth" })
-                  }
-                }}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                  index === currentIndex ? "bg-green-500" : "bg-gray-300"
-                }`}
-              />
-            ))}
-          </div>
+          {count > 1 && (
+            <div className="flex justify-center mt-4 gap-2 md:hidden">
+              {Array.from({ length: count }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => carouselApi?.scrollTo(index)}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                    index === currentIndex ? "bg-green-500" : "bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {posts.length > 8 && (
