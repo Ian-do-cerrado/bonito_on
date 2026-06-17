@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/language-context"
 // SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { MapPin, Clock, Users, Star, Utensils, Bed, Car, Calendar } from "lucide-react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import { getAllAttractions, Attraction as SupabaseAttraction } from "@/services/supabase-attractions"
 import Link from "next/link"
 import {
@@ -19,6 +19,7 @@ import {
   CarouselNext,
   type CarouselApi,
 } from "@/components/ui/carousel"
+import { htmlToPlainText } from "@/lib/text-format"
 
 export type Attraction = SupabaseAttraction
 
@@ -31,7 +32,7 @@ const defaultAttractions: AttractionProps[] = [
     id: "1",
     title: "Gruta do Lago Azul",
     description: "Uma das mais belas cavernas inundadas do mundo, com águas cristalinas de cor azul intensa.",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "/placeholder-image.png",
     category: "gastronomy",
     location: "Bonito, MS",
     duration: "2-3 horas",
@@ -44,7 +45,7 @@ const defaultAttractions: AttractionProps[] = [
     id: "2",
     title: "Flutuação no Rio da Prata",
     description: "Experiência única de flutuação em águas cristalinas com visibilidade de até 50 metros.",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "/placeholder-image.png",
     category: "accommodation",
     location: "Jardim, MS",
     duration: "4-5 horas",
@@ -57,7 +58,7 @@ const defaultAttractions: AttractionProps[] = [
     id: "3",
     title: "Restaurante Casa do João",
     description: "Culinária regional com pratos típicos do pantanal e ingredientes locais frescos.",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "/placeholder-image.png",
     category: "gastronomy",
     location: "Centro de Bonito",
     duration: "1-2 horas",
@@ -70,7 +71,7 @@ const defaultAttractions: AttractionProps[] = [
     id: "4",
     title: "Pousada Águas de Bonito",
     description: "Acomodação confortável com piscina natural e vista para a serra da Bodoquena.",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "/placeholder-image.png",
     category: "accommodation",
     location: "Bonito, MS",
     duration: "Pernoite",
@@ -212,8 +213,8 @@ export function AttractionsSection() {
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
                       <div className="relative h-64">
-                        <Image
-                          src={attraction.image || "/placeholder.svg"}
+                        <SafeImage
+                          src={attraction.image}
                           alt={attraction.title}
                           fill
                           className="object-cover"
@@ -229,7 +230,7 @@ export function AttractionsSection() {
 
                       <CardContent className="p-6 flex flex-col flex-1">
                         <h3 className="text-lg font-semibold mb-2">{attraction.title}</h3>
-                        <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed">{attraction.description}</p>
+                        <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed">{htmlToPlainText(attraction.description)}</p>
 
                         {/* Details */}
                         <div className="space-y-2 mb-4">

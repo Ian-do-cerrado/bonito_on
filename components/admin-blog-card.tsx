@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Edit, Trash2, Save, X, Calendar, Clock, User, Plus, Minus, ImageIcon } from "lucide-react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import type { BlogPost } from "@/types/index"
+import { htmlToPlainText } from "@/lib/text-format"
 
 interface AdminBlogCardProps {
   post: BlogPost
@@ -17,12 +18,6 @@ interface AdminBlogCardProps {
   onDelete: (postId: string) => void
 }
 
-// Função movida para fora do JSX
-function getSafeImageSrc(src: string | null | undefined): string {
-  if (!src) return "/placeholder.svg"
-  if (src.startsWith("http") || src.startsWith("/")) return src
-  return "/" + src
-}
 
 export function AdminBlogCard({ post, onUpdate, onDelete }: AdminBlogCardProps) {
   const [isEditing, setIsEditing] = useState(false)
@@ -75,8 +70,8 @@ export function AdminBlogCard({ post, onUpdate, onDelete }: AdminBlogCardProps) 
   return (
     <Card className="overflow-hidden">
       <div className="relative h-48">
-        <Image
-          src={getSafeImageSrc(post.image)}
+        <SafeImage
+          src={post.image}
           alt={post.title}
           fill
           className="object-cover"
@@ -149,7 +144,7 @@ export function AdminBlogCard({ post, onUpdate, onDelete }: AdminBlogCardProps) 
               rows={3}
             />
           ) : (
-            <p className="text-sm text-gray-600 line-clamp-3">{post.excerpt}</p>
+            <p className="text-sm text-gray-600 line-clamp-3">{htmlToPlainText(post.excerpt)}</p>
           )}
         </div>
 
@@ -164,7 +159,7 @@ export function AdminBlogCard({ post, onUpdate, onDelete }: AdminBlogCardProps) 
               rows={10}
             />
           ) : (
-            <p className="text-sm text-gray-800">{post.content}</p>
+            <p className="text-sm text-gray-800 whitespace-pre-line">{htmlToPlainText(post.content)}</p>
           )}
         </div>
 
@@ -339,9 +334,9 @@ export function AdminBlogCard({ post, onUpdate, onDelete }: AdminBlogCardProps) 
           ) : (
             <div className="flex flex-wrap gap-2">
               {(post.gallery || []).map((imageUrl, index) => (
-                <Image
+                <SafeImage
                   key={index}
-                  src={getSafeImageSrc(imageUrl)}
+                  src={imageUrl}
                   alt={`Galeria imagem ${index + 1}`}
                   width={100}
                   height={100}

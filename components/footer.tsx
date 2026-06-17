@@ -34,9 +34,9 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
           {/* Company Info */}
-          <div className="space-y-6 text-center">
+          <div className="space-y-6 text-center lg:text-left">
             <div>
-              <div className="flex justify-center">
+              <div className="flex justify-center lg:justify-start">
                 <Link href="/">
                   <Image
                     src="/images/logo-bonitoon.svg"
@@ -156,7 +156,7 @@ export function Footer() {
             </div>
 
             {/* Emergency Contact */}
-            <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+            <div className="w-fit p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
               <p className="text-xs text-red-200 font-medium mb-1 flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5" /> {t("emergency24h")}</p>
               <p className="text-xs text-red-100">(67) 99139-5384</p>
             </div>

@@ -72,7 +72,7 @@ export function mapDatabaseTourToTourData(data: DatabaseTour): TourData {
     price_ms_high_season: data.price_ms_hs,
     ms_price_ls: data.price_ms_low_season,
     min_child_age: data.min_child_age,
-    image: data.image || "/placeholder.svg?height=400&width=600",
+    image: data.image || "/placeholder-image.png",
     category: data.category || "passeios",
     rating: data.rating || 5,
     slug: data.slug || createSlug(data.title || ""),

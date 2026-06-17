@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Star, MapPin, Clock, Users, Phone, Mail, Check, Calendar, ChevronRight } from "lucide-react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import Link from "next/link"
 import { SiteLayout } from "@/components/site-layout"
 import type { Package } from "@/types/package"
 import { packageService } from "@/services/supabase-packages"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { useLanguage } from "@/contexts/language-context"
+import { htmlToPlainText } from "@/lib/text-format"
 // SUSPENDED: import { useContactModal } from "@/contexts/contact-modal-context";
 
 interface PackageDetailPageProps {
@@ -137,8 +138,8 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
     <SiteLayout>
       {/* Hero Section */}
       <section className="relative h-96 pt-16">
-        <Image
-          src={packageData.image || "/placeholder.svg"}
+        <SafeImage
+          src={packageData.image}
           alt={packageData.title}
           fill
           className="object-cover"
@@ -200,7 +201,7 @@ export default function PackageDetailPage({ initialPackageData }: PackageDetailP
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 leading-relaxed mb-6">{packageData.description}</p>
+                <p className="text-gray-700 leading-relaxed mb-6 whitespace-pre-line">{htmlToPlainText(packageData.description)}</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="flex items-center gap-3">

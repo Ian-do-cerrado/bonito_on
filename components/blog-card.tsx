@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Clock, User, Calendar } from "lucide-react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import Link from "next/link"
 import type { BlogPost } from "@/types/index"
 import { useLanguage } from "@/contexts/language-context"
+import { htmlToPlainText } from "@/lib/text-format"
 
 interface BlogCardProps {
   post: BlogPost
@@ -36,17 +37,11 @@ export function BlogCard({ post }: BlogCardProps) {
     })
   }
 
-  const getSafeImageSrc = (src: string | null | undefined): string => {
-    if (!src) return "/placeholder.svg"
-    if (src.startsWith("http") || src.startsWith("/")) return src
-    return "/" + src
-  }
-
   return (
     <Card className="h-full w-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative h-48">
-        <Image
-          src={getSafeImageSrc(post.image)}
+        <SafeImage
+          src={post.image}
           alt={post.title}
           fill
           className="object-cover"
@@ -58,7 +53,7 @@ export function BlogCard({ post }: BlogCardProps) {
 
       <CardContent className="p-6 flex-1">
         <h3 className="font-bold text-xl mb-3 line-clamp-2">{post.title}</h3>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{post.excerpt}</p>
+        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{htmlToPlainText(post.excerpt)}</p>
 
         <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
           <div className="flex items-center gap-1">

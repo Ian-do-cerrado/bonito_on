@@ -1,80 +1,79 @@
 "use client"
 
 import { SiteLayout } from "@/components/site-layout"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useLanguage } from "@/contexts/language-context"
 
 export default function TermosUsoPage() {
+  const router = useRouter()
+  const { t } = useLanguage()
+
   return (
     <SiteLayout>
-      <div className="pt-16 min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="mb-6">
-            <Link href="/">
-              <Button variant="outline" size="sm">
+      <section className="relative h-72 pt-16 bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          <div>
+            <div className="mb-4">
+              <Button
+                onClick={() => router.back()}
+                variant="outline"
+                size="sm"
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar ao Início
+                {t("backBtn")}
               </Button>
-            </Link>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">{t("termosUsoTitle")}</h1>
+            <p className="text-base sm:text-lg text-green-100 max-w-2xl leading-relaxed">
+              {t("termosUsoDate")}
+            </p>
           </div>
+        </div>
+      </section>
 
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Card>
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-gray-900">Termos de Uso</CardTitle>
-              <p className="text-gray-600">Última atualização: Janeiro de 2024</p>
-            </CardHeader>
-            <CardContent className="prose prose-lg max-w-none">
-              <h2>1. Aceitação dos Termos</h2>
-              <p>
-                Ao utilizar os serviços da BonitoON, você concorda com estes termos de uso. Se não concordar, não
-                utilize nossos serviços.
-              </p>
+            <CardContent className="prose prose-lg max-w-none pt-6">
+              <h2>{t("termosUso1Title")}</h2>
+              <p>{t("termosUso1Body")}</p>
 
-              <h2>2. Serviços Oferecidos</h2>
-              <p>A BonitoON oferece serviços de turismo em Bonito, MS, incluindo:</p>
+              <h2>{t("termosUso2Title")}</h2>
+              <p>{t("termosUso2Body")}</p>
               <ul>
-                <li>Organização de passeios e excursões</li>
-                <li>Reservas de hospedagem</li>
-                <li>Serviços de transporte</li>
-                <li>Consultoria em turismo</li>
+                <li>{t("termosUso2Li1")}</li>
+                <li>{t("termosUso2Li2")}</li>
+                <li>{t("termosUso2Li3")}</li>
+                <li>{t("termosUso2Li4")}</li>
               </ul>
 
-              <h2>3. Reservas e Pagamentos</h2>
-              <p>
-                As reservas estão sujeitas à disponibilidade. Os preços podem variar conforme a temporada. O pagamento
-                deve ser realizado conforme as condições acordadas.
-              </p>
+              <h2>{t("termosUso3Title")}</h2>
+              <p>{t("termosUso3Body")}</p>
 
-              <h2>4. Cancelamentos</h2>
-              <p>
-                Cancelamentos devem ser comunicados com antecedência mínima de 48 horas. Consulte nossa política de
-                cancelamento para detalhes sobre reembolsos.
-              </p>
+              <h2>{t("termosUso4Title")}</h2>
+              <p>{t("termosUso4Body")}</p>
 
-              <h2>5. Responsabilidades</h2>
-              <p>
-                A BonitoON se compromete a fornecer serviços de qualidade, mas não se responsabiliza por fatores
-                externos como condições climáticas ou problemas de terceiros.
-              </p>
+              <h2>{t("termosUso5Title")}</h2>
+              <p>{t("termosUso5Body")}</p>
 
-              <h2>6. Propriedade Intelectual</h2>
-              <p>Todo o conteúdo deste site é propriedade da BonitoON e está protegido por direitos autorais.</p>
+              <h2>{t("termosUso6Title")}</h2>
+              <p>{t("termosUso6Body")}</p>
 
-              <h2>7. Modificações</h2>
-              <p>
-                Reservamo-nos o direito de modificar estes termos a qualquer momento. As alterações entrarão em vigor
-                imediatamente após a publicação.
-              </p>
+              <h2>{t("termosUso7Title")}</h2>
+              <p>{t("termosUso7Body")}</p>
 
-              <h2>8. Contato</h2>
+              <h2>{t("termosUso8Title")}</h2>
               <p>
-                Para dúvidas sobre estes termos:
+                {t("termosUso8Body")}
                 <br />
                 E-mail: contato@bonitoon.com.br
                 <br />
-                Telefone: (67) 99139-5384
+                {t("phoneLabel")}: (67) 99139-5384
               </p>
             </CardContent>
           </Card>

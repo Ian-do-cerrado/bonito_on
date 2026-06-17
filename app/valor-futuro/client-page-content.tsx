@@ -3,10 +3,12 @@
 import { useState, useEffect, useRef } from "react"
 import { TourCard } from "@/components/tour-card"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/contexts/language-context"
-import { ChevronLeft, ChevronRight, Search } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight, Search } from "lucide-react"
 import type { DatabaseTour, Tour2Data } from "@/lib/supabase/types"
 import { SiteLayout } from "@/components/site-layout"
+import { useRouter } from "next/navigation"
 
 export type Tour = Tour2Data
 
@@ -16,6 +18,7 @@ interface ClientValorFuturoPageProps {
 
 export function ClientValorFuturoPage({ initialTours }: ClientValorFuturoPageProps) {
   const { t } = useLanguage()
+  const router = useRouter()
   const [tours] = useState<Tour[]>(initialTours)
   const [activeCategory, setActiveCategory] = useState<Tour2Data["category"] | "all">("all")
   const [searchTerm, setSearchTerm] = useState("")
@@ -89,12 +92,26 @@ export function ClientValorFuturoPage({ initialTours }: ClientValorFuturoPagePro
 
   return (
     <SiteLayout>
-      <section className="bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white pt-28 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Valores dos Passeios em Bonito</h1>
-          <p className="text-base sm:text-lg text-green-100 max-w-2xl mx-auto leading-relaxed">
-            Consulte a tabela pública de valores futuros e filtre os passeios por categoria.
-          </p>
+      <section className="relative h-72 pt-16 bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          <div>
+            <div className="mb-4">
+              <Button
+                onClick={() => router.back()}
+                variant="outline"
+                size="sm"
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                {t("backBtn")}
+              </Button>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Valores dos Passeios em Bonito</h1>
+            <p className="text-base sm:text-lg text-green-100 max-w-2xl leading-relaxed">
+              Consulte a tabela pública de valores futuros e filtre os passeios por categoria.
+            </p>
+          </div>
         </div>
       </section>
 

@@ -80,7 +80,7 @@ function transformDatabasePackage(dbPackage: any): Package {
     duration: dbPackage.duration,
     price: dbPackage.price,
     originalPrice: dbPackage.original_price,
-    image: dbPackage.image || "/placeholder.svg?height=400&width=600",
+    image: dbPackage.image || "/placeholder-image.png",
     category: dbPackage.category,
     rating: dbPackage.rating,
     reviewsCount: dbPackage.reviews_count,
@@ -117,7 +117,7 @@ function getFallbackPackages(): Package[] {
       duration: "3 dias / 2 noites",
       price: 890,
       originalPrice: 1200,
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/placeholder-image.png",
       highlights: [
         "Rio da Prata - Flutuação",
         "Gruta do Lago Azul",

@@ -26,7 +26,7 @@ export function mapDatabaseTour2ToTourData(data: DatabaseTour2): Tour2Data {
     senior_price: data.senior_price,
     ms_price: data.ms_price,
     min_child_age: data.min_child_age,
-    image: data.image || "/placeholder.svg?height=400&width=600",
+    image: data.image || "/placeholder-image.png",
     gallery: data.gallery || [],
     category: data.category || "passeios",
     rating: data.rating || 5,

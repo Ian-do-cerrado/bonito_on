@@ -5,7 +5,7 @@ import { useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Clock, User, Calendar, Share2, ChevronLeft, ChevronRight } from "lucide-react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import Link from "next/link"
 import { SiteLayout } from "@/components/site-layout"
 import { useLanguage } from "@/contexts/language-context"
@@ -150,7 +150,7 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
           <header className="mb-8">
             {post.image && (
               <div className="relative w-full h-64 sm:h-80 md:h-96 mb-8 rounded-lg overflow-hidden">
-                <Image
+                <SafeImage
                   src={post.image}
                   alt={coverAlt}
                   fill
@@ -203,8 +203,8 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
               <h2 className="text-2xl font-bold text-gray-900 mb-6">{t("imageGallery")}</h2>
 
               <div className="relative h-96 mb-4 rounded-lg overflow-hidden">
-                <Image
-                  src={post.gallery[currentGalleryIndex] || "/placeholder.svg"}
+                <SafeImage
+                  src={post.gallery[currentGalleryIndex]}
                   alt={`Imagem ${currentGalleryIndex + 1} da galeria`}
                   fill
                   sizes="100vw"
@@ -248,8 +248,8 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
                       type="button"
                       aria-label={`Ir para imagem ${index + 1}`}
                     >
-                      <Image
-                        src={imageUrl || "/placeholder.svg"}
+                      <SafeImage
+                        src={imageUrl}
                         alt={`Miniatura ${index + 1}`}
                         fill
                         sizes="80px"

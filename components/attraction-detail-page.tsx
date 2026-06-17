@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -28,6 +28,7 @@ import type { Attraction } from "@/services/supabase-attractions"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { useLanguage } from "@/contexts/language-context"
 import { SiteLayout } from "@/components/site-layout"
+import { htmlToPlainText } from "@/lib/text-format"
 
 interface AttractionDetailPageProps {
   attraction: Attraction
@@ -95,8 +96,8 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative h-[50vh] sm:h-[60vh] overflow-hidden">
-        <Image
-          src={attraction.image || "/placeholder.svg"}
+        <SafeImage
+          src={attraction.image}
           alt={attraction.title}
           fill
           className="object-cover"
@@ -161,7 +162,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
             {/* Description */}
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{t("aboutSection")}</h2>
-              <p className="text-gray-600 text-base sm:text-lg leading-relaxed">{attraction.description}</p>
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed whitespace-pre-line">{htmlToPlainText(attraction.description)}</p>
             </div>
 
             {/* Highlights */}

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Edit, Trash2, Save, X, Star } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import type { DatabaseTour } from "@/lib/supabase/types" // Use DatabaseTour
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
@@ -97,7 +97,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
   return (
     <Card className="overflow-hidden">
       <div className="relative h-48">
-        <Image src={tour.image || "/placeholder.svg"} alt={tour.title} fill className="object-cover" />
+        <SafeImage src={tour.image} alt={tour.title} fill className="object-cover" />
         <div
           className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold ${getCategoryColor(
             tour.category,
@@ -418,7 +418,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                 <strong>Galeria:</strong>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {tour.gallery.map((img, idx) => (
-                    <Image
+                    <SafeImage
                       key={idx}
                       src={img}
                       alt={`Galeria ${idx + 1}`}

@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Edit, Trash2, Save, X, Plus, Minus, Clock, Users, Star } from "lucide-react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import type { Package } from "@/types/package"
+import { htmlToPlainText } from "@/lib/text-format"
 
 interface AdminPackageCardProps {
   package: Package
@@ -121,7 +122,7 @@ export function AdminPackageCard({ package: pkg, onUpdate, onDelete }: AdminPack
   return (
     <Card className="overflow-hidden">
       <div className="relative h-48">
-        <Image src={pkg.image || "/placeholder.svg"} alt={pkg.title} fill className="object-cover" />
+        <SafeImage src={pkg.image} alt={pkg.title} fill className="object-cover" />
         <div className="absolute top-2 left-2">
           <Badge className={getCategoryColor(pkg.category)}>{getCategoryLabel(pkg.category)}</Badge>
         </div>
@@ -398,7 +399,7 @@ export function AdminPackageCard({ package: pkg, onUpdate, onDelete }: AdminPack
           </>
         ) : (
           <>
-            <p className="text-gray-600 text-sm line-clamp-3">{pkg.description}</p>
+            <p className="text-gray-600 text-sm line-clamp-3">{htmlToPlainText(pkg.description)}</p>
 
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-1">

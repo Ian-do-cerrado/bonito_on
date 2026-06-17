@@ -73,27 +73,6 @@ export function Navigation() {
     return null
   }
 
-  const scrollToSection = (sectionId: string, category?: string) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
-      setIsMenuOpen(false)
-
-      if (category) {
-        setTimeout(() => {
-          const event = new CustomEvent(
-            sectionId === "attractions" ? "changeAttractionCategory" : "changeTourCategory",
-            { detail: category }
-          )
-          window.dispatchEvent(event)
-        }, 500)
-      }
-    } else {
-      setIsMenuOpen(false)
-      window.location.href = `/#${sectionId}`
-    }
-  }
-
   const handleLanguageChange = (newLanguage: "pt" | "en" | "es") => {
     setLanguage(newLanguage)
     toast({
@@ -131,7 +110,9 @@ export function Navigation() {
               <div className="ml-10 flex items-baseline space-x-6 xl:space-x-8">
                 {[
                   { href: "/pacotes", label: "pacotes" },
-                  { href: "/tarifario", label: "passeios" }
+                  { href: "/tarifario", label: "passeios" },
+                  { href: "/atracoes", label: "atracoes" },
+                  { href: "/blog", label: "blog" },
                 ].map(({ href, label }) => (
                   <Link
                     key={href}
@@ -143,30 +124,6 @@ export function Navigation() {
                     {t(label).toUpperCase()}
                   </Link>
                 ))}
-                <button
-                  onClick={() => scrollToSection("attractions", "gastronomy")}
-                  className={`px-3 py-2 text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 ${
-                    "text-white hover:text-green-400"
-                  }`}
-                >
-                  {t("gastronomy").toUpperCase()}
-                </button>
-                <button
-                  onClick={() => scrollToSection("attractions", "accommodation")}
-                  className={`px-3 py-2 text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 ${
-                    "text-white hover:text-green-400"
-                  }`}
-                >
-                  {t("accommodations").toUpperCase()}
-                </button>
-                <button
-                  onClick={() => scrollToSection("blog")}
-                  className={`px-3 py-2 text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 ${
-                    "text-white hover:text-green-400"
-                  }`}
-                >
-                  {t("blog").toUpperCase()}
-                </button>
               </div>
             </div>
 
@@ -235,7 +192,9 @@ export function Navigation() {
             <div className="space-y-1 px-4">
               {[
                 { label: "pacotes", href: "/pacotes" },
-                { label: "passeios", href: "/tarifario" }
+                { label: "passeios", href: "/tarifario" },
+                { label: "atracoes", href: "/atracoes" },
+                { label: "blog", href: "/blog" },
               ].map(({ label, href }) => (
                 <Link
                   key={href}
@@ -246,24 +205,6 @@ export function Navigation() {
                   {t(label).toUpperCase()}
                 </Link>
               ))}
-              <button
-                onClick={() => scrollToSection("attractions", "gastronomy")}
-                className="block w-full text-left px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                {t("gastronomy").toUpperCase()}
-              </button>
-              <button
-                onClick={() => scrollToSection("attractions", "accommodation")}
-                className="block w-full text-left px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                {t("accommodations").toUpperCase()}
-              </button>
-              <button
-                onClick={() => scrollToSection("blog")}
-                className="block w-full text-left px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                {t("blog").toUpperCase()}
-              </button>
             </div>
 
             <div className="px-4 mt-6">

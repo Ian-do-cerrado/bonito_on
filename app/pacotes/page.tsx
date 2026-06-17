@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Star, Clock, Users, Filter, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { SiteLayout } from "@/components/site-layout"
@@ -16,6 +16,7 @@ import type { Package } from "@/types/package"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { packageService } from "@/services/supabase-packages"
 import { useLanguage } from "@/contexts/language-context"
+import { htmlToPlainText } from "@/lib/text-format"
 
 export default function PackagesPage() {
   const { t } = useLanguage()
@@ -91,13 +92,13 @@ export default function PackagesPage() {
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case "economico":
-        return "Econômico"
+        return t("categoryEconomico")
       case "premium":
         return "Premium"
       case "luxo":
-        return "Luxo"
+        return t("categoryLuxo")
       default:
-        return "Padrão"
+        return t("categoryPadrao")
     }
   }
 
@@ -180,13 +181,13 @@ export default function PackagesPage() {
 
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Categoria" />
+                <SelectValue placeholder={t("categoryPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("allCategories")}</SelectItem>
-                <SelectItem value="economico">Econômico</SelectItem>
+                <SelectItem value="economico">{t("categoryEconomico")}</SelectItem>
                 <SelectItem value="premium">Premium</SelectItem>
-                <SelectItem value="luxo">Luxo</SelectItem>
+                <SelectItem value="luxo">{t("categoryLuxo")}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -234,10 +235,10 @@ export default function PackagesPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPackages.map((pkg) => (
-                <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <Card key={pkg.id} className="group h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col">
                   <div className="relative h-48 overflow-hidden">
-                    <Image
-                      src={pkg.image || "/placeholder.svg"}
+                    <SafeImage
+                      src={pkg.image}
                       alt={pkg.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
@@ -252,31 +253,31 @@ export default function PackagesPage() {
                     </div>
                   </div>
 
-                  <CardHeader>
-                    <CardTitle className="text-xl">{pkg.title}</CardTitle>
-                    <p className="text-gray-600">{pkg.subtitle}</p>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-xl leading-tight">{pkg.title}</CardTitle>
+                    <p className="text-sm text-gray-600 leading-relaxed">{pkg.subtitle}</p>
                   </CardHeader>
 
-                  <CardContent>
-                    <p className="text-gray-700 mb-4 line-clamp-3">{pkg.description}</p>
+                  <CardContent className="flex flex-1 flex-col">
+                    <p className="text-gray-700 mb-4 line-clamp-3 leading-relaxed">{htmlToPlainText(pkg.description)}</p>
 
-                    <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4 text-green-600" />
+                    <div className="mb-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-sm">
+                      <div className="inline-flex items-center gap-1.5">
+                        <Clock className="w-4 h-4 text-green-600 flex-shrink-0" />
                         <span>{pkg.duration}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4 text-green-600" />
-                        <span>Até {pkg.maxPeople}</span>
+                      <div className="inline-flex items-center gap-1.5">
+                        <Users className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <span>{t("upTo")} {pkg.maxPeople}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-yellow-500" />
+                      <div className="inline-flex items-center gap-1.5">
+                        <Star className="w-4 h-4 text-yellow-500 flex-shrink-0" />
                         <span>{pkg.rating}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <div>
+                    <div className="mt-auto border-t border-gray-100 pt-4">
+                      <div className="mb-4">
                         {pkg.originalPrice && (
                           <div className="text-sm text-gray-500 line-through">
                             R$ {pkg.originalPrice.toFixed(2).replace(".", ",")}
@@ -285,13 +286,13 @@ export default function PackagesPage() {
                         <div className="text-2xl font-bold text-green-600">
                           R$ {pkg.price.toFixed(2).replace(".", ",")}
                         </div>
-                        <div className="text-sm text-gray-600">por pessoa</div>
+                        <div className="text-sm text-gray-600">{t("perPerson")}</div>
                       </div>
 
-                      <div className="flex flex-col gap-2">
-                        <Link href={`/pacotes/${createSlug(pkg.title)}`}>
-                          <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                            {t("seeDetails")}
+                      <div className="space-y-2">
+                        <Link href={`/pacotes/${createSlug(pkg.title)}`} className="w-full">
+                          <Button size="sm" variant="outline" className="w-full">
+                            {t("learnMore")}
                           </Button>
                         </Link>
                         {/*
@@ -301,7 +302,7 @@ export default function PackagesPage() {
                         <WhatsAppCtaButton
                           message={`Olá! Vim do site Bonito ON e gostaria de reservar o pacote ${pkg.title}.`}
                           label={t("bookWhatsApp")}
-                          className="text-sm"
+                          className="h-9 rounded-md px-3 text-sm whitespace-nowrap"
                         />
                       </div>
                     </div>

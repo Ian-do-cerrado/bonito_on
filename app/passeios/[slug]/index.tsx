@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Star, MapPin, Clock, Users, Phone, Mail } from "lucide-react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import Link from "next/link"
 import { SiteLayout } from "@/components/site-layout"
 import { Tour2Data as TourData } from "@/lib/supabase/types"
@@ -376,7 +376,7 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
     <SiteLayout>
       {/* Hero Section */}
       <section className="relative h-96 pt-16">
-        <Image src={tour.image || "/placeholder.svg"} alt={tour.title} fill className="object-cover" />
+        <SafeImage src={tour.image} alt={tour.title} fill className="object-cover" />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute bottom-8 left-8">
           <Badge className={getCategoryColor(tour.category)}>{getCategoryLabel(tour.category)}</Badge>
@@ -409,18 +409,13 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                         {galleryImages.map((image: string, index: number) => (
                           <CarouselItem key={index} className="relative">
                             <div className="relative h-64 sm:h-80 md:h-96 w-full rounded-lg overflow-hidden bg-gray-100">
-                              <Image
-                                src={image || "/placeholder.svg"}
+                              <SafeImage
+                                src={image}
                                 alt={`${tour.title} - Imagem ${index + 1}`}
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 priority={index === 0}
                                 className="object-cover object-center transition-opacity duration-300"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement
-                                  target.src = "/placeholder.svg?height=800&width=1200"
-                                  target.onerror = null
-                                }}
                               />
                             </div>
                             <div className="absolute bottom-2 right-2 bg-black/60 text-white px-2 py-1 rounded text-xs">
@@ -463,8 +458,8 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                               activeImageIndex === index ? "border-green-500" : "border-transparent"
                             }`}
                           >
-                            <Image
-                              src={image || "/placeholder.svg"}
+                            <SafeImage
+                              src={image}
                               alt={`Miniatura ${index + 1}`}
                               fill
                               className="object-cover"
@@ -476,8 +471,8 @@ export default function TourDetailPage({ initialTour }: TourDetailPageProps) {
                   </>
                 ) : (
                   <div className="relative h-64 sm:h-80 md:h-96 w-full rounded-lg overflow-hidden bg-gray-100">
-                    <Image
-                      src={tour.image || "/placeholder.svg?height=800&width=1200"}
+                    <SafeImage
+                      src={tour.image}
                       alt={tour.title}
                       fill
                       className="object-cover object-center"

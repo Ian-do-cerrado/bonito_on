@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,6 +7,7 @@ import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import type { DatabaseTour as TourData } from "@/lib/supabase/types"
 import { PencilIcon, TrashIcon } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { htmlToPlainText } from "@/lib/text-format"
 
 interface TourCardProps {
   tour: TourData
@@ -24,21 +24,20 @@ export function TourCard({ tour, onEdit, onDelete, basePath = "/passeios" }: Tou
       : ""
 
   // --- PREVIEW SEGURO: converte HTML em texto, preserva quebras onde faz sentido
-  const preview = htmlToText(tour.description || "").trim()
+  const preview = htmlToPlainText(tour.description)
 
   return (
     <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg border border-transparent hover:border-green-500">
-      {/* Cabeçalho com imagem/overlay (fix z-index + isolate) */}
-      <div className="relative h-48 overflow-hidden isolate">
-        <div className="absolute inset-0 z-0 transition-transform duration-300 will-change-transform group-hover:scale-105">
-          <Image
-            src={tour.image || "/placeholder.svg"}
-            alt={tour.title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 25vw"
-          />
-        </div>
+      {/* Cabeçalho com imagem/overlay */}
+      <div className="relative h-48 overflow-hidden">
+        <div
+          className="absolute inset-0 z-0 bg-center bg-cover"
+          style={{
+            backgroundImage: `url("${(tour.image || "").replace(/"/g, "%22") || "/placeholder-image.png"}"), url("/placeholder-image.png")`,
+          }}
+          role="img"
+          aria-label={tour.title}
+        />
         <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         <div className="absolute top-2 left-2 z-20 flex gap-2">
           <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getCategoryColor(tour.category)}`}>
@@ -138,19 +137,6 @@ function slugify(title: string) {
     .trim()
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
-}
-
-// Converte HTML em texto, preservando quebras ao fim de <p> e </li>
-function htmlToText(html: string) {
-  return html
-    .replace(/<\s*br\s*\/?>/gi, "\n")
-    .replace(/<\/(p|li)>/gi, "\n")
-    .replace(/<[^>]*>/g, "")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
-    .replace(/\n{3,}/g, "\n\n")
 }
 
 function getCategoryLabel(category: TourData["category"]) {

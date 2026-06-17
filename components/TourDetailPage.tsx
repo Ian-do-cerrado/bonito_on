@@ -3,7 +3,7 @@
 import React from "react";
 import { Tour } from "@/types";
 import { SiteLayout } from "@/components/site-layout";
-import Image from "next/image";
+import { SafeImage } from "@/components/safe-image";
 import { Star } from "lucide-react";
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button";
 import { useLanguage } from "@/contexts/language-context";
@@ -18,8 +18,8 @@ const TourDetailPage: React.FC<TourDetailPageProps> = ({ tour }) => {
     <SiteLayout>
       {/* Hero Section */}
       <section className="relative h-[400px] w-full">
-        <Image
-          src={tour.image || "/placeholder.svg"}
+        <SafeImage
+          src={tour.image}
           alt={tour.title}
           fill
           className="object-cover"

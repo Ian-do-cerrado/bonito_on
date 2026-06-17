@@ -68,7 +68,7 @@ function transformDatabaseBlogPost(dbBlogPost: any): BlogPost {
     title: dbBlogPost.title,
     excerpt: dbBlogPost.excerpt,
     content: dbBlogPost.content,
-    image: dbBlogPost.image || "/placeholder.svg?height=400&width=600",
+    image: dbBlogPost.image || "/placeholder-image.png",
     author: dbBlogPost.author,
     publishedAt: dbBlogPost.published_at,
     tags: dbBlogPost.blog_post_tags?.map((t: any) => t.tag) || [],

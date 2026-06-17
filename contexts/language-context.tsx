@@ -19,6 +19,8 @@ const translations: Translations = {
   tours: { pt: "PASSEIOS", en: "TOURS", es: "PASEOS" },
   gastronomy: { pt: "GASTRONOMIA", en: "GASTRONOMY", es: "GASTRONOMÍA" },
   accommodations: { pt: "HOSPEDAGENS", en: "ACCOMMODATIONS", es: "ALOJAMIENTOS" },
+  atracoes: { pt: "ATRAÇÕES", en: "ATTRACTIONS", es: "ATRACCIONES" },
+  pacotes: { pt: "PACOTES", en: "PACKAGES", es: "PAQUETES" },
   blog: { pt: "BLOG", en: "BLOG", es: "BLOG" },
   contact: { pt: "CONTATO", en: "CONTACT", es: "CONTACTO" },
   admin: { pt: "Admin", en: "Admin", es: "Admin" },
@@ -102,6 +104,50 @@ const translations: Translations = {
   },
   backToHome: { pt: "Voltar ao Início", en: "Back to Home", es: "Volver al Inicio" },
 
+  // Tarifario page
+  passeiosPageTitle: { pt: "Passeios em Bonito", en: "Tours in Bonito", es: "Paseos en Bonito" },
+  passeiosPageSubtitle: {
+    pt: "Encontre experiências, filtre por categoria e consulte os passeios disponíveis em Bonito.",
+    en: "Find experiences, filter by category and browse tours available in Bonito.",
+    es: "Encuentra experiencias, filtra por categoría y consulta los paseos disponibles en Bonito.",
+  },
+  allToursHeading: { pt: "Todos os passeios", en: "All tours", es: "Todos los paseos" },
+  futurePricesBtn: { pt: "Ver preços do próximo semestre", en: "View next semester prices", es: "Ver precios del próximo semestre" },
+  filterByCategory: { pt: "Filtrar por categoria", en: "Filter by category", es: "Filtrar por categoría" },
+  dragToFilterTours: {
+    pt: "Arraste para ver mais categorias e toque para filtrar os passeios",
+    en: "Drag to see more categories and tap to filter tours",
+    es: "Desliza para ver más categorías y toca para filtrar los paseos",
+  },
+  clickToFilterTours: {
+    pt: "Clique em uma categoria para filtrar os passeios",
+    en: "Click a category to filter the tours",
+    es: "Haz clic en una categoría para filtrar los paseos",
+  },
+
+  // Atracoes page
+  atracoesPageTitle: { pt: "Atrações em Bonito", en: "Attractions in Bonito", es: "Atracciones en Bonito" },
+  atracoesPageSubtitle: {
+    pt: "Encontre gastronomia, hospedagens, transportes e eventos para completar sua experiência.",
+    en: "Find gastronomy, accommodations, transportation and events to complete your experience.",
+    es: "Encuentra gastronomía, alojamientos, transporte y eventos para completar tu experiencia.",
+  },
+  allAttractions: { pt: "Todas", en: "All", es: "Todas" },
+  atracaoHospedagem: { pt: "Hospedagem", en: "Accommodation", es: "Alojamiento" },
+  noAttractionsFound: { pt: "Nenhuma atração encontrada", en: "No attractions found", es: "No se encontraron atracciones" },
+  noAttractionsInCategory: {
+    pt: "Não há atrações cadastradas nesta categoria ainda.",
+    en: "There are no attractions registered in this category yet.",
+    es: "No hay atracciones registradas en esta categoría aún.",
+  },
+
+  // Pacotes page
+  categoryPlaceholder: { pt: "Categoria", en: "Category", es: "Categoría" },
+  categoryEconomico: { pt: "Econômico", en: "Budget", es: "Económico" },
+  categoryLuxo: { pt: "Luxo", en: "Luxury", es: "Lujo" },
+  categoryPadrao: { pt: "Padrão", en: "Standard", es: "Estándar" },
+
+  // Blog page
   blogPageTitle: { pt: "Blog", en: "Blog", es: "Blog" },
   blogPageSubtitle: {
     pt: "Descubra dicas, guias e histórias sobre Bonito e região",
@@ -113,6 +159,18 @@ const translations: Translations = {
   noPostsFound: { pt: "Nenhum post encontrado", en: "No posts found", es: "No se encontraron publicaciones" },
   tryDifferentSearch: { pt: "Tente uma busca diferente ou remova os filtros", en: "Try a different search or remove filters", es: "Intenta una búsqueda diferente o elimina los filtros" },
   viewAllPosts: { pt: "Ver Blog", en: "View Blog", es: "Ver Blog" },
+  dragToFilterPosts: {
+    pt: "Arraste para ver mais categorias e toque para filtrar os posts",
+    en: "Drag to see more categories and tap to filter posts",
+    es: "Desliza para ver más categorías y toca para filtrar las publicaciones",
+  },
+  clickToFilterPosts: {
+    pt: "Clique em uma categoria para filtrar os posts",
+    en: "Click a category to filter posts",
+    es: "Haz clic en una categoría para filtrar las publicaciones",
+  },
+  postFoundSingular: { pt: "post encontrado", en: "post found", es: "publicación encontrada" },
+  postsFoundPlural: { pt: "posts encontrados", en: "posts found", es: "publicaciones encontradas" },
 
   // Blog Section
   blogTitle: { pt: "Blog", en: "Blog", es: "Blog" },
@@ -385,6 +443,88 @@ const translations: Translations = {
   includedGuide: { pt: "Guia especializado", en: "Specialist guide", es: "Guía especializado" },
   includedEquipment: { pt: "Equipamentos necessários", en: "Necessary equipment", es: "Equipos necesarios" },
   includedInsurance: { pt: "Seguro de acidentes pessoais", en: "Personal accident insurance", es: "Seguro de accidentes personales" },
+
+  // Legal pages shared
+  phoneLabel: { pt: "Telefone", en: "Phone", es: "Teléfono" },
+
+  // Termos de Uso page
+  termosUsoTitle: { pt: "Termos de Uso", en: "Terms of Use", es: "Términos de Uso" },
+  termosUsoDate: { pt: "Última atualização: Janeiro de 2024", en: "Last updated: January 2024", es: "Última actualización: Enero de 2024" },
+  termosUso1Title: { pt: "1. Aceitação dos Termos", en: "1. Acceptance of Terms", es: "1. Aceptación de los Términos" },
+  termosUso1Body: { pt: "Ao utilizar os serviços da BonitoON, você concorda com estes termos de uso. Se não concordar, não utilize nossos serviços.", en: "By using BonitoON services, you agree to these terms of use. If you do not agree, please do not use our services.", es: "Al utilizar los servicios de BonitoON, usted acepta estos términos de uso. Si no está de acuerdo, no utilice nuestros servicios." },
+  termosUso2Title: { pt: "2. Serviços Oferecidos", en: "2. Services Offered", es: "2. Servicios Ofrecidos" },
+  termosUso2Body: { pt: "A BonitoON oferece serviços de turismo em Bonito, MS, incluindo:", en: "BonitoON offers tourism services in Bonito, MS, including:", es: "BonitoON ofrece servicios de turismo en Bonito, MS, incluyendo:" },
+  termosUso2Li1: { pt: "Organização de passeios e excursões", en: "Organization of tours and excursions", es: "Organización de paseos y excursiones" },
+  termosUso2Li2: { pt: "Reservas de hospedagem", en: "Accommodation reservations", es: "Reservas de alojamiento" },
+  termosUso2Li3: { pt: "Serviços de transporte", en: "Transportation services", es: "Servicios de transporte" },
+  termosUso2Li4: { pt: "Consultoria em turismo", en: "Tourism consulting", es: "Consultoría en turismo" },
+  termosUso3Title: { pt: "3. Reservas e Pagamentos", en: "3. Reservations and Payments", es: "3. Reservas y Pagos" },
+  termosUso3Body: { pt: "As reservas estão sujeitas à disponibilidade. Os preços podem variar conforme a temporada. O pagamento deve ser realizado conforme as condições acordadas.", en: "Reservations are subject to availability. Prices may vary depending on the season. Payment must be made according to the agreed conditions.", es: "Las reservas están sujetas a disponibilidad. Los precios pueden variar según la temporada. El pago debe realizarse conforme a las condiciones acordadas." },
+  termosUso4Title: { pt: "4. Cancelamentos", en: "4. Cancellations", es: "4. Cancelaciones" },
+  termosUso4Body: { pt: "Cancelamentos devem ser comunicados com antecedência mínima de 48 horas. Consulte nossa política de cancelamento para detalhes sobre reembolsos.", en: "Cancellations must be communicated at least 48 hours in advance. Please consult our cancellation policy for details on refunds.", es: "Los cancelamientos deben comunicarse con al menos 48 horas de anticipación. Consulte nuestra política de cancelación para obtener detalles sobre reembolsos." },
+  termosUso5Title: { pt: "5. Responsabilidades", en: "5. Responsibilities", es: "5. Responsabilidades" },
+  termosUso5Body: { pt: "A BonitoON se compromete a fornecer serviços de qualidade, mas não se responsabiliza por fatores externos como condições climáticas ou problemas de terceiros.", en: "BonitoON is committed to providing quality services but is not responsible for external factors such as weather conditions or third-party issues.", es: "BonitoON se compromete a brindar servicios de calidad, pero no se responsabiliza por factores externos como condiciones climáticas o problemas de terceros." },
+  termosUso6Title: { pt: "6. Propriedade Intelectual", en: "6. Intellectual Property", es: "6. Propiedad Intelectual" },
+  termosUso6Body: { pt: "Todo o conteúdo deste site é propriedade da BonitoON e está protegido por direitos autorais.", en: "All content on this site is the property of BonitoON and is protected by copyright.", es: "Todo el contenido de este sitio es propiedad de BonitoON y está protegido por derechos de autor." },
+  termosUso7Title: { pt: "7. Modificações", en: "7. Modifications", es: "7. Modificaciones" },
+  termosUso7Body: { pt: "Reservamo-nos o direito de modificar estes termos a qualquer momento. As alterações entrarão em vigor imediatamente após a publicação.", en: "We reserve the right to modify these terms at any time. Changes will take effect immediately upon publication.", es: "Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios entrarán en vigor inmediatamente después de su publicación." },
+  termosUso8Title: { pt: "8. Contato", en: "8. Contact", es: "8. Contacto" },
+  termosUso8Body: { pt: "Para dúvidas sobre estes termos:", en: "For questions about these terms:", es: "Para dudas sobre estos términos:" },
+
+  // Política de Privacidade page
+  politicaPrivTitle: { pt: "Política de Privacidade", en: "Privacy Policy", es: "Política de Privacidad" },
+  politicaPrivDate: { pt: "Última atualização: Janeiro de 2024", en: "Last updated: January 2024", es: "Última actualización: Enero de 2024" },
+  politicaPriv1Title: { pt: "1. Informações que Coletamos", en: "1. Information We Collect", es: "1. Información que Recopilamos" },
+  politicaPriv1Body: { pt: "A BonitoON coleta informações que você nos fornece diretamente, como nome, e-mail, telefone e preferências de viagem quando você entra em contato conosco ou faz uma reserva.", en: "BonitoON collects information you provide directly, such as name, email, phone number and travel preferences when you contact us or make a reservation.", es: "BonitoON recopila la información que nos proporciona directamente, como nombre, correo electrónico, teléfono y preferencias de viaje cuando se pone en contacto con nosotros o realiza una reserva." },
+  politicaPriv2Title: { pt: "2. Como Usamos suas Informações", en: "2. How We Use Your Information", es: "2. Cómo Usamos su Información" },
+  politicaPriv2Body: { pt: "Utilizamos suas informações para:", en: "We use your information to:", es: "Utilizamos su información para:" },
+  politicaPriv2Li1: { pt: "Processar suas reservas e fornecer nossos serviços", en: "Process your reservations and provide our services", es: "Procesar sus reservas y brindar nuestros servicios" },
+  politicaPriv2Li2: { pt: "Entrar em contato sobre sua viagem", en: "Get in touch about your trip", es: "Ponernos en contacto sobre su viaje" },
+  politicaPriv2Li3: { pt: "Enviar informações sobre ofertas e novidades (com seu consentimento)", en: "Send information about offers and news (with your consent)", es: "Enviar información sobre ofertas y novedades (con su consentimiento)" },
+  politicaPriv2Li4: { pt: "Melhorar nossos serviços", en: "Improve our services", es: "Mejorar nuestros servicios" },
+  politicaPriv3Title: { pt: "3. Compartilhamento de Informações", en: "3. Sharing of Information", es: "3. Compartición de Información" },
+  politicaPriv3Body: { pt: "Não vendemos, alugamos ou compartilhamos suas informações pessoais com terceiros, exceto quando necessário para fornecer nossos serviços ou quando exigido por lei.", en: "We do not sell, rent, or share your personal information with third parties, except when necessary to provide our services or when required by law.", es: "No vendemos, alquilamos ni compartimos su información personal con terceros, excepto cuando sea necesario para prestar nuestros servicios o cuando lo exija la ley." },
+  politicaPriv4Title: { pt: "4. Segurança", en: "4. Security", es: "4. Seguridad" },
+  politicaPriv4Body: { pt: "Implementamos medidas de segurança adequadas para proteger suas informações pessoais contra acesso não autorizado, alteração, divulgação ou destruição.", en: "We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.", es: "Implementamos medidas de seguridad adecuadas para proteger su información personal contra el acceso no autorizado, alteración, divulgación o destrucción." },
+  politicaPriv5Title: { pt: "5. Seus Direitos", en: "5. Your Rights", es: "5. Sus Derechos" },
+  politicaPriv5Body: { pt: "Você tem o direito de acessar, corrigir ou excluir suas informações pessoais. Entre em contato conosco para exercer esses direitos.", en: "You have the right to access, correct, or delete your personal information. Contact us to exercise these rights.", es: "Usted tiene el derecho de acceder, corregir o eliminar su información personal. Contáctenos para ejercer estos derechos." },
+  politicaPriv6Title: { pt: "6. Contato", en: "6. Contact", es: "6. Contacto" },
+  politicaPriv6Body: { pt: "Para questões sobre esta política, entre em contato:", en: "For questions about this policy, please contact:", es: "Para preguntas sobre esta política, contáctenos:" },
+
+  // Política de Cancelamento page
+  politicaCancelTitle: { pt: "Política de Cancelamento", en: "Cancellation Policy", es: "Política de Cancelación" },
+  politicaCancelSubtitle: { pt: "Condições para cancelamento de reservas", en: "Conditions for reservation cancellations", es: "Condiciones para la cancelación de reservas" },
+  politicaCancelSummaryTitle: { pt: "Resumo da Política", en: "Policy Summary", es: "Resumen de la Política" },
+  politicaCancelSummaryBody: { pt: "Oferecemos cancelamento gratuito até 48 horas antes do passeio. Cancelamentos com menos antecedência estão sujeitos a taxas.", en: "We offer free cancellation up to 48 hours before the tour. Cancellations with less notice are subject to fees.", es: "Ofrecemos cancelación gratuita hasta 48 horas antes del paseo. Las cancelaciones con menos anticipación están sujetas a cargos." },
+  politicaCancelDeadlinesTitle: { pt: "Prazos de Cancelamento", en: "Cancellation Deadlines", es: "Plazos de Cancelación" },
+  politicaCancelFullRefund: { pt: "Reembolso Total", en: "Full Refund", es: "Reembolso Total" },
+  politicaCancelFullRefundLabel: { pt: "Cancelamento com 48h+ de antecedência", en: "Cancellation with 48h+ in advance", es: "Cancelación con 48h+ de anticipación" },
+  politicaCancelFullRefundDesc: { pt: "100% do valor pago será reembolsado", en: "100% of the amount paid will be refunded", es: "Se reembolsará el 100% del valor pagado" },
+  politicaCancelPartialRefund: { pt: "Reembolso Parcial", en: "Partial Refund", es: "Reembolso Parcial" },
+  politicaCancelPartialRefundLabel: { pt: "Cancelamento entre 24h e 48h", en: "Cancellation between 24h and 48h", es: "Cancelación entre 24h y 48h" },
+  politicaCancelPartialRefundDesc: { pt: "50% do valor pago será reembolsado", en: "50% of the amount paid will be refunded", es: "Se reembolsará el 50% del valor pagado" },
+  politicaCancelNoRefund: { pt: "Sem Reembolso", en: "No Refund", es: "Sin Reembolso" },
+  politicaCancelNoRefundLabel: { pt: "Cancelamento com menos de 24h", en: "Cancellation with less than 24h notice", es: "Cancelación con menos de 24h de anticipación" },
+  politicaCancelNoRefundDesc: { pt: "Não há reembolso do valor pago", en: "There is no refund of the amount paid", es: "No hay reembolso del valor pagado" },
+  politicaCancelSpecialTitle: { pt: "Condições Especiais", en: "Special Conditions", es: "Condiciones Especiales" },
+  politicaCancelWeatherTitle: { pt: "Condições Climáticas", en: "Weather Conditions", es: "Condiciones Climáticas" },
+  politicaCancelWeatherBody: { pt: "Em caso de cancelamento por condições climáticas adversas, oferecemos reagendamento gratuito ou reembolso total.", en: "In case of cancellation due to adverse weather conditions, we offer free rescheduling or a full refund.", es: "En caso de cancelación por condiciones climáticas adversas, ofrecemos reprogramación gratuita o reembolso total." },
+  politicaCancelMedicalTitle: { pt: "Emergências Médicas", en: "Medical Emergencies", es: "Emergencias Médicas" },
+  politicaCancelMedicalBody: { pt: "Cancelamentos por emergências médicas (com comprovação) têm reembolso total, independente do prazo.", en: "Cancellations due to medical emergencies (with documentation) receive a full refund, regardless of the notice period.", es: "Las cancelaciones por emergencias médicas (con comprobante) tienen reembolso total, independientemente del plazo." },
+  politicaCancelPromoTitle: { pt: "Pacotes Promocionais", en: "Promotional Packages", es: "Paquetes Promocionales" },
+  politicaCancelPromoBody: { pt: "Pacotes com desconto especial podem ter condições de cancelamento diferenciadas. Consulte as condições específicas.", en: "Packages with special discounts may have different cancellation conditions. Please consult the specific conditions.", es: "Los paquetes con descuento especial pueden tener condiciones de cancelación diferenciadas. Consulte las condiciones específicas." },
+  politicaCancelHowTitle: { pt: "Como Cancelar", en: "How to Cancel", es: "Cómo Cancelar" },
+  politicaCancelStep1: { pt: "Entre em contato via WhatsApp: (67) 99139-5384", en: "Contact us via WhatsApp: (67) 99139-5384", es: "Contáctenos por WhatsApp: (67) 99139-5384" },
+  politicaCancelStep2: { pt: "Ou ligue para: (67) 99139-5384", en: "Or call us at: (67) 99139-5384", es: "O llámenos al: (67) 99139-5384" },
+  politicaCancelStep3: { pt: "Informe seu nome e número da reserva", en: "Provide your name and reservation number", es: "Informe su nombre y número de reserva" },
+  politicaCancelStep4: { pt: "Receba a confirmação do cancelamento por e-mail", en: "Receive the cancellation confirmation by email", es: "Reciba la confirmación del cancelamiento por correo electrónico" },
+  politicaCancelRefundsTitle: { pt: "Processamento de Reembolsos", en: "Refund Processing", es: "Procesamiento de Reembolsos" },
+  politicaCancelRefundCC: { pt: "Cartão de crédito: até 2 faturas", en: "Credit card: up to 2 billing cycles", es: "Tarjeta de crédito: hasta 2 facturas" },
+  politicaCancelRefundDebit: { pt: "Cartão de débito: até 5 dias úteis", en: "Debit card: up to 5 business days", es: "Tarjeta de débito: hasta 5 días hábiles" },
+  politicaCancelRefundPix: { pt: "PIX: até 1 dia útil", en: "PIX: up to 1 business day", es: "PIX: hasta 1 día hábil" },
+  politicaCancelRefundTransfer: { pt: "Transferência bancária: até 3 dias úteis", en: "Bank transfer: up to 3 business days", es: "Transferencia bancaria: hasta 3 días hábiles" },
+  politicaCancelContactTitle: { pt: "Dúvidas sobre Cancelamento?", en: "Questions about Cancellation?", es: "¿Dudas sobre Cancelación?" },
+  politicaCancelContactBody: { pt: "Nossa equipe está pronta para ajudar com seu cancelamento ou reagendamento.", en: "Our team is ready to help with your cancellation or rescheduling.", es: "Nuestro equipo está listo para ayudarle con su cancelación o reagendamiento." },
 }
 
 interface LanguageContextType {

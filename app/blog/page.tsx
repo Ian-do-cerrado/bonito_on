@@ -1,21 +1,40 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { BlogCard } from "@/components/blog-card"
 import { useLanguage } from "@/contexts/language-context"
 import type { BlogPost } from "@/types/index"
 import { getAllBlogPosts } from "@/services/supabase-blog"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Search } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight, Search } from "lucide-react"
 import { SiteLayout } from "@/components/site-layout"
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 export default function BlogPage() {
   const { t } = useLanguage()
+  const router = useRouter()
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const tagsRef = useRef<HTMLDivElement>(null)
+
+  const scrollFilter = (direction: "left" | "right") => {
+    const el = tagsRef.current
+    if (!el) return
+
+    const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 4
+    const atStart = el.scrollLeft <= 4
+
+    if (direction === "right") {
+      if (atEnd) el.scrollTo({ left: 0, behavior: "smooth" })
+      else el.scrollBy({ left: 200, behavior: "smooth" })
+    } else {
+      if (atStart) el.scrollTo({ left: el.scrollWidth, behavior: "smooth" })
+      else el.scrollBy({ left: -200, behavior: "smooth" })
+    }
+  }
 
   useEffect(() => {
     const loadBlogPosts = async () => {
@@ -47,6 +66,14 @@ export default function BlogPage() {
     setFilteredPosts(filtered)
   }, [posts, searchTerm, selectedTag])
 
+  useEffect(() => {
+    if (selectedTag !== null) return
+
+    requestAnimationFrame(() => {
+      if (tagsRef.current) tagsRef.current.scrollLeft = 0
+    })
+  }, [selectedTag])
+
   // Get all unique tags
   const allTags = Array.from(new Set(posts.flatMap((post) => post.tags)))
 
@@ -54,12 +81,26 @@ export default function BlogPage() {
     <SiteLayout>
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white pt-28 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">{t("blogPageTitle") || "Blog"}</h1>
-          <p className="text-base sm:text-lg text-green-100 max-w-2xl mx-auto leading-relaxed">
-            {t("blogPageSubtitle") || "Descubra dicas, guias e histórias sobre Bonito e região"}
-          </p>
+      <div className="relative h-72 pt-16 bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          <div>
+            <div className="mb-4">
+              <Button
+                onClick={() => router.back()}
+                variant="outline"
+                size="sm"
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                {t("backBtn")}
+              </Button>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">{t("blogPageTitle") || "Blog"}</h1>
+            <p className="text-base sm:text-lg text-green-100 max-w-2xl leading-relaxed">
+              {t("blogPageSubtitle") || "Descubra dicas, guias e histórias sobre Bonito e região"}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -78,29 +119,51 @@ export default function BlogPage() {
             />
           </div>
 
-          {/* Tags Filter */}
-          <div className="flex flex-wrap gap-2">
-            <Badge
-              variant={selectedTag === null ? "default" : "outline"}
-              className={`cursor-pointer transition-all duration-200 ${
-                selectedTag === null ? "bg-green-600 hover:bg-green-700" : "hover:bg-gray-100"
-              }`}
-              onClick={() => setSelectedTag(null)}
+          <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 block text-center sm:text-left">
+            {t("filterByCategory")}
+          </span>
+          <p className="text-xs text-gray-500 mb-3 text-center sm:text-left">
+            <span className="sm:hidden">{t("dragToFilterPosts")}</span>
+            <span className="hidden sm:inline">{t("clickToFilterPosts")}</span>
+          </p>
+
+          <div className="relative flex items-center gap-2">
+            <button
+              onClick={() => scrollFilter("left")}
+              className="flex-shrink-0 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-50 transition-colors z-10"
+              aria-label="Rolar categorias para a esquerda"
             >
-              {t("allPosts") || "Todos"}
-            </Badge>
-            {allTags.map((tag) => (
-              <Badge
-                key={tag}
-                variant={selectedTag === tag ? "default" : "outline"}
-                className={`cursor-pointer transition-all duration-200 capitalize ${
-                  selectedTag === tag ? "bg-green-600 hover:bg-green-700" : "hover:bg-gray-100"
-                }`}
-                onClick={() => setSelectedTag(tag)}
-              >
-                {tag}
-              </Badge>
-            ))}
+              <ChevronLeft className="w-4 h-4 text-gray-600" />
+            </button>
+            <div ref={tagsRef} className="flex overflow-x-auto scrollbar-hide gap-2 py-1 flex-1">
+              {[
+                { value: null, label: t("allPosts") || "Todos", count: posts.length },
+                ...allTags.map((tag) => ({
+                  value: tag,
+                  label: tag,
+                  count: posts.filter((post) => post.tags.includes(tag)).length,
+                })),
+              ].map(({ value, label, count }) => (
+                <button
+                  key={value || "all"}
+                  onClick={() => setSelectedTag(value)}
+                  className={`flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full border transition-all whitespace-nowrap shadow-sm capitalize ${
+                    selectedTag === value
+                      ? "bg-green-600 text-white border-green-600"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-green-300 hover:text-green-700"
+                  }`}
+                >
+                  {label} <span className="ml-1 opacity-70">({count})</span>
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => scrollFilter("right")}
+              className="flex-shrink-0 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-50 transition-colors z-10"
+              aria-label="Rolar categorias para a direita"
+            >
+              <ChevronRight className="w-4 h-4 text-gray-600" />
+            </button>
           </div>
         </div>
 
@@ -108,8 +171,8 @@ export default function BlogPage() {
         <div className="mb-6">
           <p className="text-gray-600">
             {filteredPosts.length === 1
-              ? `${filteredPosts.length} post encontrado`
-              : `${filteredPosts.length} posts encontrados`}
+              ? `${filteredPosts.length} ${t("postFoundSingular")}`
+              : `${filteredPosts.length} ${t("postsFoundPlural")}`}
           </p>
         </div>
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Star, Quote, ExternalLink } from "lucide-react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 // SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 // SUSPENDED: import { ContactModalContext } from "@/contexts/contact-modal-context";
 // SUSPENDED: import { useContext } from "react";
@@ -180,8 +180,8 @@ export function ReviewsSection() {
                     <CardContent className="p-6 sm:p-8 flex flex-col flex-1">
                       <div className="flex items-center mb-6">
                         <div className="relative w-16 h-16 mr-4">
-                          <Image
-                            src={review.avatar || "/placeholder.svg"}
+                          <SafeImage
+                            src={review.avatar}
                             alt={review.name}
                             fill
                             className="object-cover rounded-full border-2 border-green-200"
@@ -242,7 +242,7 @@ export function ReviewsSection() {
             <WhatsAppCtaButton
               message="Olá! Vim do site Bonito ON e gostaria de reservar uma experiência em Bonito."
               label="Reservar pelo WhatsApp"
-              className="max-w-xs mx-auto px-8 py-3 text-lg"
+              className="!w-fit max-w-none mx-auto px-8 py-3 text-lg whitespace-nowrap"
             />
           </div>
         </div>

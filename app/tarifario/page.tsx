@@ -6,15 +6,17 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight, Search } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight, Search } from "lucide-react"
 import { getAllTours, Tour as SupabaseTour } from "@/services/supabase-tours"
 import { SiteLayout } from "@/components/site-layout"
 import type { DatabaseTour } from "@/lib/supabase/types"
+import { useRouter } from "next/navigation"
 
 export type Tour = SupabaseTour
 
 export default function ToursPage() {
   const { t } = useLanguage()
+  const router = useRouter()
   const [tours, setTours] = useState<Tour[]>([])
   const [activeCategory, setActiveCategory] = useState<Tour["category"]>("all")
   const [searchTerm, setSearchTerm] = useState("")
@@ -105,12 +107,26 @@ export default function ToursPage() {
 
   return (
     <SiteLayout>
-      <section className="bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white pt-28 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Passeios em Bonito</h1>
-          <p className="text-base sm:text-lg text-green-100 max-w-2xl mx-auto leading-relaxed">
-            Encontre experiências, filtre por categoria e consulte os passeios disponíveis em Bonito.
-          </p>
+      <section className="relative h-72 pt-16 bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          <div>
+            <div className="mb-4">
+              <Button
+                onClick={() => router.back()}
+                variant="outline"
+                size="sm"
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                {t("backBtn")}
+              </Button>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">{t("passeiosPageTitle")}</h1>
+            <p className="text-base sm:text-lg text-green-100 max-w-2xl leading-relaxed">
+              {t("passeiosPageSubtitle")}
+            </p>
+          </div>
         </div>
       </section>
 
@@ -118,7 +134,7 @@ export default function ToursPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 sm:mb-12 animate-fade-in-up gap-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight animate-slide-in-left text-center sm:text-left">
-            Todos os passeios
+            {t("allToursHeading")}
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <div className="relative w-full sm:w-64">
@@ -136,18 +152,18 @@ export default function ToursPage() {
                 variant="outline"
                 className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white font-medium animate-slide-in-right hover:scale-105 transition-transform duration-200 w-full sm:w-auto"
               >
-                Ver preços do próximo semestre
+                {t("futurePricesBtn")}
               </Button>
             </Link>
           </div>
         </div>
 
         <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 block text-center sm:text-left">
-          Filtrar por categoria
+          {t("filterByCategory")}
         </span>
         <p className="text-xs text-gray-500 mb-3 text-center sm:text-left">
-          <span className="sm:hidden">Arraste para ver mais categorias e toque para filtrar os passeios</span>
-          <span className="hidden sm:inline">Clique em uma categoria para filtrar os passeios</span>
+          <span className="sm:hidden">{t("dragToFilterTours")}</span>
+          <span className="hidden sm:inline">{t("clickToFilterTours")}</span>
         </p>
 
         <div className="relative mb-6 sm:mb-8">

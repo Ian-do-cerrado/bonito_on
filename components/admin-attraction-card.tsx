@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Edit, Trash2, Save, X, Star } from "lucide-react"
-import Image from "next/image"
+import { SafeImage } from "@/components/safe-image"
 import type { Attraction } from "@/components/attractions-section"
+import { htmlToPlainText } from "@/lib/text-format"
 
 interface AdminAttractionCardProps {
   attraction: Attraction
@@ -64,7 +65,7 @@ export function AdminAttractionCard({ attraction, onUpdate, onDelete }: AdminAtt
   return (
     <Card className="overflow-hidden">
       <div className="relative h-48">
-        <Image src={attraction.image || "/placeholder.svg"} alt={attraction.title} fill className="object-cover" />
+        <SafeImage src={attraction.image} alt={attraction.title} fill className="object-cover" />
         <div
           className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold ${getCategoryColor(attraction.category)}`}
         >
@@ -224,7 +225,7 @@ export function AdminAttractionCard({ attraction, onUpdate, onDelete }: AdminAtt
           </>
         ) : (
           <>
-            <p className="text-gray-600 text-sm line-clamp-3">{attraction.description}</p>
+            <p className="text-gray-600 text-sm line-clamp-3">{htmlToPlainText(attraction.description)}</p>
 
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
               <div>
