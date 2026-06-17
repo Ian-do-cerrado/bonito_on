@@ -12,7 +12,7 @@ import { Tour2Data as TourData } from "@/lib/supabase/types"
 // SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { getTour2BySlug } from "@/lib/supabase/tours-2" // Changed to tours-2 service
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel"
 import { useLanguage } from "@/contexts/language-context"
 
 interface ValorFuturoTourDetailPageProps {
@@ -225,6 +225,7 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
   const [tour, setTour] = useState<TourData | null>(initialTour)
   const [isLoading, setIsLoading] = useState(false) // No longer loading on client if initialTour is provided
   const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const [galleryApi, setGalleryApi] = useState<CarouselApi>()
 
   // Function to create URL-friendly slug from tour title
   const createSlug = (title: string) => {
@@ -334,6 +335,25 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
     return []
   }
 
+  const galleryImages = tour ? getGalleryImages(tour) : []
+
+  useEffect(() => {
+    if (!galleryApi) return
+
+    const updateGalleryState = () => {
+      setActiveImageIndex(galleryApi.selectedScrollSnap())
+    }
+
+    updateGalleryState()
+    galleryApi.on("select", updateGalleryState)
+    galleryApi.on("reInit", updateGalleryState)
+
+    return () => {
+      galleryApi.off("select", updateGalleryState)
+      galleryApi.off("reInit", updateGalleryState)
+    }
+  }, [galleryApi])
+
   if (isLoading) {
     return (
       <SiteLayout>
@@ -364,8 +384,6 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
       </SiteLayout>
     )
   }
-
-  const galleryImages = getGalleryImages(tour)
 
   return (
     <SiteLayout>
@@ -399,7 +417,7 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
               <div className="mb-6">
                 {galleryImages.length > 0 ? (
                   <>
-                    <Carousel className="w-full">
+                    <Carousel className="w-full" setApi={setGalleryApi}>
                       <CarouselContent>
                         {galleryImages.map((image: string, index: number) => (
                           <CarouselItem key={index} className="relative">
@@ -432,13 +450,28 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                       )}
                     </Carousel>
 
+                    {galleryImages.length > 1 && (
+                      <div className="flex justify-center mt-4 gap-2">
+                        {galleryImages.map((_: string, index: number) => (
+                          <button
+                            key={index}
+                            onClick={() => galleryApi?.scrollTo(index)}
+                            className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                              index === activeImageIndex ? "bg-green-500" : "bg-gray-300"
+                            }`}
+                            aria-label={`Ir para imagem ${index + 1}`}
+                          />
+                        ))}
+                      </div>
+                    )}
+
                     {/* Miniaturas */}
                     {galleryImages.length > 1 && (
                       <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
                         {galleryImages.map((image: string, index: number) => (
                           <button
                             key={index}
-                            onClick={() => setActiveImageIndex(index)}
+                            onClick={() => galleryApi?.scrollTo(index)}
                             className={`relative h-16 w-16 rounded-md overflow-hidden flex-shrink-0 border-2 ${
                               activeImageIndex === index ? "border-green-500" : "border-transparent"
                             }`}

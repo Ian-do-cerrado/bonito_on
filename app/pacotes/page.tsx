@@ -141,7 +141,7 @@ export default function PackagesPage() {
   return (
     <SiteLayout>
       {/* Hero Section */}
-      <section className="relative h-64 pt-16 bg-gradient-to-r from-green-600 to-green-800">
+      <section className="relative h-72 pt-16 bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29]">
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div>
@@ -156,8 +156,8 @@ export default function PackagesPage() {
                 {t("backBtn")}
               </Button>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-4">{t("completePackagesTitle")}</h1>
-            <p className="text-xl text-green-100">
+            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">{t("completePackagesTitle")}</h1>
+            <p className="text-base sm:text-lg text-green-100 max-w-2xl leading-relaxed">
               {t("completePackagesSubtitle")}
             </p>
           </div>

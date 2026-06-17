@@ -23,6 +23,8 @@ export function Footer() {
           window.dispatchEvent(event)
         }, 500)
       }
+    } else {
+      window.location.href = `/#${sectionId}`
     }
   }
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle, MessageCircle, Phone, Mail, Clock, Star, ArrowRight, Gift, Sparkles, Rocket, Mountain, Package, BookOpen, Home } from "lucide-react"
 import Link from "next/link"
+import { SiteLayout } from "@/components/site-layout"
 
 export default function ThankYouPage() {
   const searchParams = useSearchParams()
@@ -27,7 +28,8 @@ export default function ThankYouPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8 px-4">
+    <SiteLayout>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 pt-24 pb-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Success Header */}
         <div className="text-center mb-8">
@@ -240,5 +242,6 @@ export default function ThankYouPage() {
         </div>
       </div>
     </div>
+    </SiteLayout>
   )
 }

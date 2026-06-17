@@ -106,11 +106,18 @@ export function AttractionsSection() {
   }, [])
 
   const filteredAttractions = attractions.filter((attraction) => attraction.category === activeTab)
+  const hasFilteredAttractions = filteredAttractions.length > 0
 
   useEffect(() => {
+    if (!hasFilteredAttractions) {
+      setCount(0)
+      setCurrentIndex(0)
+      return
+    }
+
     carouselApi?.scrollTo(0)
     setCurrentIndex(0)
-  }, [activeTab, attractions, carouselApi])
+  }, [activeTab, hasFilteredAttractions, carouselApi])
 
   useEffect(() => {
     if (!carouselApi) return
@@ -191,130 +198,123 @@ export function AttractionsSection() {
           ))}
         </div>
 
-        {/* Attractions Carousel / Grid */}
-        <div className="relative">
-          <Carousel opts={{ loop: true, align: "center" }} setApi={setCarouselApi}>
-            <CarouselContent className="-ml-6 md:-ml-8">
-              {filteredAttractions.map((attraction, index) => (
-                <CarouselItem
-                  key={attraction.id}
-                  className="pl-6 md:pl-8 basis-[82vw] md:basis-1/2 lg:basis-1/3"
-                >
-                  <Card
-                    className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up"
-                    style={{ animationDelay: `${index * 100}ms` }}
+        {hasFilteredAttractions ? (
+          <div className="relative">
+            <Carousel opts={{ loop: true, align: "center" }} setApi={setCarouselApi}>
+              <CarouselContent className="-ml-6 md:-ml-8 items-stretch">
+                {filteredAttractions.map((attraction, index) => (
+                  <CarouselItem
+                    key={attraction.id}
+                    className="pl-6 md:pl-8 basis-[82vw] md:basis-1/2 lg:basis-1/3 flex"
                   >
-                    <div className="relative h-64">
-                      <Image
-                        src={attraction.image || "/placeholder.svg"}
-                        alt={attraction.title}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/90 text-gray-800">{getCategoryLabel(attraction.category)}</Badge>
+                    <Card
+                      className="h-full w-full flex flex-col overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <div className="relative h-64">
+                        <Image
+                          src={attraction.image || "/placeholder.svg"}
+                          alt={attraction.title}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute top-4 left-4">
+                          <Badge className="bg-white/90 text-gray-800">{getCategoryLabel(attraction.category)}</Badge>
+                        </div>
+                        <div className="absolute top-4 right-4 bg-white/90 rounded-full px-2 py-1 flex items-center gap-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-sm font-semibold">{attraction.rating}</span>
+                        </div>
                       </div>
-                      <div className="absolute top-4 right-4 bg-white/90 rounded-full px-2 py-1 flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-semibold">{attraction.rating}</span>
-                      </div>
-                    </div>
 
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold mb-2">{attraction.title}</h3>
-                      <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed">{attraction.description}</p>
+                      <CardContent className="p-6 flex flex-col flex-1">
+                        <h3 className="text-lg font-semibold mb-2">{attraction.title}</h3>
+                        <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed">{attraction.description}</p>
 
-                {/* Details */}
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <MapPin className="w-4 h-4" />
-                    {attraction.location}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Clock className="w-4 h-4" />
-                    {attraction.duration}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Users className="w-4 h-4" />
-                    {attraction.capacity}
-                  </div>
-                </div>
+                        {/* Details */}
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <MapPin className="w-4 h-4 flex-shrink-0" />
+                            <span>{attraction.location}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Clock className="w-4 h-4 flex-shrink-0" />
+                            <span>{attraction.duration}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Users className="w-4 h-4 flex-shrink-0" />
+                            <span>{attraction.capacity}</span>
+                          </div>
+                        </div>
 
-                {/* Highlights */}
-                <div className="mb-4">
-                  <div className="flex flex-wrap gap-1">
-                    {attraction.highlights.slice(0, 3).map((highlight, idx) => (
-                      <Badge key={idx} variant="secondary" className="text-xs">
-                        {highlight}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+                        {/* Highlights */}
+                        <div className="mb-4">
+                          <div className="flex flex-wrap gap-1">
+                            {attraction.highlights.slice(0, 3).map((highlight, idx) => (
+                              <Badge key={idx} variant="secondary" className="text-xs">
+                                {highlight}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
 
-                {/* Price */}
-                {attraction.price && (
-                  <div className="mb-4">
-                    <div className="text-2xl font-bold text-green-600">
-                      R${" "}
-                      {attraction.price}
-                    </div>
-                    <div className="text-xs text-gray-500">{t("perPerson")}</div>
-                  </div>
-                )}
+                        {/* Price */}
+                        {attraction.price && (
+                          <div className="mb-4">
+                            <div className="text-2xl font-bold text-green-600">
+                              R${" "}
+                              {attraction.price}
+                            </div>
+                            <div className="text-xs text-gray-500">{t("perPerson")}</div>
+                          </div>
+                        )}
 
-                {/* Action Buttons */}
-                <div className="flex gap-2 mb-3">
-                  <Link href={`/atracoes/${attraction.slug}`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full">
-                      {t("learnMore")}
-                    </Button>
-                  </Link>
-                </div>
-                {/*
-                SUSPENDED:
-                <Button onClick={handleReserveClick} size="sm" className="flex-1 bg-green-600 hover:bg-green-700">
-                  Reservar
-                </Button>
-                */}
-                {/*
-                SUSPENDED:
-                <a href={`https://wa.me/...`} className="...bg-orange-500...">Fale Com um Especialista</a>
-                */}
-                <WhatsAppCtaButton
-                  message={`Olá! Vim do site Bonito ON e gostaria de reservar ${attraction.title}.`}
-                  label={t("bookWhatsApp")}
-                  className="text-sm"
-                />
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -left-4 w-10 h-10 hover:bg-white md:hidden" />
-            <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -right-4 w-10 h-10 hover:bg-white md:hidden" />
-          </Carousel>
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 mb-3 mt-auto">
+                          <Link href={`/atracoes/${attraction.slug}`} className="flex-1">
+                            <Button variant="outline" size="sm" className="w-full">
+                              {t("learnMore")}
+                            </Button>
+                          </Link>
+                        </div>
+                        <WhatsAppCtaButton
+                          message={`Olá! Vim do site Bonito ON e gostaria de reservar ${attraction.title}.`}
+                          label={t("bookWhatsApp")}
+                          className="text-sm"
+                        />
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 left-2 sm:-left-4 w-10 h-10 hover:bg-white" />
+              <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 right-2 sm:-right-4 w-10 h-10 hover:bg-white" />
+            </Carousel>
 
-          {count > 1 && (
-            <div className="flex justify-center mt-4 gap-2 md:hidden">
-              {Array.from({ length: count }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => carouselApi?.scrollTo(index)}
-                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                    index === currentIndex ? "bg-green-500" : "bg-gray-300"
-                  }`}
-                />
-              ))}
+            {count > 1 && (
+              <div className="flex justify-center mt-4 gap-2">
+                {Array.from({ length: count }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => carouselApi?.scrollTo(index)}
+                    className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                      index === currentIndex ? "bg-green-500" : "bg-gray-300"
+                    }`}
+                    aria-label={`Ir para atração ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="mx-auto max-w-md rounded-lg border border-dashed border-gray-200 bg-white px-6 py-10 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-600 [&_svg]:h-6 [&_svg]:w-6">
+              {getCategoryIcon(activeTab)}
             </div>
-          )}
-        </div>
-
-        {/* Empty State */}
-        {filteredAttractions.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">{getCategoryIcon(activeTab)}</div>
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">Nenhuma atração encontrada</h3>
-            <p className="text-gray-500">Não há atrações cadastradas nesta categoria ainda.</p>
+            <h3 className="text-lg font-semibold text-gray-700">Nenhuma atração encontrada</h3>
+            <p className="mt-2 text-sm leading-relaxed text-gray-500">
+              Não há atrações cadastradas nesta categoria ainda.
+            </p>
           </div>
         )}
       </div>

@@ -27,6 +27,7 @@ import Link from "next/link"
 import type { Attraction } from "@/services/supabase-attractions"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { useLanguage } from "@/contexts/language-context"
+import { SiteLayout } from "@/components/site-layout"
 
 interface AttractionDetailPageProps {
   attraction: Attraction
@@ -90,6 +91,7 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
   }
 
   return (
+    <SiteLayout>
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative h-[50vh] sm:h-[60vh] overflow-hidden">
@@ -296,5 +298,6 @@ export function AttractionDetailPage({ attraction }: AttractionDetailPageProps) 
         </div>
       </div>
     </div>
+    </SiteLayout>
   )
 }

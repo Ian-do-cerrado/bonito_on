@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from "react"
 import { TourCard } from "@/components/tour-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Search } from "lucide-react"
 import { getAllTours, Tour as SupabaseTour } from "@/services/supabase-tours"
+import { SiteLayout } from "@/components/site-layout"
+import type { DatabaseTour } from "@/lib/supabase/types"
 
 export type Tour = SupabaseTour
 
@@ -18,8 +19,6 @@ export default function ToursPage() {
   const [activeCategory, setActiveCategory] = useState<Tour["category"]>("all")
   const [searchTerm, setSearchTerm] = useState("")
   const tabsRef = useRef<HTMLDivElement>(null)
-  const [showLeftArrow, setShowLeftArrow] = useState(false)
-  const [showRightArrow, setShowRightArrow] = useState(true)
 
   useEffect(() => {
     const loadTours = async () => {
@@ -49,38 +48,38 @@ export default function ToursPage() {
     }
   }, [])
 
-  const checkScrollPosition = () => {
-    if (tabsRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current
-      setShowLeftArrow(scrollLeft > 0)
-      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10)
-    }
-  }
+  const scrollFilter = (direction: "left" | "right") => {
+    const el = tabsRef.current
+    if (!el) return
 
-  const scrollLeft = () => {
-    if (tabsRef.current) {
-      tabsRef.current.scrollBy({ left: -200, behavior: "smooth" })
-    }
-  }
+    const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 4
+    const atStart = el.scrollLeft <= 4
 
-  const scrollRight = () => {
-    if (tabsRef.current) {
-      tabsRef.current.scrollBy({ left: 200, behavior: "smooth" })
+    if (direction === "right") {
+      if (atEnd) el.scrollTo({ left: 0, behavior: "smooth" })
+      else el.scrollBy({ left: 200, behavior: "smooth" })
+    } else {
+      if (atStart) el.scrollTo({ left: el.scrollWidth, behavior: "smooth" })
+      else el.scrollBy({ left: -200, behavior: "smooth" })
     }
   }
 
   useEffect(() => {
     const tabsElement = tabsRef.current
     if (tabsElement) {
-      tabsElement.addEventListener("scroll", checkScrollPosition)
-      checkScrollPosition()
-    }
-    return () => {
-      if (tabsElement) {
-        tabsElement.removeEventListener("scroll", checkScrollPosition)
-      }
+      requestAnimationFrame(() => {
+        tabsElement.scrollTo({ left: 0 })
+      })
     }
   }, [])
+
+  useEffect(() => {
+    if (activeCategory !== "all") return
+
+    requestAnimationFrame(() => {
+      if (tabsRef.current) tabsRef.current.scrollLeft = 0
+    })
+  }, [activeCategory])
 
   const filteredTours = tours
     .filter((tour) => {
@@ -89,89 +88,100 @@ export default function ToursPage() {
       return matchesCategory && matchesSearch
     })
 
-  const getCategoryTitle = (category: Tour["category"]) => {
-    switch (category) {
-      case "all": return t("all")
-      case "resort": return t("resort")
-      case "floating": return t("floating")
-      case "adventure": return t("adventure")
-      case "waterfall": return t("waterfall")
-      case "contemplation": return t("contemplation")
-      case "biking": return t("biking")
-      case "pantanal": return t("pantanal")
-      case "scubaDiving": return t("scubaDiving")
-      case "rappelling": return t("rappelling")
-      case "cave": return t("cave")
-      default: return t("all")
-    }
-  }
+  const categoryOptions: [Tour["category"], string, number][] = [
+    ["all", t("all"), tours.length],
+    ["adventure", t("adventure"), tours.filter((tour) => tour.category === "adventure").length],
+    ["contemplation", t("contemplation"), tours.filter((tour) => tour.category === "contemplation").length],
+    ["cave", t("cave"), tours.filter((tour) => tour.category === "cave").length],
+    ["waterfall", t("waterfall"), tours.filter((tour) => tour.category === "waterfall").length],
+    ["rappelling", t("rappelling"), tours.filter((tour) => tour.category === "rappelling").length],
+    ["horseback", t("horseback"), tours.filter((tour) => tour.category === "horseback").length],
+    ["biking", t("biking"), tours.filter((tour) => tour.category === "biking").length],
+    ["scubaDiving", t("scubaDiving"), tours.filter((tour) => tour.category === "scubaDiving").length],
+    ["resort", t("resort"), tours.filter((tour) => tour.category === "resort").length],
+    ["floating", t("floating"), tours.filter((tour) => tour.category === "floating").length],
+    ["pantanal", t("pantanal"), tours.filter((tour) => tour.category === "pantanal").length],
+  ]
 
   return (
-    <section id="tours" className="py-12 sm:py-16 bg-green-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <SiteLayout>
+      <section className="bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white pt-28 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">Passeios em Bonito</h1>
+          <p className="text-base sm:text-lg text-green-100 max-w-2xl mx-auto leading-relaxed">
+            Encontre experiências, filtre por categoria e consulte os passeios disponíveis em Bonito.
+          </p>
+        </div>
+      </section>
+
+      <section id="tours" className="py-12 sm:py-16 bg-green-50 min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 sm:mb-12 animate-fade-in-up gap-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight animate-slide-in-left text-center sm:text-left">
-            Passeios em Bonito
+            Todos os passeios
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Input
-              type="text"
-              placeholder={t("searchTours")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-64"
-            />
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              <Input
+                type="text"
+                placeholder={t("searchTours")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
             <Link href="/valor-futuro" className="self-center sm:self-auto">
               <Button
                 variant="outline"
                 className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white font-medium animate-slide-in-right hover:scale-105 transition-transform duration-200 w-full sm:w-auto"
               >
-                {t("Ver Preços do Proximo Semestre")}
+                Ver preços do próximo semestre
               </Button>
             </Link>
           </div>
         </div>
 
+        <span className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 block text-center sm:text-left">
+          Filtrar por categoria
+        </span>
+        <p className="text-xs text-gray-500 mb-3 text-center sm:text-left">
+          <span className="sm:hidden">Arraste para ver mais categorias e toque para filtrar os passeios</span>
+          <span className="hidden sm:inline">Clique em uma categoria para filtrar os passeios</span>
+        </p>
+
         <div className="relative mb-6 sm:mb-8">
-          {showLeftArrow && (
+          <div className="relative flex items-center gap-2">
             <button
-              onClick={scrollLeft}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 bg-white rounded-full p-1 sm:p-1 shadow-md z-10 hover:bg-gray-100 hidden sm:block"
-              aria-label="Scroll left"
+              onClick={() => scrollFilter("left")}
+              className="flex-shrink-0 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-50 transition-colors z-10"
+              aria-label="Rolar categorias para a esquerda"
             >
-              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+              <ChevronLeft className="w-4 h-4 text-gray-600" />
             </button>
-          )}
-
-          <Tabs
-            value={activeCategory}
-            onValueChange={(value) => setActiveCategory(value as Tour["category"])}
-            className="animate-fade-in-up animation-delay-200"
-          >
-            <div className="relative overflow-hidden">
-              <TabsList ref={tabsRef} className="flex overflow-x-auto scrollbar-hide p-1 bg-gray-100 rounded-md w-full">
-                {["all", "resort", "floating", "adventure", "waterfall", "contemplation", "biking", "pantanal", "scubaDiving", "rappelling", "cave"].map((cat) => (
-                  <TabsTrigger
-                    key={cat}
-                    value={cat}
-                    className="flex-shrink-0 font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white hover:scale-105 transition-all duration-200 whitespace-nowrap px-3 sm:px-4 text-sm"
-                  >
-                    {getCategoryTitle(cat as Tour["category"])}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+            <div ref={tabsRef} className="flex overflow-x-auto scrollbar-hide gap-2 py-1 flex-1">
+              {categoryOptions.map(([value, label, count]) => (
+                <button
+                  key={value}
+                  onClick={() => setActiveCategory(value)}
+                  className={`flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full border transition-all whitespace-nowrap shadow-sm ${
+                    activeCategory === value
+                      ? "bg-green-600 text-white border-green-600"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-green-300 hover:text-green-700"
+                  }`}
+                >
+                  {label} <span className="ml-1 opacity-70">({count})</span>
+                </button>
+              ))}
             </div>
-          </Tabs>
-
-          {showRightArrow && (
             <button
-              onClick={scrollRight}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 bg-white rounded-full p-1 sm:p-1 shadow-md z-10 hover:bg-gray-100 hidden sm:block"
-              aria-label="Scroll right"
+              onClick={() => scrollFilter("right")}
+              className="flex-shrink-0 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-50 transition-colors z-10"
+              aria-label="Rolar categorias para a direita"
             >
-              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
+              <ChevronRight className="w-4 h-4 text-gray-600" />
             </button>
-          )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -181,22 +191,13 @@ export default function ToursPage() {
               className="animate-fade-in-up hover:animate-bounce-subtle"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <TourCard tour={tour} />
+              <TourCard tour={tour as unknown as DatabaseTour} />
             </div>
           ))}
         </div>
 
-        <div className="flex justify-center mt-6 sm:mt-8">
-          <Link href="/tarifario">
-            <Button
-              size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full sm:w-auto max-w-xs"
-            >
-              {t("seeAllAttractions")}
-            </Button>
-          </Link>
         </div>
-      </div>
-    </section>
+      </section>
+    </SiteLayout>
   )
 }

@@ -173,11 +173,11 @@ export function ReviewsSection() {
         {/* Reviews Carousel */}
         <div className="relative">
           <Carousel opts={{ loop: true, align: "center" }} setApi={setCarouselApi}>
-            <CarouselContent className="-ml-4">
+            <CarouselContent className="-ml-4 items-stretch">
               {reviews.map((review) => (
-                <CarouselItem key={review.id} className="pl-4 basis-[82vw] sm:basis-1/3">
-                  <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-0 h-full">
-                    <CardContent className="p-6 sm:p-8">
+                <CarouselItem key={review.id} className="pl-4 basis-[82vw] sm:basis-1/3 flex">
+                  <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-0 h-full flex flex-col">
+                    <CardContent className="p-6 sm:p-8 flex flex-col flex-1">
                       <div className="flex items-center mb-6">
                         <div className="relative w-16 h-16 mr-4">
                           <Image
@@ -212,8 +212,8 @@ export function ReviewsSection() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -left-4 w-10 h-10 hover:bg-white" />
-            <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -right-4 w-10 h-10 hover:bg-white" />
+            <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 left-2 sm:-left-4 w-10 h-10 hover:bg-white" />
+            <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 right-2 sm:-right-4 w-10 h-10 hover:bg-white" />
           </Carousel>
           {count > 1 && (
             <div className="flex justify-center mt-4 gap-2">

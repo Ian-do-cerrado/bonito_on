@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation"
 
 export function Navigation() {
   const pathname = usePathname()
+  const isHome = pathname === "/"
   const { language, setLanguage, t } = useLanguage()
   const { toast } = useToast()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -68,7 +69,7 @@ export function Navigation() {
     }
   }, [isMenuOpen])
 
-  if (pathname === "/test-integrations" || pathname !== "/") {
+  if (pathname === "/test-integrations" || pathname?.startsWith("/admin")) {
     return null
   }
 
@@ -87,6 +88,9 @@ export function Navigation() {
           window.dispatchEvent(event)
         }, 500)
       }
+    } else {
+      setIsMenuOpen(false)
+      window.location.href = `/#${sectionId}`
     }
   }
 
@@ -102,8 +106,8 @@ export function Navigation() {
     <>
       <nav
         className={`fixed top-0 w-full z-[100] transition-all duration-300 transform ${
-          showNav ? "translate-y-0" : "-translate-y-full"
-        } ${isSolid ? "bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] shadow-lg" : "bg-black/20 backdrop-blur-sm"}`}
+          showNav || !isHome ? "translate-y-0" : "-translate-y-full"
+        } ${isSolid || !isHome ? "bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] shadow-lg" : "bg-black/20 backdrop-blur-sm"}`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">

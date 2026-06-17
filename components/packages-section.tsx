@@ -121,9 +121,9 @@ export function PackagesSection() {
           {!isLoading && packages.length > 0 && (
             <div className="relative">
               <Carousel opts={{ loop: true, align: "center" }} setApi={setCarouselApi}>
-                <CarouselContent className="-ml-4">
+                <CarouselContent className="-ml-4 items-stretch">
                   {packages.map((pkg) => (
-                    <CarouselItem key={pkg.id} className="pl-4 basis-[82vw] lg:basis-1/4">
+                    <CarouselItem key={pkg.id} className="pl-4 basis-[82vw] lg:basis-1/4 flex">
                       <Card className="flex flex-col overflow-hidden hover:shadow-xl transition-all duration-300 group border border-transparent group-hover:border-green-500 h-full">
                         {/* ======= BLOCO DA IMAGEM/OVERLAY CORRIGIDO ======= */}
                         <div className="relative h-48 overflow-hidden isolate">
@@ -240,8 +240,8 @@ export function PackagesSection() {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -left-4 w-10 h-10 hover:bg-white" />
-                <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -right-4 w-10 h-10 hover:bg-white" />
+                <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 left-2 sm:-left-4 w-10 h-10 hover:bg-white" />
+                <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 right-2 sm:-right-4 w-10 h-10 hover:bg-white" />
               </Carousel>
               {count > 1 && (
                 <div className="flex justify-center mt-4 gap-2">

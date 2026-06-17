@@ -60,19 +60,19 @@ export function BlogSection() {
 
         <div className="relative">
           <Carousel opts={{ loop: true, align: "center" }} setApi={setCarouselApi}>
-            <CarouselContent className="-ml-6 md:-ml-8">
+            <CarouselContent className="-ml-6 md:-ml-8 items-stretch">
               {posts.slice(0, 8).map((post) => (
-                <CarouselItem key={post.id} className="pl-6 md:pl-8 basis-[82vw] md:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={post.id} className="pl-6 md:pl-8 basis-[82vw] md:basis-1/2 lg:basis-1/3 flex">
                   <BlogCard post={post} />
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -left-4 w-10 h-10 hover:bg-white md:hidden" />
-            <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 -right-4 w-10 h-10 hover:bg-white md:hidden" />
+            <CarouselPrevious className="bg-white/90 backdrop-blur-sm shadow-lg border-0 left-2 sm:-left-4 w-10 h-10 hover:bg-white" />
+            <CarouselNext className="bg-white/90 backdrop-blur-sm shadow-lg border-0 right-2 sm:-right-4 w-10 h-10 hover:bg-white" />
           </Carousel>
 
           {count > 1 && (
-            <div className="flex justify-center mt-4 gap-2 md:hidden">
+            <div className="flex justify-center mt-4 gap-2">
               {Array.from({ length: count }).map((_, index) => (
                 <button
                   key={index}

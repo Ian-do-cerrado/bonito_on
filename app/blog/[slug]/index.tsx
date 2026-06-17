@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Clock, User, Calendar, Share2, ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { Navigation } from "@/components/navigation"
+import { SiteLayout } from "@/components/site-layout"
 import { useLanguage } from "@/contexts/language-context"
 import type { BlogPost } from "@/types/index"
 import { getBlogPostBySlug } from "@/services/supabase-blog"
@@ -95,8 +95,8 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
 
   if (isLoading) {
     return (
+      <SiteLayout>
       <div className="min-h-screen bg-gray-50">
-        <Navigation />
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4" />
@@ -104,13 +104,14 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
           </div>
         </div>
       </div>
+      </SiteLayout>
     )
   }
 
   if (!post) {
     return (
+      <SiteLayout>
       <div className="min-h-screen bg-gray-50">
-        <Navigation />
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">{t("postNotFound")}</h1>
@@ -123,6 +124,7 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
           </div>
         </div>
       </div>
+      </SiteLayout>
     )
   }
 
@@ -130,8 +132,8 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
   const mainTag = post.tags?.[0]
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation />
+    <SiteLayout>
+    <div className="min-h-screen bg-gray-50 pt-20">
 
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -144,7 +146,7 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
           </Button>
         </div>
 
-        <article className="bg-white rounded-lg shadow-sm p-8">
+        <article className="bg-white rounded-lg shadow-sm p-5 sm:p-8">
           <header className="mb-8">
             {post.image && (
               <div className="relative w-full h-64 sm:h-80 md:h-96 mb-8 rounded-lg overflow-hidden">
@@ -157,7 +159,7 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
                 />
               </div>
             )}
-            <h1 className="text-4xl font-bold text-gray-900 mb-6">{post.title}</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-6">{post.title}</h1>
 
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-6">
               {post.author && (
@@ -277,5 +279,6 @@ export default function BlogPostPage({ initialPost }: BlogPostPageProps) {
         </article>
       </div>
     </div>
+    </SiteLayout>
   )
 }

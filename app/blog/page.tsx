@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react"
 import { BlogCard } from "@/components/blog-card"
 import { useLanguage } from "@/contexts/language-context"
-import type { BlogPost } from "@/components/blog-section"
+import type { BlogPost } from "@/types/index"
+import { getAllBlogPosts } from "@/services/supabase-blog"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Search } from "lucide-react"
+import { SiteLayout } from "@/components/site-layout"
 
 export default function BlogPage() {
   const { t } = useLanguage()
@@ -16,13 +18,12 @@ export default function BlogPage() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
 
   useEffect(() => {
-    // Load blog posts from localStorage
-    const savedPosts = localStorage.getItem("blogPosts")
-    if (savedPosts) {
-      const loadedPosts = JSON.parse(savedPosts)
-      setPosts(loadedPosts)
-      setFilteredPosts(loadedPosts)
+    const loadBlogPosts = async () => {
+      const data = await getAllBlogPosts()
+      setPosts(data)
+      setFilteredPosts(data)
     }
+    loadBlogPosts()
   }, [])
 
   useEffect(() => {
@@ -50,12 +51,13 @@ export default function BlogPage() {
   const allTags = Array.from(new Set(posts.flatMap((post) => post.tags)))
 
   return (
+    <SiteLayout>
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-16">
+      <div className="bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white pt-28 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t("blogPageTitle") || "Blog"}</h1>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">{t("blogPageTitle") || "Blog"}</h1>
+          <p className="text-base sm:text-lg text-green-100 max-w-2xl mx-auto leading-relaxed">
             {t("blogPageSubtitle") || "Descubra dicas, guias e histórias sobre Bonito e região"}
           </p>
         </div>
@@ -139,5 +141,6 @@ export default function BlogPage() {
         )}
       </div>
     </div>
+    </SiteLayout>
   )
 }

@@ -43,7 +43,7 @@ export function BlogCard({ post }: BlogCardProps) {
   }
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="h-full w-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative h-48">
         <Image
           src={getSafeImageSrc(post.image)}
@@ -56,7 +56,7 @@ export function BlogCard({ post }: BlogCardProps) {
         </div>
       </div>
 
-      <CardContent className="p-6">
+      <CardContent className="p-6 flex-1">
         <h3 className="font-bold text-xl mb-3 line-clamp-2">{post.title}</h3>
         <p className="text-gray-600 text-sm mb-4 line-clamp-3">{post.excerpt}</p>
 
