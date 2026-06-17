@@ -13,6 +13,7 @@ import { Tour2Data as TourData } from "@/lib/supabase/types"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 import { getTour2BySlug } from "@/lib/supabase/tours-2" // Changed to tours-2 service
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { useLanguage } from "@/contexts/language-context"
 
 interface ValorFuturoTourDetailPageProps {
   initialTour: TourData | null;
@@ -220,6 +221,7 @@ function formatInlineText(text: string) {
 
 export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFuturoTourDetailPageProps) {
   // SUSPENDED: const { openModal } = useContactModal()
+  const { t } = useLanguage()
   const [tour, setTour] = useState<TourData | null>(initialTour)
   const [isLoading, setIsLoading] = useState(false) // No longer loading on client if initialTour is provided
   const [activeImageIndex, setActiveImageIndex] = useState(0)
@@ -338,7 +340,7 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Carregando...</p>
+            <p className="text-gray-600">{t("loadingLabel")}</p>
           </div>
         </div>
       </SiteLayout>
@@ -350,11 +352,11 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
       <SiteLayout>
         <div className="pt-16 flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Item não encontrado</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">{t("itemNotFound")}</h1>
             <Link href="/valor-futuro"> {/* Changed back to /valor-futuro */}
               <Button className="bg-green-600 hover:bg-green-700">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar aos Passeios
+                {t("backToTours")}
               </Button>
             </Link>
           </div>
@@ -382,7 +384,7 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
           <Link href="/valor-futuro"> {/* Changed back to /valor-futuro */}
             <Button variant="outline" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
+              {t("backBtn")}
             </Button>
           </Link>
         </div>
@@ -479,14 +481,14 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
 
             <Card className="mb-8">
               <CardContent className="p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-200 pb-3">Descrição</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-200 pb-3">{t("descriptionSection")}</h2>
                 <div className="prose-custom max-w-none">{formatDescription(tour.description)}</div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pt-6 border-t border-gray-100">
                   <div className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-green-600" />
                     <div>
-                      <p className="font-semibold">Localização</p>
+                      <p className="font-semibold">{t("locationLabel")}</p>
                       <p className="text-gray-600">Bonito, MS</p>
                     </div>
                   </div>
@@ -494,8 +496,8 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                   <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-green-600" />
                     <div>
-                      <p className="font-semibold">Duração</p>
-                      <p className="text-gray-600">{tour.duration || "Não informado"}</p>
+                      <p className="font-semibold">{t("durationLabel")}</p>
+                      <p className="text-gray-600">{tour.duration || t("difficultyUnknown")}</p>
                     </div>
                   </div>
 
@@ -507,24 +509,24 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
             <Card>
               <CardContent className="p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-3">
-                  O que está incluído
+                  {t("whatsIncluded")}
                 </h2>
                 <ul className="space-y-4 text-gray-700">
                   <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                    Disponível a contratação de transfer
+                    {t("includedTransfer")}
                   </li>
                   <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                    Guia especializado
+                    {t("includedGuide")}
                   </li>
                   <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                    Equipamentos necessários
+                    {t("includedEquipment")}
                   </li>
                   <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                    Seguro de acidentes pessoais
+                    {t("includedInsurance")}
                   </li>
                 </ul>
               </CardContent>
@@ -535,9 +537,9 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
           <div className="lg:col-span-1">
             <Card className="sticky top-24">
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-6">Valores</h3>
+                <h3 className="text-xl font-semibold mb-6">{t("valoresTitle")}</h3>
                 <p className="text-sm text-gray-500 mb-4">
-                  Os preços podem sofrer alterações, fale com o agente.
+                  {t("pricesMayChange")}
                 </p>
 
                 <div className="space-y-4 mb-6">
@@ -545,8 +547,8 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="text-sm font-medium text-green-800">Valor</p>
-                        <p className="text-xs text-green-600">Adulto</p>
+                        <p className="text-sm font-medium text-green-800">{t("lowSeason")}</p>
+                        <p className="text-xs text-green-600">{t("adultLabel")}</p>
                       </div>
                       <div className="text-right">
                         <div className="text-2xl font-bold text-green-700">
@@ -556,7 +558,7 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                     </div>
                     {tour.min_child_age && tour.min_child_age > 0 && (
                        <div className="text-xs text-gray-500 mt-1 text-right">
-                         Grátis até: {tour.min_child_age} anos
+                         {t("freeUpToYear")} {tour.min_child_age} ano(s)
                        </div>
                      )}
                   </div>
@@ -566,8 +568,8 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">Alta Temporada</p>
-                          <p className="text-xs text-gray-500">Adulto</p>
+                          <p className="text-sm font-medium text-gray-900">{t("highSeason")}</p>
+                          <p className="text-xs text-gray-500">{t("adultLabel")}</p>
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-gray-900">
@@ -583,9 +585,9 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                     <div className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">Criança</p>
+                          <p className="text-sm font-medium text-gray-900">{t("childLowSeason")}</p>
                           {tour.min_child_age !== undefined && tour.min_child_age !== null && (
-                            <p className="text-xs text-gray-500">Grátis até: {tour.min_child_age} anos</p>
+                            <p className="text-xs text-gray-500">{t("freeUpToYear")} {tour.min_child_age} ano(s)</p>
                           )}
                         </div>
                         <div className="text-right">
@@ -690,13 +692,13 @@ export default function ValorFuturoTourDetailPageClient({ initialTour }: ValorFu
                   */}
                   <WhatsAppCtaButton
                     message={`Olá! Vim do site Bonito ON e gostaria de reservar o passeio ${tour.title}.`}
-                    label="Reservar pelo WhatsApp"
+                    label={t("bookWhatsApp")}
                     className="text-lg py-3"
                   />
                 </div>
 
                 <div className="border-t pt-6">
-                  <h4 className="font-semibold mb-3">Precisa de ajuda?</h4>
+                  <h4 className="font-semibold mb-3">{t("needHelp")}</h4>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <Phone className="w-4 h-4 text-green-600" />
