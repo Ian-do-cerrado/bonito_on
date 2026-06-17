@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Edit, Trash2, Save, X } from "lucide-react"
+import { Edit, Trash2, Save, X, Star } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import Image from "next/image"
 import { Tour2Data } from "@/lib/supabase/types"
@@ -366,7 +366,10 @@ export function AdminTour2Card({ tour, onUpdate, onDelete }: AdminTour2CardProps
               <div className="text-2xl font-bold text-green-600">
                 R$ {tour.price !== null ? tour.price.toFixed(2).replace(".", ",") : "N/A"}
               </div>
-              <div className="text-sm text-gray-500">{tour.rating} ⭐</div>
+              <div className="flex items-center gap-1 text-sm text-gray-500">
+                {tour.rating}
+                <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm mt-2">
               {tour.ms_price_ls !== null && tour.ms_price_ls !== undefined && (

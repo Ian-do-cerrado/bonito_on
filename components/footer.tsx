@@ -1,7 +1,8 @@
 "use client"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube, Star, Award } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Youtube, Star, AlertTriangle } from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa"
 // SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 import { useLanguage } from "@/contexts/language-context"
@@ -29,13 +30,21 @@ export function Footer() {
     <footer className="bg-gradient-to-br from-[#1e2c1e] via-[#264c33] to-[#1a3b29] text-white">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
           {/* Company Info */}
-          <div className="space-y-6">
+          <div className="space-y-6 text-center">
             <div>
-              <Link href="/" className="text-2xl font-bold tracking-tight">
-                Bonito<span className="text-green-400 font-extrabold">ON</span>
-              </Link>
+              <div className="flex justify-center">
+                <Link href="/">
+                  <Image
+                    src="/images/logo-bonitoon.svg"
+                    alt="BonitoON"
+                    width={160}
+                    height={40}
+                    className="brightness-0 invert"
+                  />
+                </Link>
+              </div>
               <p className="text-green-100 mt-2 text-sm">Sua aventura em Bonito começa aqui</p>
             </div>
 
@@ -52,18 +61,11 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Certifications */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-xs text-gray-300">
-                <Award className="w-4 h-4 text-green-400" />
-                <span>Cadastur</span>
-              </div>
-            </div>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">{t("quickLinks")}</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400">{t("quickLinks")}</h3>
 
             <div className="space-y-3">
               <Link href="/pacotes" className="block text-gray-300 hover:text-green-400 transition-colors text-sm">
@@ -73,7 +75,7 @@ export function Footer() {
                 onClick={() => scrollToSection("tours", "passeios")}
                 className="block text-gray-300 hover:text-green-400 transition-colors text-sm text-left"
               >
-                {t("toursInBonito")}
+                {t("passeios")} {t("toursInBonito")}
               </button>
               <button
                 onClick={() => scrollToSection("tours", "food")}
@@ -85,7 +87,7 @@ export function Footer() {
                 onClick={() => scrollToSection("tours", "locations")}
                 className="block text-gray-300 hover:text-green-400 transition-colors text-sm text-left"
               >
-                {t("accommodations")}
+                {t("locations")}
               </button>
               <button
                 onClick={() => scrollToSection("blog")}
@@ -95,26 +97,17 @@ export function Footer() {
               </button>
             </div>
 
-            <div className="pt-4 border-t border-white/20">
-              <h4 className="text-sm font-semibold text-white mb-3">{t("popularTours")}</h4>
-              <div className="space-y-2">
-                <div className="text-xs text-gray-300">• Rio da Prata - Flutuação</div>
-                <div className="text-xs text-gray-300">• Gruta do Lago Azul</div>
-                <div className="text-xs text-gray-300">• Aquário Natural</div>
-                <div className="text-xs text-gray-300">• Balneário Municipal</div>
-              </div>
-            </div>
           </div>
 
           {/* Contact Info */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">{t("contact")}</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400">{t("contact")}</h3>
 
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-white font-medium">{t("address")}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-0.5">{t("address")}</p>
                   <p className="text-xs text-gray-300">
                     Rua Coronel Pilad Rebuá, 1997
                     <br />
@@ -128,7 +121,7 @@ export function Footer() {
               <div className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-white font-medium">{t("phones")}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-0.5">{t("phones")}</p>
                   <p className="text-xs text-gray-300">
                     (67) 99139-5384
                     <br />
@@ -140,7 +133,7 @@ export function Footer() {
               <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-white font-medium">{t("email")}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-0.5">{t("email")}</p>
                   <p className="text-xs text-gray-300">contato@bonitoon.com.br</p>
                 </div>
               </div>
@@ -148,7 +141,7 @@ export function Footer() {
               <div className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-white font-medium">{t("schedule")}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-0.5">{t("schedule")}</p>
                   <p className="text-xs text-gray-300">
                     Segunda a Sexta: 8h às 18h
                     <br />
@@ -162,7 +155,7 @@ export function Footer() {
 
             {/* Emergency Contact */}
             <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-              <p className="text-xs text-red-200 font-medium mb-1">🚨 {t("emergency24h")}</p>
+              <p className="text-xs text-red-200 font-medium mb-1 flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5" /> {t("emergency24h")}</p>
               <p className="text-xs text-red-100">(67) 99139-5384</p>
             </div>
           </div>
@@ -171,7 +164,7 @@ export function Footer() {
           <div className="space-y-6">
             {/* Social Media */}
             <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-white">{t("socialMedia")}</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-gray-400">{t("socialMedia")}</h4>
 
               <div className="flex gap-3">
                 <Button
@@ -237,7 +230,6 @@ export function Footer() {
             <div className="text-center md:text-left">
               <p className="text-sm text-gray-300">{t("copyright").replace("{year}", new Date().getFullYear().toString())}</p>
               <p className="text-xs text-gray-400 mt-1">CNPJ: 47.950.064/0001-17 | Cadastur: 47.950.064/0001-17</p>
-              <p className="text-xs text-gray-500 mt-1">Site feito por Ian Yamaguchi</p>
             </div>
 
             {/* Legal Links */}
@@ -253,21 +245,6 @@ export function Footer() {
               </Link>
             </div>
 
-            {/* Payment Methods */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">{t("weAccept")}</span>
-              <div className="flex gap-1">
-                <div className="w-8 h-5 bg-white/20 rounded text-xs flex items-center justify-center text-white font-bold">
-                  💳
-                </div>
-                <div className="w-8 h-5 bg-white/20 rounded text-xs flex items-center justify-center text-white font-bold">
-                  💳
-                </div>
-                <div className="w-8 h-5 bg-white/20 rounded text-xs flex items-center justify-center text-white font-bold">
-                  🏦
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

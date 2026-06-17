@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Search } from "lucide-react"
 import { getAllTours, Tour as SupabaseTour } from "@/services/supabase-tours"
 export type Tour = SupabaseTour
 
@@ -38,6 +38,10 @@ export function ToursSection() {
   const tabsRef = useRef<HTMLDivElement>(null)
   const [showLeftArrow, setShowLeftArrow] = useState(false)
   const [showRightArrow, setShowRightArrow] = useState(true)
+  const cardsRef = useRef<HTMLDivElement>(null)
+  const [cardsCanLeft, setCardsCanLeft] = useState(false)
+  const [cardsCanRight, setCardsCanRight] = useState(false)
+  const [cardIndex, setCardIndex] = useState(0)
 
   useEffect(() => {
     const loadTours = async () => {
@@ -91,6 +95,26 @@ export function ToursSection() {
     }
   }
 
+  const handleCardsScroll = () => {
+    if (cardsRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = cardsRef.current
+      setCardsCanLeft(scrollLeft > 0)
+      setCardsCanRight(scrollLeft < scrollWidth - clientWidth - 10)
+      if (filteredTours.length > 0) {
+        setCardIndex(Math.round(scrollLeft / (scrollWidth / filteredTours.length)))
+      }
+    }
+  }
+
+  const scrollCards = (direction: "left" | "right") => {
+    if (cardsRef.current) {
+      cardsRef.current.scrollBy({
+        left: direction === "left" ? -cardsRef.current.clientWidth : cardsRef.current.clientWidth,
+        behavior: "smooth",
+      })
+    }
+  }
+
   // Add scroll event listener
   useEffect(() => {
     const tabsElement = tabsRef.current
@@ -105,6 +129,15 @@ export function ToursSection() {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (cardsRef.current) {
+      cardsRef.current.scrollTo({ left: 0 })
+    }
+    setCardIndex(0)
+    setCardsCanLeft(false)
+    requestAnimationFrame(() => handleCardsScroll())
+  }, [activeCategory, searchTerm, tours])
 
   const filteredTours = tours
     .filter((tour) => {
@@ -149,17 +182,20 @@ export function ToursSection() {
       <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200&query=abstract+pattern')] opacity-5 mix-blend-overlay"></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 sm:mb-12 animate-fade-in-up gap-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight animate-slide-in-left text-center sm:text-left">
-            Passeios em Bonito
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight animate-slide-in-left text-center sm:text-left">
+            {t("passeios")} {t("toursInBonito")}
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Input
-              type="text"
-              placeholder={t("searchTours")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-64 bg-white/10 text-white placeholder:text-white/70 border-white/30 focus:border-white focus:ring-white"
-            />
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50 pointer-events-none" />
+              <Input
+                type="text"
+                placeholder={t("searchTours")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 bg-white/10 text-white placeholder:text-white/70 border-white/30 focus:border-white focus:ring-white"
+              />
+            </div>
             <Link href="/tarifario" className="self-center sm:self-auto">
               <Button
                 variant="outline"
@@ -170,6 +206,8 @@ export function ToursSection() {
             </Link>
           </div>
         </div>
+
+        <p className="text-xs text-white/50 mb-3 text-center sm:text-left">Clique em uma categoria para filtrar os passeios</p>
 
         <div className="relative mb-6 sm:mb-8">
           {showLeftArrow && (
@@ -270,16 +308,54 @@ export function ToursSection() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-          {filteredTours.map((tour, index) => (
-            <div
-              key={tour.id}
-              className="h-full animate-fade-in-up shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <TourCard tour={tour} />
-            </div>
-          ))}
+        <div className="relative">
+          <button
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300 sm:hidden"
+            onClick={() => scrollCards("left")}
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-700" />
+          </button>
+
+          <button
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300 sm:hidden"
+            onClick={() => scrollCards("right")}
+          >
+            <ChevronRight className="w-5 h-5 text-gray-700" />
+          </button>
+
+          <div
+            ref={cardsRef}
+            className="flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 snap-x snap-mandatory sm:snap-none scrollbar-hide pb-4 sm:pb-0 pl-[calc(50%-41vw)] pr-[calc(50%-41vw)] sm:pl-0 sm:pr-0"
+            onScroll={handleCardsScroll}
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {filteredTours.map((tour, index) => (
+              <div
+                key={tour.id}
+                className="flex-shrink-0 w-[82vw] sm:w-auto h-full animate-fade-in-up shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-300 snap-center"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <TourCard tour={tour} />
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-4 gap-2 sm:hidden">
+            {filteredTours.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  if (cardsRef.current && filteredTours.length > 0) {
+                    const cardWidth = cardsRef.current.scrollWidth / filteredTours.length
+                    cardsRef.current.scrollTo({ left: index * cardWidth, behavior: "smooth" })
+                  }
+                }}
+                className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                  index === cardIndex ? "bg-green-400" : "bg-white/40"
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Botões na linha de baixo */}
@@ -287,7 +363,7 @@ export function ToursSection() {
           <Link href="/tarifario">
             <Button
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full sm:w-auto max-w-xs"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-3 text-sm sm:text-base font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full sm:w-auto max-w-xs"
             >
               {t("seeAllAttractions")}
             </Button>

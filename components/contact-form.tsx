@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Phone, Mail, Shield, Lock, Zap, Search, Calendar, Users, Car, X } from "lucide-react"
+import { Phone, Mail, Shield, Lock, Zap, Search, Calendar, Users, Car, X, Flame, Target } from "lucide-react"
 
 export default function ContactForm() {
   const [temCriancas, setTemCriancas] = useState(false)
@@ -22,7 +22,7 @@ export default function ContactForm() {
         <div className="bg-emerald-600 text-white px-4 py-3 rounded-t-xl flex items-center justify-between relative">
           <div className="flex items-center gap-2 mx-auto">
             <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-            <span className="text-sm font-semibold">🔥 VAGAS LIMITADAS: Reserve antes que esgote!</span>
+            <span className="text-sm font-semibold flex items-center gap-1.5"><Flame className="w-4 h-4" /> VAGAS LIMITADAS: Reserve antes que esgote!</span>
             <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
           </div>
           <button
@@ -152,7 +152,7 @@ export default function ContactForm() {
           {/* Action Buttons */}
           <div className="flex flex-col gap-2">
             <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-6 text-base">
-              <Search className="w-4 h-4 mr-2" />🎯 Garantir minha vaga agora!
+              <Search className="w-4 h-4 mr-1" /><Target className="w-4 h-4 mr-2" /> Garantir minha vaga agora!
             </Button>
             <Button variant="ghost" className="w-full text-gray-500 hover:text-gray-700 text-sm font-normal" asChild>
               <a href="https://wa.me/5567991395384" target="_blank" rel="noopener noreferrer">
@@ -194,7 +194,7 @@ export default function ContactForm() {
             </div>
             <div>
               <p className="font-semibold text-sm text-gray-800">WhatsApp Direto</p>
-              <p className="text-xs text-gray-500">Resposta em 2 minutos ⚡</p>
+              <p className="text-xs text-gray-500 flex items-center gap-1">Resposta em 2 minutos <Zap className="w-3 h-3 text-yellow-500" /></p>
             </div>
           </CardContent>
         </Card>
@@ -205,7 +205,7 @@ export default function ContactForm() {
             </div>
             <div>
               <p className="font-semibold text-sm text-gray-800">Email Prioritário</p>
-              <p className="text-xs text-gray-500">Roteiro em 15 minutos 🎯</p>
+              <p className="text-xs text-gray-500 flex items-center gap-1">Roteiro em 15 minutos <Target className="w-3 h-3 text-blue-500" /></p>
             </div>
           </CardContent>
         </Card>

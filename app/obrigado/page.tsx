@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { CheckCircle, MessageCircle, Phone, Mail, Clock, Star, ArrowRight, Gift } from "lucide-react"
+import { CheckCircle, MessageCircle, Phone, Mail, Clock, Star, ArrowRight, Gift, Sparkles, Rocket, Mountain, Package, BookOpen, Home } from "lucide-react"
 import Link from "next/link"
 
 export default function ThankYouPage() {
@@ -35,13 +35,15 @@ export default function ThankYouPage() {
             <CheckCircle className="w-10 h-10 text-white" />
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">🎉 Parabéns, {name}!</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-2">
+            <Sparkles className="w-8 h-8 text-yellow-500" /> Parabéns, {name}!
+          </h1>
 
           <p className="text-xl text-gray-700 mb-2">Sua solicitação foi enviada com sucesso!</p>
 
           {attraction && (
             <p className="text-lg text-green-700 font-semibold">
-              ✨ Interesse registrado em: <span className="text-green-800">{attraction}</span>
+              <span className="inline-flex items-center gap-1"><Sparkles className="w-4 h-4 text-yellow-500" /> Interesse registrado em: <span className="text-green-800">{attraction}</span></span>
             </p>
           )}
         </div>
@@ -88,7 +90,7 @@ export default function ThankYouPage() {
         {/* Next Steps */}
         <Card className="mb-8 border-2 border-green-200">
           <CardContent className="p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">🚀 Próximos Passos</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center flex items-center justify-center gap-2"><Rocket className="w-6 h-6 text-green-600" /> Próximos Passos</h2>
 
             <div className="space-y-4">
               <div className="flex items-start gap-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
@@ -133,7 +135,7 @@ export default function ThankYouPage() {
         {/* Contact Options */}
         <Card className="mb-8">
           <CardContent className="p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">💬 Precisa falar conosco agora?</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center flex items-center justify-center gap-2"><MessageCircle className="w-6 h-6 text-green-600" /> Precisa falar conosco agora?</h2>
 
             <div className="grid md:grid-cols-2 gap-4">
               <a
@@ -204,19 +206,19 @@ export default function ThankYouPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/atracoes">
               <Button variant="outline" className="w-full sm:w-auto bg-transparent">
-                🏞️ Ver Atrações
+                <Mountain className="w-4 h-4 mr-2" /> Ver Atrações
               </Button>
             </Link>
 
             <Link href="/pacotes">
               <Button variant="outline" className="w-full sm:w-auto bg-transparent">
-                📦 Conhecer Pacotes
+                <Package className="w-4 h-4 mr-2" /> Conhecer Pacotes
               </Button>
             </Link>
 
             <Link href="/blog">
               <Button variant="outline" className="w-full sm:w-auto bg-transparent">
-                📖 Ler Dicas de Viagem
+                <BookOpen className="w-4 h-4 mr-2" /> Ler Dicas de Viagem
               </Button>
             </Link>
           </div>
@@ -224,7 +226,7 @@ export default function ThankYouPage() {
           <div className="pt-4">
             <Link href="/">
               <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-                🏠 Voltar ao Início
+                <Home className="w-4 h-4 mr-2" /> Voltar ao Início
               </Button>
             </Link>
           </div>
@@ -233,7 +235,7 @@ export default function ThankYouPage() {
         {/* Footer Note */}
         <div className="text-center mt-8 p-4 bg-white rounded-lg border border-gray-200">
           <p className="text-sm text-gray-500">
-            📧 Verifique sua caixa de entrada (e spam) para confirmação do recebimento
+            <span className="inline-flex items-center gap-1"><Mail className="w-4 h-4 text-gray-400" /> Verifique sua caixa de entrada (e spam) para confirmação do recebimento</span>
           </p>
         </div>
       </div>

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { submitContactForm, SubmitContactFormData } from "@/app/actions/contact"
 import { useToast } from "@/hooks/use-toast"
-import { MessageCircle, Phone, Mail, MapPin, Clock, X } from "lucide-react"
+import { MessageCircle, Phone, Mail, MapPin, Clock, X, Flame, Check, Lock, Zap, Target, Star, Sparkles } from "lucide-react"
 import { ContactModalContext } from "@/contexts/contact-modal-context"
 
 interface ContactModalProps {
@@ -89,7 +89,7 @@ export function ContactModal({ attraction }: ContactModalProps) {
             <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-red-600/20 animate-pulse"></div>
             <div className="relative z-10 flex items-center justify-center gap-2">
               <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-              <span className="font-bold text-xs sm:text-sm">🔥 VAGAS LIMITADAS: Reserve antes que esgote!</span>
+              <span className="font-bold text-xs sm:text-sm flex items-center gap-1.5"><Flame className="w-3.5 h-3.5" /> VAGAS LIMITADAS: Reserve antes que esgote!</span>
               <div className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:200ms]"></div>
             </div>
           </div>
@@ -170,19 +170,19 @@ export function ContactModal({ attraction }: ContactModalProps) {
               <div className="flex items-center justify-center gap-6 text-xs text-gray-600">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-[8px]">✓</span>
+                    <Check className="w-2 h-2 text-white" />
                   </div>
                   <span>100% Seguro</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-[8px]">🔒</span>
+                    <Lock className="w-2 h-2 text-white" />
                   </div>
                   <span>Dados Protegidos</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 bg-purple-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-[8px]">⚡</span>
+                    <Zap className="w-2 h-2 text-white" />
                   </div>
                   <span>Resposta Rápida</span>
                 </div>
@@ -205,7 +205,9 @@ export function ContactModal({ attraction }: ContactModalProps) {
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4" /> 🎯 Garantir minha vaga agora!
+                    <MessageCircle className="w-4 h-4" />
+                    <Target className="w-4 h-4" />
+                    Garantir minha vaga agora!
                   </div>
                 )}
               </Button>
@@ -247,7 +249,7 @@ export function ContactModal({ attraction }: ContactModalProps) {
               </div>
               <div>
                 <p className="font-semibold text-gray-900 text-sm sm:text-base">WhatsApp Direto</p>
-                <p className="text-gray-600 text-xs sm:text-sm">Resposta em 2 minutos ⚡</p>
+                <p className="text-gray-600 text-xs sm:text-sm flex items-center gap-1">Resposta em 2 minutos <Zap className="w-3 h-3 text-yellow-500" /></p>
               </div>
               <div className="ml-auto">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -260,7 +262,7 @@ export function ContactModal({ attraction }: ContactModalProps) {
               </div>
               <div>
                 <p className="font-semibold text-gray-900 text-sm sm:text-base">Email Prioritário</p>
-                <p className="text-gray-600 text-xs sm:text-sm">Roteiro em 15 minutos 🎯</p>
+                <p className="text-gray-600 text-xs sm:text-sm flex items-center gap-1">Roteiro em 15 minutos <Target className="w-3 h-3 text-blue-500" /></p>
               </div>
               <div className="ml-auto">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse [animation-delay:300ms]"></div>
@@ -272,7 +274,7 @@ export function ContactModal({ attraction }: ContactModalProps) {
           <div className="bg-gradient-to-r from-yellow-50 to-amber-50 p-4 rounded-lg border border-yellow-200">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-6 h-6 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs font-bold">★</span>
+                <Star className="w-3.5 h-3.5 text-white fill-white" />
               </div>
               <h4 className="font-bold text-amber-800">Benefícios Exclusivos VIP</h4>
             </div>
@@ -300,15 +302,15 @@ export function ContactModal({ attraction }: ContactModalProps) {
           <div className="border-t pt-4 space-y-3">
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Clock className="w-4 h-4 text-green-500" />
-              <span>⚡ Resposta em até 2 minutos durante horário comercial</span>
+              <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-yellow-500" /> Resposta em até 2 minutos durante horário comercial</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <MapPin className="w-4 h-4 text-blue-500" />
-              <span>📍 Rua Coronel Pilad Rebuá, 1997 - Centro, Bonito - MS</span>
+              <span>Rua Coronel Pilad Rebuá, 1997 - Centro, Bonito - MS</span>
             </div>
             <div className="text-center">
               <p className="text-xs text-gray-500">
-                🌟 <span className="font-semibold text-green-600">Mais de 10.000 aventureiros</span> já realizaram seus sonhos conosco!
+                <span className="inline-flex items-center gap-1"><Sparkles className="w-3.5 h-3.5 text-green-500" /> <span className="font-semibold text-green-600">Mais de 10.000 aventureiros</span> já realizaram seus sonhos conosco!</span>
               </p>
             </div>
           </div>

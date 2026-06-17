@@ -87,7 +87,7 @@ export function SeasonSection() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Calendar className="h-8 w-8 text-white" />
-            <h2 className="text-3xl font-bold text-white">{t("seasonTitle")}</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">{t("seasonTitle")}</h2>
           </div>
         </div>
 

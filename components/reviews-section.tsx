@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Star, Quote, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react"
@@ -24,6 +24,7 @@ export function ReviewsSection() {
   // SUSPENDED: const { openModal } = useContext(ContactModalContext) as any;
   const { t } = useLanguage();
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null)
   const [reviews] = useState<Review[]>([
     {
       id: "1",
@@ -81,12 +82,27 @@ export function ReviewsSection() {
     },
   ])
 
+  const scrollToIndex = (index: number) => {
+    if (scrollRef.current) {
+      const cardWidth = scrollRef.current.scrollWidth / reviews.length
+      scrollRef.current.scrollTo({ left: index * cardWidth, behavior: "smooth" })
+    }
+  }
+
   const nextReview = () => {
-    setCurrentReviewIndex((prev) => (prev + 1) % reviews.length)
+    setCurrentReviewIndex((prev) => {
+      const next = (prev + 1) % reviews.length
+      scrollToIndex(next)
+      return next
+    })
   }
 
   const prevReview = () => {
-    setCurrentReviewIndex((prev) => (prev - 1 + reviews.length) % reviews.length)
+    setCurrentReviewIndex((prev) => {
+      const next = (prev - 1 + reviews.length) % reviews.length
+      scrollToIndex(next)
+      return next
+    })
   }
 
   // Auto-advance reviews every 5 seconds
@@ -105,8 +121,8 @@ export function ReviewsSection() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 md:max-w-full">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">{t("reviewsTitle")}</h2>
-          <p className="text-green-100 max-w-2xl mx-auto mb-8">{t("reviewsSubtitle")}</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2">{t("reviewsTitle")}</h2>
+          <p className="text-base sm:text-lg text-green-100 max-w-2xl mx-auto mb-8 leading-relaxed">{t("reviewsSubtitle")}</p>
 
           {/* Google Reviews Summary */}
           <div className="flex items-center justify-center gap-6 mb-8 flex-wrap">
@@ -149,65 +165,64 @@ export function ReviewsSection() {
         </div>
 
         {/* Reviews Carousel */}
-        <div className="relative max-w-4xl mx-auto sm:max-w-full">
-          <div className="overflow-hidden">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentReviewIndex * 100}%)` }}
-            >
-              {reviews.map((review, index) => (
-                <div key={review.id} className="w-full flex-shrink-0 px-4">
-                  <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-0">
-                    <CardContent className="p-8">
-                      <div className="flex items-center mb-6">
-                        <div className="relative w-16 h-16 mr-4">
-                          <Image
-                            src={review.avatar || "/placeholder.svg"}
-                            alt={review.name}
-                            fill
-                            className="object-cover rounded-full border-2 border-green-200"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-lg text-gray-900">{review.name}</h4>
-                          <div className="flex items-center gap-2 mt-1">
-                            <div className="flex items-center">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={`w-4 h-4 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-                                />
-                              ))}
-                            </div>
-                            <span className="text-sm text-gray-500">{review.date}</span>
+        <div className="relative">
+          <div
+            ref={scrollRef}
+            className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory sm:snap-none pl-[calc(50%-41vw)] pr-[calc(50%-41vw)] sm:pl-0 sm:pr-0"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {reviews.map((review) => (
+              <div key={review.id} className="flex-shrink-0 w-[82vw] sm:w-[calc(33.333%-16px)] snap-center">
+                <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-0 h-full">
+                  <CardContent className="p-6 sm:p-8">
+                    <div className="flex items-center mb-6">
+                      <div className="relative w-16 h-16 mr-4">
+                        <Image
+                          src={review.avatar || "/placeholder.svg"}
+                          alt={review.name}
+                          fill
+                          className="object-cover rounded-full border-2 border-green-200"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-lg text-gray-900">{review.name}</h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-4 h-4 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                              />
+                            ))}
                           </div>
+                          <span className="text-sm text-gray-500">{review.date}</span>
                         </div>
                       </div>
+                    </div>
 
-                      <div className="relative">
-                        <Quote className="absolute -top-2 -left-2 w-8 h-8 text-green-200" />
-                        <p className="text-gray-700 text-lg leading-relaxed pl-6 italic">"{review.comment}"</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
+                    <div className="relative">
+                      <Quote className="absolute -top-2 -left-2 w-8 h-8 text-green-200" />
+                      <p className="text-gray-700 text-base leading-relaxed pl-6 italic">"{review.comment}"</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
           </div>
 
           {/* Navigation Buttons */}
           <button
             onClick={prevReview}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-3 hover:bg-white transition-colors sm:p-4"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300"
           >
-            <ChevronLeft className="w-6 h-6 text-green-800 sm:w-7 sm:h-7" />
+            <ChevronLeft className="w-5 h-5 text-gray-700" />
           </button>
 
           <button
             onClick={nextReview}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-3 hover:bg-white transition-colors sm:p-4"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300"
           >
-            <ChevronRight className="w-6 h-6 text-green-800 sm:w-7 sm:h-7" />
+            <ChevronRight className="w-5 h-5 text-gray-700" />
           </button>
 
           {/* Dots Indicator */}
@@ -215,7 +230,7 @@ export function ReviewsSection() {
             {reviews.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentReviewIndex(index)}
+                onClick={() => { setCurrentReviewIndex(index); scrollToIndex(index) }}
                 className={`w-3 h-3 rounded-full transition-colors ${
                   index === currentReviewIndex ? "bg-green-400" : "bg-white/50"
                 }`}
@@ -227,8 +242,8 @@ export function ReviewsSection() {
         {/* Call to Action */}
         <div className="text-center mt-12">
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8 max-w-2xl mx-auto border border-white/20">
-            <h3 className="text-2xl font-bold text-white mb-4">{t("joinStories")}</h3>
-            <p className="text-green-100 mb-6">{t("joinStoriesDesc")}</p>
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">{t("joinStories")}</h3>
+            <p className="text-base text-green-100 mb-6 leading-relaxed">{t("joinStoriesDesc")}</p>
             {/*
             SUSPENDED:
             <Button onClick={() => { openModal(); }} className="bg-green-500 ...">

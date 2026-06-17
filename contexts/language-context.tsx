@@ -28,6 +28,14 @@ const translations: Translations = {
   heroTitle1: { pt: "Passeios Incríveis", en: "Amazing Tours", es: "Paseos Increíbles" },
   heroTitle2: { pt: "Esperam Por Você", en: "Await You", es: "Te Esperan" },
   heroButton: { pt: "Fale com um Especialista!", en: "Talk to a Specialist!", es: "¡Habla con un Especialista!" },
+  heroDiscover: { pt: "Descubra", en: "Discover", es: "Descubre" },
+  heroDescription: {
+    pt: "Descubra as águas cristalinas, grutas místicas e a natureza exuberante do destino mais encantador do Brasil",
+    en: "Discover the crystal-clear waters, mystical caves and exuberant nature of Brazil's most enchanting destination",
+    es: "Descubre las aguas cristalinas, grutas místicas y la naturaleza exuberante del destino más encantador de Brasil",
+  },
+  heroExplore: { pt: "Explore", en: "Explore", es: "Explora" },
+  heroClients: { pt: "Clientes", en: "Clients", es: "Clientes" },
 
   // Packages Section
   packagesTitle: { pt: "Pacotes Completos", en: "Complete Packages", es: "Paquetes Completos" },
@@ -61,7 +69,7 @@ const translations: Translations = {
   transportation: { pt: "Transporte", en: "Transportation", es: "Transporte" },
   events: { pt: "Eventos", en: "Events", es: "Eventos" },
   reserve: { pt: "Reservar", en: "Reserve", es: "Reservar" },
-  searchTours: { pt: "🔍 Procurar Passeio", en: "🔍 Search Tour", es: "🔍 Buscar Paseo" },
+  searchTours: { pt: "Procurar Passeio", en: "Search Tour", es: "Buscar Paseo" },
   verPrecosProximoSemestre: { pt: "Ver Preços do Proximo Semestre", en: "See Next Semester Prices", es: "Ver Precios del Próximo Semestre" },
 
   // Attractions Section

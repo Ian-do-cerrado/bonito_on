@@ -168,21 +168,26 @@ export function Navigation() {
 
             {/* Language Switcher & Mobile Button */}
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="hidden sm:flex space-x-1 sm:space-x-2">
+              <div className="hidden sm:flex items-center bg-white/10 backdrop-blur-sm rounded-full p-1 gap-0.5 border border-white/10">
                 {[
-                  { code: "en", flag: "🇺🇸" },
-                  { code: "pt", flag: "🇧🇷" },
-                  { code: "es", flag: "🇪🇸" }
-                ].map(({ code, flag }) => (
+                  { code: "en", country: "us", label: "English" },
+                  { code: "pt", country: "br", label: "Português" },
+                  { code: "es", country: "es", label: "Español" },
+                ].map(({ code, country, label }) => (
                   <button
                     key={code}
                     onClick={() => handleLanguageChange(code as "pt" | "en" | "es")}
-                    className={`text-sm transition-all duration-300 p-1.5 sm:p-2 rounded-lg hover:scale-110 ${
-                      language === code ? "bg-green-500/20 scale-110" : ""
-                    } ${"hover:bg-white/10"}`}
-                    title={code}
+                    title={label}
+                    className={`relative flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 hover:scale-110 ${
+                      language === code
+                        ? "bg-white/25 shadow-md ring-1 ring-white/40 scale-110"
+                        : "hover:bg-white/10 opacity-60 hover:opacity-100"
+                    }`}
                   >
-                    {flag}
+                    <span
+                      className={`fi fi-${country} fi-squared rounded-sm overflow-hidden`}
+                      style={{ fontSize: "17px", lineHeight: 1 }}
+                    />
                   </button>
                 ))}
               </div>
@@ -261,21 +266,26 @@ export function Navigation() {
               <div className="border-t pt-4">
                 <h3 className="text-sm font-semibold text-gray-500 mb-3">Idioma</h3>
                 <div className="grid grid-cols-3 gap-2">
-                  {["en", "pt", "es"].map((lang) => (
+                  {[
+                    { code: "en", country: "us", label: "English" },
+                    { code: "pt", country: "br", label: "Português" },
+                    { code: "es", country: "es", label: "Español" },
+                  ].map(({ code, country, label }) => (
                     <button
-                      key={lang}
-                      onClick={() => handleLanguageChange(lang as "pt" | "en" | "es")}
-                      className={`flex flex-col items-center p-3 rounded-lg transition-all ${
-                        language === lang
-                          ? "bg-green-100 border-2 border-green-500"
-                          : "bg-gray-50 hover:bg-gray-100"
+                      key={code}
+                      onClick={() => handleLanguageChange(code as "pt" | "en" | "es")}
+                      className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-200 ${
+                        language === code
+                          ? "bg-green-50 border-2 border-green-500 shadow-sm"
+                          : "bg-gray-50 border-2 border-transparent hover:bg-gray-100"
                       }`}
                     >
-                      <span className="text-2xl mb-1">
-                        {lang === "en" ? "🇺🇸" : lang === "pt" ? "🇧🇷" : "🇪🇸"}
-                      </span>
-                      <span className="text-xs font-medium">
-                        {lang === "en" ? "English" : lang === "pt" ? "Português" : "Español"}
+                      <span
+                        className={`fi fi-${country} fi-squared rounded overflow-hidden shadow-sm`}
+                        style={{ fontSize: "28px", lineHeight: 1 }}
+                      />
+                      <span className={`text-xs font-semibold ${language === code ? "text-green-700" : "text-gray-600"}`}>
+                        {label}
                       </span>
                     </button>
                   ))}

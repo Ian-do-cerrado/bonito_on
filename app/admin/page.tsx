@@ -365,22 +365,22 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-wrap items-center gap-3">
               <Link href="/">
-                <Button variant="outline" size="sm" className="hover:scale-105 transition-transform">
+                <Button variant="outline" size="sm" className="hover:scale-105 transition-transform shrink-0">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Voltar ao Site
                 </Button>
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
-                <p className="text-gray-600">Gerencie todo o conteúdo do site</p>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Painel Administrativo</h1>
+                <p className="text-sm text-gray-600 hidden sm:block">Gerencie todo o conteúdo do site</p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               {/* Stats */}
               <div className="hidden lg:flex items-center space-x-6 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
@@ -412,8 +412,8 @@ export default function AdminPage() {
                 size="sm"
                 className="hover:scale-105 transition-transform"
               >
-                <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
-                Atualizar
+                <RefreshCw className={`w-4 h-4 sm:mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+                <span className="hidden sm:inline">Atualizar</span>
               </Button>
 
               {/* Add Button */}
@@ -421,33 +421,37 @@ export default function AdminPage() {
                 <Button
                   onClick={() => setIsAddTourDialogOpen(true)}
                   className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all"
+                  size="sm"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Passeio
+                  <Plus className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Adicionar Passeio</span>
                 </Button>
               ) : activeTab === "blog" ? (
                 <Button
                   onClick={() => setIsAddBlogDialogOpen(true)}
                   className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all"
+                  size="sm"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Escrever Post
+                  <Plus className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Escrever Post</span>
                 </Button>
               ) : activeTab === "packages" ? (
                 <Button
                   onClick={() => setIsAddPackageDialogOpen(true)}
                   className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all"
+                  size="sm"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Pacote
+                  <Plus className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Adicionar Pacote</span>
                 </Button>
               ) : (
                 <Button
                   onClick={() => setIsAddAttractionDialogOpen(true)}
                   className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all"
+                  size="sm"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Atração
+                  <Plus className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Adicionar Atração</span>
                 </Button>
               )}
 
@@ -457,8 +461,8 @@ export default function AdminPage() {
                 size="sm"
                 className="hover:scale-105 transition-transform"
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sair
+                <LogOut className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Sair</span>
               </Button>
             </div>
           </div>

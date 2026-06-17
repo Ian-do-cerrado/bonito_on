@@ -138,7 +138,7 @@ export default function AdminLoginPage() {
 
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="text-center">
-                <p className="text-xs text-gray-500 mb-2">🔒 Acesso protegido por autenticação segura</p>
+                <p className="text-xs text-gray-500 mb-2 flex items-center justify-center gap-1"><Lock className="w-3 h-3" /> Acesso protegido por autenticação segura</p>
                 <p className="text-xs text-gray-400">Apenas administradores autorizados podem acessar</p>
               </div>
             </div>

@@ -237,7 +237,11 @@ export function AdminAttractionCard({ attraction, onUpdate, onDelete }: AdminAtt
                 <span className="font-medium">Capacidade:</span> {attraction.capacity}
               </div>
               <div>
-                <span className="font-medium">Avaliação:</span> {attraction.rating} ⭐
+                <span className="font-medium">Avaliação:</span>{" "}
+                <span className="inline-flex items-center gap-1">
+                  {attraction.rating}
+                  <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                </span>
               </div>
             </div>
 

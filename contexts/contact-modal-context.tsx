@@ -42,7 +42,7 @@ export function ContactModalProvider({ children }: { children: React.ReactNode }
 
   const closeModal = () => {
     setIsOpen(false)
-    // ❗ Removemos a flag do sessionStorage para permitir novo trigger se quiser reabrir
+    // Removemos a flag do sessionStorage para permitir novo trigger se quiser reabrir
     sessionStorage.removeItem("autoModalShown");
     setAttraction(null);
   }

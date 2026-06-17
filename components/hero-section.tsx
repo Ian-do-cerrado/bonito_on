@@ -1,16 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Star } from "lucide-react"
 // SUSPENDED: import { Button } from "@/components/ui/button"
 // SUSPENDED: import { MessageCircle } from "lucide-react"
 // SUSPENDED: import { useContactModal } from "@/contexts/contact-modal-context"
-// SUSPENDED: import { useLanguage } from "@/contexts/language-context"
+import { useLanguage } from "@/contexts/language-context"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
 
 export function HeroSection() {
   // SUSPENDED: const { openModal } = useContactModal()
-  // SUSPENDED: const { t } = useLanguage()
+  const { t } = useLanguage()
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
 
   useEffect(() => {
@@ -56,16 +56,15 @@ export function HeroSection() {
         <div className="space-y-6 sm:space-y-8">
           {/* Main Title */}
           <div className="space-y-3 sm:space-y-4">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-up opacity-0">
-              <span className="block">Descubra</span>
+            <h1 className="text-5xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight animate-fade-in-up opacity-0">
+              <span className="block">{t("heroDiscover")}</span>
               <span className="block font-light text-green-300 animate-fade-in-up animation-delay-300 opacity-0">
                 Bonito
               </span>
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-2xl mx-auto animate-fade-in-up animation-delay-500 opacity-0 leading-relaxed px-4">
-              Descubra as águas cristalinas, grutas místicas e a natureza exuberante do destino mais encantador do
-              Brasil
+              {t("heroDescription")}
             </p>
           </div>
 
@@ -84,7 +83,7 @@ export function HeroSection() {
             */}
             <WhatsAppCtaButton
               message="Olá! Vim do site Bonito ON e gostaria de mais informações sobre os passeios."
-              label="Fale Conosco pelo WhatsApp"
+              label={t("contactWhatsApp")}
               className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full shadow-2xl hover:scale-105 z-[4] relative w-full max-w-xs sm:w-auto"
             />
           </div>
@@ -93,15 +92,17 @@ export function HeroSection() {
           <div className="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto pt-6 sm:pt-8 animate-fade-in-up animation-delay-1000 opacity-0 px-4">
             <div className="text-center">
               <div className="text-xl sm:text-2xl md:text-3xl font-bold text-green-400">50+</div>
-              <div className="text-xs sm:text-sm text-gray-300">Atrações</div>
+              <div className="text-xs sm:text-sm text-gray-300">{t("attractionsTitle")}</div>
             </div>
             <div className="text-center">
               <div className="text-xl sm:text-2xl md:text-3xl font-bold text-green-400">5000+</div>
-              <div className="text-xs sm:text-sm text-gray-300">Clientes</div>
+              <div className="text-xs sm:text-sm text-gray-300">{t("heroClients")}</div>
             </div>
             <div className="text-center">
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-green-400">4.9★</div>
-              <div className="text-xs sm:text-sm text-gray-300">Avaliação</div>
+              <div className="flex items-center justify-center gap-1 text-xl sm:text-2xl md:text-3xl font-bold text-green-400">
+                4.9<Star className="w-5 h-5 sm:w-6 sm:h-6 fill-green-400 text-green-400" />
+              </div>
+              <div className="text-xs sm:text-sm text-gray-300">{t("rating")}</div>
             </div>
           </div>
         </div>
@@ -113,7 +114,7 @@ export function HeroSection() {
         className="absolute bottom-6 sm:bottom-8 left transform -translate-x z-[4] text-white/70 hover:text-white transition-all duration-300 animate-bounce group"
       >
         <div className="flex flex-col items-center space-y-1 sm:space-y-2">
-          <span className="text-xs sm:text-sm font-medium">Explore</span>
+          <span className="text-xs sm:text-sm font-medium">{t("heroExplore")}</span>
           <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
         </div>
       </button>

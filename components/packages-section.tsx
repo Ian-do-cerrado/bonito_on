@@ -16,7 +16,8 @@ export function PackagesSection() {
   const { t } = useLanguage()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(true)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [packages, setPackages] = useState<Package[]>([])
   const [isLoading, setIsLoading] = useState(true)
   // SUSPENDED: const { openModal } = useContactModal()
@@ -26,7 +27,7 @@ export function PackagesSection() {
       setIsLoading(true)
       try {
         const packagesData = await getAllPackages()
-        setPackages(packagesData.slice(0, 4))
+        setPackages(packagesData)
       } catch (error) {
         console.error("Error loading packages:", error)
         setPackages([])
@@ -39,7 +40,7 @@ export function PackagesSection() {
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
-      const scrollAmount = 400
+      const scrollAmount = scrollRef.current.clientWidth
       const newScrollLeft =
         scrollRef.current.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount)
       scrollRef.current.scrollTo({ left: newScrollLeft, behavior: "smooth" })
@@ -51,8 +52,16 @@ export function PackagesSection() {
       const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
       setCanScrollLeft(scrollLeft > 0)
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10)
+      const cardWidth = scrollWidth / packages.length
+      setCurrentIndex(Math.round(scrollLeft / cardWidth))
     }
   }
+
+  useEffect(() => {
+    if (!isLoading) {
+      requestAnimationFrame(() => handleScroll())
+    }
+  }, [isLoading])
 
   const createSlug = (title: string) => {
     return title
@@ -71,10 +80,10 @@ export function PackagesSection() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-12 gap-4">
           <div className="text-center sm:text-left">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight mb-2">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-2">
               {t("packagesTitle")}
             </h2>
-            <p className="text-gray-600 text-lg">{t("packagesSubtitle")}</p>
+            <p className="text-base sm:text-lg text-gray-500 leading-relaxed">{t("packagesSubtitle")}</p>
           </div>
           <Link href="/pacotes" className="self-center sm:self-auto">
             <Button variant="outline" className="group transition-all duration-300 hover:pr-5">
@@ -87,27 +96,19 @@ export function PackagesSection() {
         {/* Carousel Container */}
         <div className="relative">
           {/* Navigation Buttons */}
-          <Button
-            variant="outline"
-            size="icon"
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-300 ${
-              canScrollLeft ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+          <button
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300"
             onClick={() => scroll("left")}
           >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
+            <ChevronLeft className="w-5 h-5 text-gray-700" />
+          </button>
 
-          <Button
-            variant="outline"
-            size="icon"
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-300 ${
-              canScrollRight ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
+          <button
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300"
             onClick={() => scroll("right")}
           >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
+            <ChevronRight className="w-5 h-5 text-gray-700" />
+          </button>
 
           {/* Loading State */}
           {isLoading && (
@@ -136,14 +137,14 @@ export function PackagesSection() {
           {!isLoading && packages.length > 0 && (
             <div
               ref={scrollRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide pb-4"
+              className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory sm:snap-none -mx-4 sm:mx-0 px-[9vw] sm:px-0"
               onScroll={handleScroll}
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {packages.map((pkg) => (
                 <Card
                   key={pkg.id}
-                  className="flex-shrink-0 w-80 overflow-hidden hover:shadow-xl transition-all duration-300 group border border-transparent group-hover:border-green-500"
+                  className="flex flex-col flex-shrink-0 w-[82vw] lg:w-[calc(25%-18px)] snap-center lg:snap-start overflow-hidden hover:shadow-xl transition-all duration-300 group border border-transparent group-hover:border-green-500"
                 >
                   {/* ======= BLOCO DA IMAGEM/OVERLAY CORRIGIDO ======= */}
                   <div className="relative h-48 overflow-hidden isolate">
@@ -188,26 +189,29 @@ export function PackagesSection() {
 
                     {/* Título/Subtítulo */}
                     <div className="absolute bottom-4 left-4 right-4 z-20">
-                      <h3 className="text-white font-bold text-lg mb-1">{pkg.title}</h3>
+                      <h3 className="text-lg font-semibold text-white mb-1">{pkg.title}</h3>
                       <p className="text-green-200 text-sm font-medium">{pkg.subtitle}</p>
                     </div>
                   </div>
                   {/* ======= FIM DO BLOCO CORRIGIDO ======= */}
 
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 flex flex-col flex-1">
+                    {/* Top content */}
                     <div className="space-y-4">
                       {/* Price */}
-                      <div className="flex items-baseline gap-2">
-                        <div className="text-2xl font-bold text-green-600">
-                          R$ {pkg.price.toLocaleString("pt-BR")}
-                        </div>
-                        {pkg.originalPrice && (
-                          <div className="text-sm text-gray-500 line-through">
-                            R$ {pkg.originalPrice.toLocaleString("pt-BR")}
+                      <div>
+                        <div className="flex items-baseline gap-2">
+                          <div className="text-2xl font-bold text-green-600">
+                            R$ {pkg.price.toLocaleString("pt-BR")}
                           </div>
-                        )}
+                          {pkg.originalPrice && (
+                            <div className="text-sm text-gray-500 line-through">
+                              R$ {pkg.originalPrice.toLocaleString("pt-BR")}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-400">{t("perPerson")}</div>
                       </div>
-                      <div className="text-sm text-gray-600">{t("perPerson")}</div>
 
                       {/* Highlights */}
                       <div className="space-y-1">
@@ -218,9 +222,10 @@ export function PackagesSection() {
                           </div>
                         ))}
                       </div>
+                    </div>
 
-                      {/* Actions */}
-                      <div className="flex flex-col gap-2 pt-2">
+                      {/* Actions — pinned to bottom */}
+                      <div className="flex flex-col gap-2 pt-4 mt-auto">
                         <Link
                           href={`/pacotes/${pkg.slug || createSlug(pkg.title)}`}
                           className="w-full"
@@ -251,9 +256,28 @@ export function PackagesSection() {
                           className="text-sm"
                         />
                       </div>
-                    </div>
                   </CardContent>
                 </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Dots */}
+          {!isLoading && packages.length > 1 && (
+            <div className="flex justify-center mt-6 gap-2">
+              {packages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    if (scrollRef.current) {
+                      const cardWidth = scrollRef.current.scrollWidth / packages.length
+                      scrollRef.current.scrollTo({ left: index * cardWidth, behavior: "smooth" })
+                    }
+                  }}
+                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                    index === currentIndex ? "bg-green-500" : "bg-gray-300"
+                  }`}
+                />
               ))}
             </div>
           )}

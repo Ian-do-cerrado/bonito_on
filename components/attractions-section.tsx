@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/contexts/language-context"
 // SUSPENDED: import { useContactModal } from "@/hooks/use-contact-modal"
 import { WhatsAppCtaButton } from "@/components/whatsapp-cta-button"
-import { MapPin, Clock, Users, Star, Utensils, Bed, Car, Calendar } from "lucide-react"
+import { MapPin, Clock, Users, Star, Utensils, Bed, Car, Calendar, ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 import { getAllAttractions, Attraction as SupabaseAttraction } from "@/services/supabase-attractions"
 import Link from "next/link"
@@ -78,6 +78,10 @@ export function AttractionsSection() {
   // SUSPENDED: const contactModal = useContactModal()
   const [activeTab, setActiveTab] = useState<Attraction["category"]>("gastronomy")
   const [attractions, setAttractions] = useState<Attraction[]>([])
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
     const loadAttractions = async () => {
@@ -95,6 +99,33 @@ export function AttractionsSection() {
   }, [])
 
   const filteredAttractions = attractions.filter((attraction) => attraction.category === activeTab)
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
+      setCanScrollLeft(scrollLeft > 0)
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10)
+      if (filteredAttractions.length > 0) {
+        setCurrentIndex(Math.round(scrollLeft / (scrollWidth / filteredAttractions.length)))
+      }
+    }
+  }
+
+  const scrollCarousel = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollRef.current.clientWidth : scrollRef.current.clientWidth,
+        behavior: "smooth",
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTo({ left: 0 })
+    setCurrentIndex(0)
+    setCanScrollLeft(false)
+    requestAnimationFrame(() => handleScroll())
+  }, [activeTab, attractions])
 
   const getCategoryIcon = (category: Attraction["category"]) => {
     switch (category) {
@@ -133,8 +164,8 @@ export function AttractionsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t("attractionsTitle")}</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">{t("attractionsSubtitle")}</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-2">{t("attractionsTitle")}</h2>
+          <p className="text-base sm:text-lg text-gray-500 max-w-3xl mx-auto leading-relaxed">{t("attractionsSubtitle")}</p>
         </div>
 
         {/* Category Tabs */}
@@ -157,12 +188,32 @@ export function AttractionsSection() {
           ))}
         </div>
 
-        {/* Attractions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Attractions Carousel / Grid */}
+        <div className="relative">
+          <button
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300 md:hidden"
+            onClick={() => scrollCarousel("left")}
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-700" />
+          </button>
+
+          <button
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/90 backdrop-blur-sm shadow-lg rounded-full p-2.5 hover:bg-white transition-all duration-300 md:hidden"
+            onClick={() => scrollCarousel("right")}
+          >
+            <ChevronRight className="w-5 h-5 text-gray-700" />
+          </button>
+
+        <div
+          ref={scrollRef}
+          className="flex md:grid overflow-x-auto md:overflow-visible md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 snap-x snap-mandatory md:snap-none scrollbar-hide pb-4 md:pb-0 pl-[calc(50%-41vw)] pr-[calc(50%-41vw)] md:pl-0 md:pr-0"
+          onScroll={handleScroll}
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {filteredAttractions.map((attraction, index) => (
             <Card
               key={attraction.id}
-              className="overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up"
+              className="flex-shrink-0 w-[82vw] md:w-auto overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up snap-center"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="relative h-64">
@@ -182,8 +233,8 @@ export function AttractionsSection() {
               </div>
 
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">{attraction.title}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-2">{attraction.description}</p>
+                <h3 className="text-lg font-semibold mb-2">{attraction.title}</h3>
+                <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed">{attraction.description}</p>
 
                 {/* Details */}
                 <div className="space-y-2 mb-4">
@@ -249,6 +300,24 @@ export function AttractionsSection() {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+          <div className="flex justify-center mt-4 gap-2 md:hidden">
+            {filteredAttractions.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  if (scrollRef.current && filteredAttractions.length > 0) {
+                    const cardWidth = scrollRef.current.scrollWidth / filteredAttractions.length
+                    scrollRef.current.scrollTo({ left: index * cardWidth, behavior: "smooth" })
+                  }
+                }}
+                className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                  index === currentIndex ? "bg-green-500" : "bg-gray-300"
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Empty State */}
