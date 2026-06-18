@@ -18,7 +18,8 @@ import type { Tour } from "@/types"
 import {
   PRICE_EXTRA_FIELD_OPTIONS,
   PRICE_EXTRA_PLACEMENT_OPTIONS,
-  listExtraRows,
+  extraRowsInheritedFromS1,
+  listExtraRowsForSemester,
   newExtraRowId,
   resolveExtraRowValue,
   setExtraRowsForSemester,
@@ -51,7 +52,11 @@ export function AdminPriceExtraRows({
   const semester = semesterProp ?? semesterInternal
 
   const extraRows = useMemo(
-    () => listExtraRows(editedVisiblePrices, semester),
+    () => listExtraRowsForSemester(editedVisiblePrices, semester),
+    [editedVisiblePrices, semester]
+  )
+  const inheritedFromS1 = useMemo(
+    () => extraRowsInheritedFromS1(editedVisiblePrices, semester),
     [editedVisiblePrices, semester]
   )
 
@@ -93,7 +98,8 @@ export function AdminPriceExtraRows({
   const selectedRowOption = rowOptions.find((o) => o.key === draftTabelaAtividade)
 
   const persistRows = (rows: PriceTableExtraRow[]) => {
-    onVisiblePricesChange(setExtraRowsForSemester(editedVisiblePrices, semester, rows))
+    const tagged = rows.map((r) => ({ ...r, semester }))
+    onVisiblePricesChange(setExtraRowsForSemester(editedVisiblePrices, semester, tagged))
   }
 
   const manualNumber = Number(String(draftManualValue).replace(",", "."))
@@ -150,6 +156,11 @@ export function AdminPriceExtraRows({
           <p className="text-[11px] text-gray-400 mt-1">
             Adicione linhas na tabela &quot;Reserve agora&quot; do site usando qualquer preço do BTMS
             deste atrativo.
+            {inheritedFromS1 && (
+              <span className="block mt-1 text-violet-600 font-medium">
+                Exibindo linhas do 1º semestre (herança). Ao editar, passam a valer para o 2º sem.
+              </span>
+            )}
           </p>
         </div>
         {!semesterProp && (

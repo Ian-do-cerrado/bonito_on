@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import type { TourPriceInfo, TourPriceRowDisplay } from "@/lib/supabase/price-columns"
 import {
   isExtraRowEntry,
-  listExtraRows,
+  listExtraRowsForSemester,
   resolveExtraRowValue,
   type PriceExtraPlacement,
   type PriceTableExtraRow,
@@ -238,12 +238,7 @@ export function TourPricesSidebar({
     { key: "baixa", label: "Baixa Temporada" },
     { key: "alta", label: "Alta Temporada" },
   ]
-  // Linhas extras do semestre; no 2º semestre, herda as do 1º quando não houver específicas.
-  const extraRows = (() => {
-    const own = listExtraRows(visiblePrices, semester)
-    if (own.length > 0 || semester !== "s2") return own
-    return listExtraRows(visiblePrices, "s1")
-  })()
+  const extraRows = listExtraRowsForSemester(visiblePrices, semester)
 
   const extrasForPlacement = (placement: PriceExtraPlacement) =>
     extraRows.filter((r) => r.placement === placement)

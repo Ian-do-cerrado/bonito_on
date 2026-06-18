@@ -57,6 +57,10 @@ export function parseExtraRow(entry: string): PriceTableExtraRow | null {
   }
 }
 
+function rowSemester(row: PriceTableExtraRow): "s1" | "s2" {
+  return row.semester ?? "s1"
+}
+
 export function listExtraRows(
   visiblePrices?: string[],
   semester?: "s1" | "s2"
@@ -64,7 +68,34 @@ export function listExtraRows(
   if (!visiblePrices?.length) return []
   return visiblePrices
     .map(parseExtraRow)
-    .filter((r): r is PriceTableExtraRow => r != null && (!semester || r.semester === semester))
+    .filter(
+      (r): r is PriceTableExtraRow =>
+        r != null && (!semester || rowSemester(r) === semester)
+    )
+}
+
+/**
+ * Linhas extras efetivas de um semestre. No 2º semestre, herda as do 1º quando não houver específicas.
+ */
+export function listExtraRowsForSemester(
+  visiblePrices?: string[],
+  semester: "s1" | "s2" = "s1"
+): PriceTableExtraRow[] {
+  const own = listExtraRows(visiblePrices, semester)
+  if (own.length > 0 || semester !== "s2") return own
+  return listExtraRows(visiblePrices, "s1")
+}
+
+/** true quando o 2º semestre está usando linhas extras herdadas do 1º (sem overrides s2). */
+export function extraRowsInheritedFromS1(
+  visiblePrices?: string[],
+  semester: "s1" | "s2" = "s1"
+): boolean {
+  return (
+    semester === "s2" &&
+    listExtraRows(visiblePrices, "s2").length === 0 &&
+    listExtraRows(visiblePrices, "s1").length > 0
+  )
 }
 
 export function isExtraRowEntry(entry: string): boolean {
@@ -78,7 +109,7 @@ export function setExtraRowsForSemester(
   extraRows: PriceTableExtraRow[]
 ): string[] | undefined {
   const standard = (visiblePrices ?? []).filter((e) => !isExtraRowEntry(e))
-  const otherSemester = listExtraRows(visiblePrices).filter((r) => r.semester !== semester)
+  const otherSemester = listExtraRows(visiblePrices).filter((r) => rowSemester(r) !== semester)
   const encoded = [...otherSemester, ...extraRows].map(encodeExtraRow)
   const next = [...standard, ...encoded]
   return next.length === 0 ? undefined : next
