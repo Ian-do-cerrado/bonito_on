@@ -94,7 +94,7 @@ export default function AdminPage() {
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false)
   const [isUpdatingMaintenance, setIsUpdatingMaintenance] = useState(false)
   const [isUpdatingInitialValue, setIsUpdatingInitialValue] = useState(false)
-  const [activeTab, setActiveTab] = useState<"pricing" | "tours" | "blog" | "packages" | "attractions" | "tours-2o-semester">("pricing")
+  const [activeTab, setActiveTab] = useState<"pricing" | "tours" | "blog" | "packages" | "attractions" | "tours-2o-semester" | "next-semester">("pricing")
   const [tours2oSemester, setTours2oSemester] = useState<Tour[]>([])
   const [isLoadingTours2o, setIsLoadingTours2o] = useState(false)
   const [searchQuery2o, setSearchQuery2o] = useState("")
@@ -783,7 +783,7 @@ export default function AdminPage() {
           ))}
         </div>
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="mb-8">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 lg:grid-cols-5 bg-white shadow-lg rounded-xl p-2 h-auto gap-1">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 bg-white shadow-lg rounded-xl p-2 h-auto gap-1">
             <TabsTrigger
               value="pricing"
               className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
@@ -813,6 +813,13 @@ export default function AdminPage() {
               className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
             >
               Gerenciar Blog
+            </TabsTrigger>
+            <TabsTrigger
+              value="next-semester"
+              className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
+              asChild
+            >
+              <Link href="/admin/valor-futuro">Editar 2º Semestre</Link>
             </TabsTrigger>
           </TabsList>
         </Tabs>

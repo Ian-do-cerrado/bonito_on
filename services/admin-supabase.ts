@@ -1,100 +1,38 @@
-"use server"
+import { createClient } from "@/lib/supabase/client"
+import { Tour2Data } from "@/lib/supabase/types"
+import type { Package } from "@/types/package"
+import type { Attraction } from "@/components/attractions-section"
+import type { BlogPost } from "@/types/index" // Declare BlogPost variable
+import { DatabaseTour } from "@/lib/supabase/types" // Import DatabaseTour
 
-import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js"
-import { createClient } from "@/lib/supabase/server"
-import { BlogPost, Tour, Package, Attraction } from "@/types"
-
-export type AdminSaveResult = {
-  success: boolean
-  error?: string
-  /** Campos de 2º semestre não foram gravados — migração pendente no Supabase */
-  governanceSkipped?: boolean
-}
-
-function formatDbError(error: PostgrestError): string {
-  return error.message || error.code || "Erro desconhecido no banco"
-}
-
-function isMissingColumnError(error: PostgrestError): boolean {
-  return (
-    error.code === "PGRST204" ||
-    /Could not find the '([^']+)' column/.test(error.message ?? "")
-  )
-}
-
-function buildTourCoreRow(tour: Tour | Omit<Tour, "id">) {
-  return {
-    title: tour.title,
-    description: tour.description,
-    title_en: tour.title_en,
-    description_en: tour.description_en,
-    title_es: tour.title_es,
-    description_es: tour.description_es,
-    price: tour.price,
-    duration: tour.duration,
-    difficulty: tour.difficulty,
-    category: tour.category,
-    image: tour.image,
-    gallery: tour.gallery,
-    highlights: tour.highlights,
-    included: tour.included,
-    not_included: tour.notIncluded,
-    requirements: tour.requirements,
-    best_season: tour.bestSeason,
-    max_group_size: tour.maxGroupSize,
-    location: tour.location,
-    slug: tour.slug,
-    rating: tour.rating,
-    reviews_count: tour.reviewsCount,
-    preferred_price_atividade: tour.preferred_price_atividade,
-    preferred_price_tabela: tour.preferred_price_tabela,
-    preferred_baixa_tabela: tour.preferred_baixa_tabela ?? null,
-    preferred_ms_tabela: tour.preferred_ms_tabela ?? null,
-    preferred_bonitense_tabela: tour.preferred_bonitense_tabela ?? null,
-    visible_prices: tour.visible_prices ?? null,
-    btms_atrativo_override: tour.btms_atrativo_override ?? null,
-    manual_price: tour.manual_price ?? null,
-    price_2o_semester: tour.price_2o_semester ?? null,
-  }
-}
-
-function buildTourGovernanceRow(tour: Tour | Omit<Tour, "id">) {
-  return {
-    manual_price_2o_semester: tour.manual_price_2o_semester ?? null,
-    price_display_overrides: tour.price_display_overrides ?? null,
-  }
-}
-
-async function applyTourGovernanceFields(
-  supabase: SupabaseClient,
-  tourId: string,
-  tour: Tour | Omit<Tour, "id">
-): Promise<Pick<AdminSaveResult, "governanceSkipped">> {
-  const { error } = await supabase
-    .from("tours")
-    .update(buildTourGovernanceRow(tour))
-    .eq("id", tourId)
-
-  if (!error) return {}
-
-  if (isMissingColumnError(error)) {
-    console.warn(
-      "Colunas de governança de semestre ausentes em tours. Execute migrations/add_semester_pricing_governance.sql no Supabase.",
-      error.message
-    )
-    return { governanceSkipped: true }
-  }
-
-  throw error
-}
+const supabase = createClient()
 
 // TOURS CRUD
-export async function createTour(tour: Omit<Tour, "id">): Promise<Tour | null> {
-  const supabase = await createClient()
+export async function createTour(
+  tour: Omit<DatabaseTour, "id" | "created_at" | "updated_at" | "slug">, // Explicitly omit slug
+): Promise<DatabaseTour | null> {
   try {
     const { data, error } = await supabase
       .from("tours")
-      .insert(buildTourCoreRow(tour))
+      .insert({
+        title: tour.title,
+        description: tour.description,
+        price: tour.price,
+        duration: tour.duration || null,
+        price_high_season: tour.price_high_season || null,
+        price_ms_low_season: tour.price_ms_low_season || null,
+        price_ms_hs: tour.price_ms_hs || null,
+        price_child_ls: tour.price_child_ls || null,
+        price_child_hs: tour.price_child_hs || null,
+        price_senior_hs: tour.price_senior_hs || null,
+        price_senior_low_season: tour.price_senior_low_season || null,
+        min_child_age: tour.min_child_age || null,
+        image: tour.image || null,
+        gallery: tour.gallery || null,
+        rating: tour.rating,
+        category: tour.category,
+        slug: tour.title ? tour.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-*|-*$/g, "") : null, // Generate slug internally
+      })
       .select()
       .single()
 
@@ -103,13 +41,7 @@ export async function createTour(tour: Omit<Tour, "id">): Promise<Tour | null> {
       return null
     }
 
-    try {
-      await applyTourGovernanceFields(supabase, data.id, tour)
-    } catch (govError) {
-      console.error("Error applying tour governance fields:", govError)
-      return null
-    }
-
+    // Return the created tour with all properties
     return data
   } catch (error) {
     console.error("Error in createTour:", error)
@@ -117,38 +49,45 @@ export async function createTour(tour: Omit<Tour, "id">): Promise<Tour | null> {
   }
 }
 
-export async function updateTour(tour: Tour): Promise<AdminSaveResult> {
-  const supabase = await createClient()
+export async function updateTour(tour: DatabaseTour): Promise<boolean> {
   try {
     const { error } = await supabase
       .from("tours")
-      .update(buildTourCoreRow(tour))
+      .update({
+        title: tour.title,
+        description: tour.description,
+        price: tour.price,
+        duration: tour.duration || null,
+        price_high_season: tour.price_high_season || null,
+        price_ms_low_season: tour.price_ms_low_season || null,
+        price_ms_hs: tour.price_ms_hs || null,
+        chd_price_ls: tour.chd_price_ls || null,
+        price_child_hs: tour.price_child_hs || null,
+        price_senior_high_season: tour.price_senior_high_season || null,
+        price_senior_low_season: tour.price_senior_low_season || null,
+        min_child_age: tour.min_child_age || null,
+        image: tour.image || null,
+        gallery: tour.gallery || null,
+        rating: tour.rating,
+        category: tour.category,
+        slug: tour.slug || null, // Ensure slug is handled
+        updated_at: new Date().toISOString(),
+      })
       .eq("id", tour.id)
 
     if (error) {
       console.error("Error updating tour:", error)
-      return { success: false, error: formatDbError(error) }
+      return false
     }
 
-    try {
-      const { governanceSkipped } = await applyTourGovernanceFields(supabase, tour.id, tour)
-      return { success: true, governanceSkipped }
-    } catch (govError) {
-      const err = govError as PostgrestError
-      console.error("Error updating tour governance fields:", govError)
-      return { success: false, error: formatDbError(err) }
-    }
+    return true
   } catch (error) {
     console.error("Error in updateTour:", error)
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Erro ao atualizar passeio",
-    }
+    return false
   }
 }
 
 export async function deleteTour(tourId: string): Promise<boolean> {
-  const supabase = await createClient()
   try {
     const { error } = await supabase.from("tours").delete().eq("id", tourId)
 
@@ -164,28 +103,114 @@ export async function deleteTour(tourId: string): Promise<boolean> {
   }
 }
 
+// TOURS_2 CRUD
+export async function createTour2(tour: Omit<Tour2Data, "id">): Promise<Tour2Data | null> {
+  try {
+    const { data, error } = await supabase
+      .from("tours_2")
+      .insert({
+        title: tour.title,
+        description: tour.description,
+        price: tour.price,
+        chd_price_ls: tour.chd_price_ls,
+        price_chd_hs: tour.price_chd_hs,
+        hs_price: tour.hs_price,
+        senior_price_ls: tour.senior_price_ls,
+        price_senior_hs: tour.price_senior_hs,
+        ms_price_ls: tour.ms_price_ls,
+        price_ms_hs: tour.price_ms_hs,
+        min_child_age: tour.min_child_age,
+        gallery: tour.gallery,
+        image: tour.image,
+        category: tour.category,
+        rating: tour.rating,
+        slug: tour.slug,
+        is_visible: tour.is_visible,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error("Error creating tour in tours_2:", error)
+      return null
+    }
+
+    return data
+  } catch (error) {
+    console.error("Error in createTour2:", error)
+    return null
+  }
+}
+
+export async function updateTour2(tour: Tour2Data): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from("tours_2")
+      .update({
+        title: tour.title,
+        description: tour.description,
+        price: tour.price,
+        chd_price_ls: tour.chd_price_ls,
+        price_chd_hs: tour.price_chd_hs,
+        hs_price: tour.hs_price,
+        senior_price_ls: tour.senior_price_ls,
+        price_senior_hs: tour.price_senior_hs,
+        ms_price_ls: tour.ms_price_ls,
+        price_ms_hs: tour.price_ms_hs,
+        min_child_age: tour.min_child_age,
+        gallery: tour.gallery,
+        image: tour.image,
+        category: tour.category,
+        rating: tour.rating,
+        slug: tour.slug,
+        updated_at: new Date().toISOString(),
+        is_visible: tour.is_visible,
+      })
+      .eq("id", tour.id)
+
+    if (error) {
+      console.error("Error updating tour in tours_2:", error)
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error("Error in updateTour2:", error)
+    return false
+  }
+}
+
+export async function deleteTour2(tourId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase.from("tours_2").delete().eq("id", tourId)
+
+    if (error) {
+      console.error("Error deleting tour from tours_2:", error)
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error("Error in deleteTour2:", error)
+    return false
+  }
+}
+
 // PACKAGES CRUD
 export async function createPackage(pkg: Omit<Package, "id">): Promise<Package | null> {
-  const supabase = await createClient()
   try {
+    // Insert main package
     const { data: packageData, error: packageError } = await supabase
       .from("packages")
       .insert({
         title: pkg.title,
         subtitle: pkg.subtitle,
         description: pkg.description,
-        title_en: pkg.title_en,
-        subtitle_en: pkg.subtitle_en,
-        description_en: pkg.description_en,
-        title_es: pkg.title_es,
-        subtitle_es: pkg.subtitle_es,
-        description_es: pkg.description_es,
+        duration: pkg.duration,
         price: pkg.price,
         original_price: pkg.originalPrice,
-        duration: pkg.duration,
-        category: pkg.category,
         image: pkg.image,
-        slug: pkg.slug,
+        category: pkg.category,
         rating: pkg.rating,
         reviews_count: pkg.reviewsCount,
         max_people: pkg.maxPeople,
@@ -201,26 +226,37 @@ export async function createPackage(pkg: Omit<Package, "id">): Promise<Package |
 
     const packageId = packageData.id
 
-    // Insert relations
-    if (pkg.highlights && pkg.highlights.length > 0) {
-      const highlightsData = pkg.highlights.map((h) => ({ package_id: packageId, highlight: h }))
+    // Insert highlights
+    if (pkg.highlights.length > 0) {
+      const highlightsData = pkg.highlights.map((highlight) => ({
+        package_id: packageId,
+        highlight,
+      }))
       await supabase.from("package_highlights").insert(highlightsData)
     }
 
-    if (pkg.included && pkg.included.length > 0) {
-      const includedData = pkg.included.map((i) => ({ package_id: packageId, item: i }))
+    // Insert included items
+    if (pkg.included.length > 0) {
+      const includedData = pkg.included.map((item) => ({
+        package_id: packageId,
+        item,
+      }))
       await supabase.from("package_included").insert(includedData)
     }
 
-    if (pkg.bestSeason) {
-      const seasons = Array.isArray(pkg.bestSeason) ? pkg.bestSeason : [pkg.bestSeason]
-      const seasonsData = seasons.map((s) => ({ package_id: packageId, season: s }))
+    // Insert best seasons
+    if (pkg.bestSeason.length > 0) {
+      const seasonsData = pkg.bestSeason.map((season) => ({
+        package_id: packageId,
+        season,
+      }))
       await supabase.from("package_best_seasons").insert(seasonsData)
     }
 
-    if (pkg.itinerary && pkg.itinerary.length > 0) {
+    // Insert itinerary
+    if (pkg.itinerary.length > 0) {
       for (const day of pkg.itinerary) {
-        const { data: dayData, error: dayError } = await supabase
+        const { data: itineraryData } = await supabase
           .from("package_itinerary")
           .insert({
             package_id: packageId,
@@ -231,27 +267,44 @@ export async function createPackage(pkg: Omit<Package, "id">): Promise<Package |
           .select()
           .single()
 
-        if (dayError) continue
-
-        if (day.activities && day.activities.length > 0) {
-          const activitiesData = day.activities.map((a) => ({ itinerary_id: dayData.id, activity: a }))
+        if (itineraryData && day.activities.length > 0) {
+          const activitiesData = day.activities.map((activity) => ({
+            itinerary_id: itineraryData.id,
+            activity,
+          }))
           await supabase.from("itinerary_activities").insert(activitiesData)
         }
 
-        if (day.meals && day.meals.length > 0) {
-          const mealsData = day.meals.map((m) => ({ itinerary_id: dayData.id, meal: m }))
+        if (itineraryData && day.meals.length > 0) {
+          const mealsData = day.meals.map((meal) => ({
+            itinerary_id: itineraryData.id,
+            meal,
+          }))
           await supabase.from("itinerary_meals").insert(mealsData)
         }
       }
     }
 
     return {
-      ...pkg,
-      id: packageId,
-      originalPrice: pkg.originalPrice,
-      maxPeople: pkg.maxPeople,
-      reviewsCount: pkg.reviewsCount,
-    } as Package
+      id: packageData.id,
+      title: packageData.title,
+      subtitle: packageData.subtitle,
+      description: packageData.description,
+      duration: packageData.duration,
+      price: packageData.price,
+      originalPrice: packageData.original_price,
+      image: packageData.image,
+      category: packageData.category,
+      rating: packageData.rating,
+      reviewsCount: packageData.reviews_count,
+      maxPeople: packageData.max_people,
+      difficulty: packageData.difficulty,
+      highlights: pkg.highlights,
+      included: pkg.included,
+      bestSeason: pkg.bestSeason,
+      itinerary: pkg.itinerary,
+      slug: packageData.slug,
+    }
   } catch (error) {
     console.error("Error in createPackage:", error)
     return null
@@ -259,7 +312,6 @@ export async function createPackage(pkg: Omit<Package, "id">): Promise<Package |
 }
 
 export async function updatePackage(pkg: Package): Promise<boolean> {
-  const supabase = await createClient()
   try {
     // Update main package
     const { error: packageError } = await supabase
@@ -268,18 +320,11 @@ export async function updatePackage(pkg: Package): Promise<boolean> {
         title: pkg.title,
         subtitle: pkg.subtitle,
         description: pkg.description,
-        title_en: pkg.title_en,
-        subtitle_en: pkg.subtitle_en,
-        description_en: pkg.description_en,
-        title_es: pkg.title_es,
-        subtitle_es: pkg.subtitle_es,
-        description_es: pkg.description_es,
+        duration: pkg.duration,
         price: pkg.price,
         original_price: pkg.originalPrice,
-        duration: pkg.duration,
-        category: pkg.category,
         image: pkg.image,
-        slug: pkg.slug,
+        category: pkg.category,
         rating: pkg.rating,
         reviews_count: pkg.reviewsCount,
         max_people: pkg.maxPeople,
@@ -292,34 +337,43 @@ export async function updatePackage(pkg: Package): Promise<boolean> {
       return false
     }
 
-    // Delete existing relations
-    await Promise.all([
-      supabase.from("package_highlights").delete().eq("package_id", pkg.id),
-      supabase.from("package_included").delete().eq("package_id", pkg.id),
-      supabase.from("package_best_seasons").delete().eq("package_id", pkg.id),
-      supabase.from("package_itinerary").delete().eq("package_id", pkg.id),
-    ])
+    // Delete existing related data
+    await supabase.from("package_highlights").delete().eq("package_id", pkg.id)
+    await supabase.from("package_included").delete().eq("package_id", pkg.id)
+    await supabase.from("package_best_seasons").delete().eq("package_id", pkg.id)
 
-    // Re-insert relations
-    if (pkg.highlights && pkg.highlights.length > 0) {
-      const highlightsData = pkg.highlights.map((h) => ({ package_id: pkg.id, highlight: h }))
+    // Delete itinerary (cascade will handle activities and meals)
+    await supabase.from("package_itinerary").delete().eq("package_id", pkg.id)
+
+    // Re-insert updated data
+    if (pkg.highlights.length > 0) {
+      const highlightsData = pkg.highlights.map((highlight) => ({
+        package_id: pkg.id,
+        highlight,
+      }))
       await supabase.from("package_highlights").insert(highlightsData)
     }
 
-    if (pkg.included && pkg.included.length > 0) {
-      const includedData = pkg.included.map((i) => ({ package_id: pkg.id, item: i }))
+    if (pkg.included.length > 0) {
+      const includedData = pkg.included.map((item) => ({
+        package_id: pkg.id,
+        item,
+      }))
       await supabase.from("package_included").insert(includedData)
     }
 
-    if (pkg.bestSeason) {
-      const seasons = Array.isArray(pkg.bestSeason) ? pkg.bestSeason : [pkg.bestSeason]
-      const seasonsData = seasons.map((s) => ({ package_id: pkg.id, season: s }))
+    if (pkg.bestSeason.length > 0) {
+      const seasonsData = pkg.bestSeason.map((season) => ({
+        package_id: pkg.id,
+        season,
+      }))
       await supabase.from("package_best_seasons").insert(seasonsData)
     }
 
-    if (pkg.itinerary && pkg.itinerary.length > 0) {
+    // Re-insert itinerary
+    if (pkg.itinerary.length > 0) {
       for (const day of pkg.itinerary) {
-        const { data: dayData, error: dayError } = await supabase
+        const { data: itineraryData } = await supabase
           .from("package_itinerary")
           .insert({
             package_id: pkg.id,
@@ -330,15 +384,19 @@ export async function updatePackage(pkg: Package): Promise<boolean> {
           .select()
           .single()
 
-        if (dayError) continue
-
-        if (day.activities && day.activities.length > 0) {
-          const activitiesData = day.activities.map((a) => ({ itinerary_id: dayData.id, activity: a }))
+        if (itineraryData && day.activities.length > 0) {
+          const activitiesData = day.activities.map((activity) => ({
+            itinerary_id: itineraryData.id,
+            activity,
+          }))
           await supabase.from("itinerary_activities").insert(activitiesData)
         }
 
-        if (day.meals && day.meals.length > 0) {
-          const mealsData = day.meals.map((m) => ({ itinerary_id: dayData.id, meal: m }))
+        if (itineraryData && day.meals.length > 0) {
+          const mealsData = day.meals.map((meal) => ({
+            itinerary_id: itineraryData.id,
+            meal,
+          }))
           await supabase.from("itinerary_meals").insert(mealsData)
         }
       }
@@ -352,7 +410,6 @@ export async function updatePackage(pkg: Package): Promise<boolean> {
 }
 
 export async function deletePackage(packageId: string): Promise<boolean> {
-  const supabase = await createClient()
   try {
     const { error } = await supabase.from("packages").delete().eq("id", packageId)
 
@@ -370,41 +427,51 @@ export async function deletePackage(packageId: string): Promise<boolean> {
 
 // ATTRACTIONS CRUD
 export async function createAttraction(attraction: Omit<Attraction, "id">): Promise<Attraction | null> {
-  const supabase = await createClient()
   try {
-    const { data, error } = await supabase
+    const { data: attractionData, error: attractionError } = await supabase
       .from("attractions")
       .insert({
         title: attraction.title,
         description: attraction.description,
-        title_en: attraction.title_en,
-        description_en: attraction.description_en,
-        title_es: attraction.title_es,
-        description_es: attraction.description_es,
-        category: attraction.category,
         image: attraction.image,
+        category: attraction.category,
         location: attraction.location,
-        contact: attraction.contact,
-        website: attraction.website,
-        rating: attraction.rating,
-        price_range: attraction.priceRange,
-        features: attraction.features,
-        slug: attraction.slug,
-        highlights: attraction.highlights,
         duration: attraction.duration,
         capacity: attraction.capacity,
         price: attraction.price,
-        group_size: attraction.groupSize,
+        rating: attraction.rating,
       })
       .select()
       .single()
 
-    if (error) {
-      console.error("Error creating attraction:", error)
+    if (attractionError) {
+      console.error("Error creating attraction:", attractionError)
       return null
     }
 
-    return data
+    // Insert highlights - verificar se highlights existe e não é undefined
+    if (attraction.highlights && Array.isArray(attraction.highlights) && attraction.highlights.length > 0) {
+      const highlightsData = attraction.highlights.map((highlight) => ({
+        attraction_id: attractionData.id,
+        highlight,
+      }))
+      await supabase.from("attraction_highlights").insert(highlightsData)
+    }
+
+    return {
+      id: attractionData.id,
+      title: attractionData.title,
+      description: attractionData.description,
+      image: attractionData.image,
+      category: attractionData.category,
+      location: attractionData.location,
+      duration: attractionData.duration,
+      capacity: attractionData.capacity,
+      price: attractionData.price,
+      rating: attractionData.rating,
+      slug: attractionData.slug,
+      highlights: attraction.highlights || [], // fallback para array vazio
+    }
   } catch (error) {
     console.error("Error in createAttraction:", error)
     return null
@@ -412,37 +479,37 @@ export async function createAttraction(attraction: Omit<Attraction, "id">): Prom
 }
 
 export async function updateAttraction(attraction: Attraction): Promise<boolean> {
-  const supabase = await createClient()
   try {
-    const { error } = await supabase
+    const { error: attractionError } = await supabase
       .from("attractions")
       .update({
         title: attraction.title,
         description: attraction.description,
-        title_en: attraction.title_en,
-        description_en: attraction.description_en,
-        title_es: attraction.title_es,
-        description_es: attraction.description_es,
-        category: attraction.category,
         image: attraction.image,
+        category: attraction.category,
         location: attraction.location,
-        contact: attraction.contact,
-        website: attraction.website,
-        rating: attraction.rating,
-        price_range: attraction.priceRange,
-        features: attraction.features,
-        slug: attraction.slug,
-        highlights: attraction.highlights,
         duration: attraction.duration,
         capacity: attraction.capacity,
         price: attraction.price,
-        group_size: attraction.groupSize,
+        rating: attraction.rating,
       })
       .eq("id", attraction.id)
 
-    if (error) {
-      console.error("Error updating attraction:", error)
+    if (attractionError) {
+      console.error("Error updating attraction:", attractionError)
       return false
+    }
+
+    // Delete existing highlights
+    await supabase.from("attraction_highlights").delete().eq("attraction_id", attraction.id)
+
+    // Re-insert highlights - verificar se highlights existe e não é undefined
+    if (attraction.highlights && Array.isArray(attraction.highlights) && attraction.highlights.length > 0) {
+      const highlightsData = attraction.highlights.map((highlight) => ({
+        attraction_id: attraction.id,
+        highlight,
+      }))
+      await supabase.from("attraction_highlights").insert(highlightsData)
     }
 
     return true
@@ -453,7 +520,6 @@ export async function updateAttraction(attraction: Attraction): Promise<boolean>
 }
 
 export async function deleteAttraction(attractionId: string): Promise<boolean> {
-  const supabase = await createClient()
   try {
     const { error } = await supabase.from("attractions").delete().eq("id", attractionId)
 
@@ -471,20 +537,14 @@ export async function deleteAttraction(attractionId: string): Promise<boolean> {
 
 // BLOG POSTS CRUD
 export async function createBlogPost(post: Omit<BlogPost, "id">): Promise<BlogPost | null> {
-  const supabase = await createClient()
   try {
+    // Insert main blog post
     const { data: blogData, error: blogError } = await supabase
       .from("blog_posts")
       .insert({
         title: post.title,
         excerpt: post.excerpt,
         content: post.content,
-        title_en: post.title_en,
-        excerpt_en: post.excerpt_en,
-        content_en: post.content_en,
-        title_es: post.title_es,
-        excerpt_es: post.excerpt_es,
-        content_es: post.content_es,
         image: post.image,
         author: post.author,
         published_at: post.publishedAt,
@@ -502,18 +562,27 @@ export async function createBlogPost(post: Omit<BlogPost, "id">): Promise<BlogPo
 
     const postId = blogData.id
 
+    // Insert tags
     if (post.tags && post.tags.length > 0) {
-      const tagsData = post.tags.map((tag: string) => ({ post_id: postId, tag }))
+      const tagsData = post.tags.map((tag) => ({
+        post_id: postId,
+        tag,
+      }))
       await supabase.from("blog_post_tags").insert(tagsData)
     }
 
+    // Insert SEO keywords
     if (post.seoKeywords && post.seoKeywords.length > 0) {
-      const keywordsData = post.seoKeywords.map((keyword: string) => ({ post_id: postId, keyword }))
+      const keywordsData = post.seoKeywords.map((keyword) => ({
+        post_id: postId,
+        keyword,
+      }))
       await supabase.from("blog_post_seo_keywords").insert(keywordsData)
     }
 
+    // Insert gallery images
     if (post.gallery && post.gallery.length > 0) {
-      const galleryData = post.gallery.map((imageUrl: string, index: number) => ({
+      const galleryData = post.gallery.map((imageUrl, index) => ({
         post_id: postId,
         image_url: imageUrl,
         image_order: index,
@@ -522,13 +591,18 @@ export async function createBlogPost(post: Omit<BlogPost, "id">): Promise<BlogPo
     }
 
     return {
-      ...blogData,
       id: blogData.id,
+      title: blogData.title,
+      excerpt: blogData.excerpt,
+      content: blogData.content,
+      image: blogData.image,
+      author: blogData.author,
       publishedAt: blogData.published_at,
       readTime: blogData.read_time,
+      tags: post.tags || [],
+      slug: blogData.slug,
       seoTitle: blogData.seo_title,
       seoDescription: blogData.seo_description,
-      tags: post.tags || [],
       seoKeywords: post.seoKeywords || [],
       gallery: post.gallery || [],
     }
@@ -539,20 +613,14 @@ export async function createBlogPost(post: Omit<BlogPost, "id">): Promise<BlogPo
 }
 
 export async function updateBlogPost(post: BlogPost): Promise<boolean> {
-  const supabase = await createClient()
   try {
+    // Update main blog post
     const { error: blogError } = await supabase
       .from("blog_posts")
       .update({
         title: post.title,
         excerpt: post.excerpt,
         content: post.content,
-        title_en: post.title_en,
-        excerpt_en: post.excerpt_en,
-        content_en: post.content_en,
-        title_es: post.title_es,
-        excerpt_es: post.excerpt_es,
-        content_es: post.content_es,
         image: post.image,
         author: post.author,
         published_at: post.publishedAt,
@@ -567,24 +635,32 @@ export async function updateBlogPost(post: BlogPost): Promise<boolean> {
       return false
     }
 
-    await Promise.all([
-      supabase.from("blog_post_tags").delete().eq("post_id", post.id),
-      supabase.from("blog_post_seo_keywords").delete().eq("post_id", post.id),
-      supabase.from("blog_post_gallery").delete().eq("post_id", post.id),
-    ])
+    // Delete existing related data
+    await supabase.from("blog_post_tags").delete().eq("post_id", post.id)
+    await supabase.from("blog_post_seo_keywords").delete().eq("post_id", post.id)
+    await supabase.from("blog_post_gallery").delete().eq("post_id", post.id)
 
+    // Re-insert tags
     if (post.tags && post.tags.length > 0) {
-      const tagsData = post.tags.map((tag: string) => ({ post_id: post.id, tag }))
+      const tagsData = post.tags.map((tag) => ({
+        post_id: post.id,
+        tag,
+      }))
       await supabase.from("blog_post_tags").insert(tagsData)
     }
 
+    // Re-insert SEO keywords
     if (post.seoKeywords && post.seoKeywords.length > 0) {
-      const keywordsData = post.seoKeywords.map((keyword: string) => ({ post_id: post.id, keyword }))
+      const keywordsData = post.seoKeywords.map((keyword) => ({
+        post_id: post.id,
+        keyword,
+      }))
       await supabase.from("blog_post_seo_keywords").insert(keywordsData)
     }
 
+    // Re-insert gallery images
     if (post.gallery && post.gallery.length > 0) {
-      const galleryData = post.gallery.map((imageUrl: string, index: number) => ({
+      const galleryData = post.gallery.map((imageUrl, index) => ({
         post_id: post.id,
         image_url: imageUrl,
         image_order: index,
@@ -600,13 +676,14 @@ export async function updateBlogPost(post: BlogPost): Promise<boolean> {
 }
 
 export async function deleteBlogPost(postId: string): Promise<boolean> {
-  const supabase = await createClient()
   try {
     const { error } = await supabase.from("blog_posts").delete().eq("id", postId)
+
     if (error) {
       console.error("Error deleting blog post:", error)
       return false
     }
+
     return true
   } catch (error) {
     console.error("Error in deleteBlogPost:", error)
