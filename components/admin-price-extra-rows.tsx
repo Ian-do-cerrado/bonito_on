@@ -45,8 +45,10 @@ export function AdminPriceExtraRows({
   allPriceRows,
   editedVisiblePrices,
   onVisiblePricesChange,
+  semester: semesterProp,
 }: AdminPriceExtraRowsProps) {
-  const [semester, setSemester] = useState<"s1" | "s2">("s1")
+  const [semesterInternal, setSemesterInternal] = useState<"s1" | "s2">(semesterProp ?? "s1")
+  const semester = semesterProp ?? semesterInternal
 
   const extraRows = useMemo(
     () => listExtraRows(editedVisiblePrices, semester),
@@ -150,20 +152,22 @@ export function AdminPriceExtraRows({
             deste atrativo.
           </p>
         </div>
-        <div className="flex rounded-md border border-gray-200 overflow-hidden shrink-0">
-          {(["s1", "s2"] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setSemester(s)}
-              className={`px-2.5 py-1 text-[10px] font-bold uppercase ${
-                semester === s ? "bg-indigo-600 text-white" : "bg-white text-gray-500 hover:bg-gray-50"
-              }`}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
+        {!semesterProp && (
+          <div className="flex rounded-md border border-gray-200 overflow-hidden shrink-0">
+            {(["s1", "s2"] as const).map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setSemesterInternal(s)}
+                className={`px-2.5 py-1 text-[10px] font-bold uppercase ${
+                  semester === s ? "bg-indigo-600 text-white" : "bg-white text-gray-500 hover:bg-gray-50"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {extraRows.length > 0 && (

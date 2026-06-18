@@ -55,13 +55,14 @@ export function inferSpecialSeason(row: TourPriceRowDisplay): SpecialSeason {
   return "baixa"
 }
 
-/** Monta a chave de visible_prices para uma tarifa especial (sempre namespaced em s1). */
+/** Monta a chave de visible_prices para uma tarifa especial (namespaced por semestre). */
 export function buildSpecialKey(
   rowId: SpecialTariffId,
   season: SpecialSeason | "__auto__",
-  override: string
+  override: string,
+  semesterNamespace: "s1" | "s2" = "s1"
 ): string {
-  let key = `s1:${rowId}`
+  let key = `${semesterNamespace}:${rowId}`
   if (season !== "__auto__") key += `:${season}`
   if (override !== "__auto__") key += `#${override}`
   return key

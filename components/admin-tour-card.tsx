@@ -19,16 +19,28 @@ import { AdminPriceExtraRows } from "@/components/admin-price-extra-rows"
 import { isExtraRowEntry } from "@/lib/price-table-extra-rows"
 import { parseSpecialEntry, inferSpecialSeason, buildSpecialKey, type SpecialSeason } from "@/lib/special-tariffs"
 import { buildManualOverride, parseManualOverride, isManualOverride } from "@/lib/price-overrides"
+import {
+  type AdminSemester,
+  getCellOverride,
+  isCellVisible,
+  setCellEntryInList,
+  stripSemesterVisiblePrices,
+  allStandardScopedKeys,
+} from "@/lib/semester-admin-prices"
 
 
 interface AdminTourCardProps {
   tour: Tour
   onUpdate: (tour: Tour) => any
   onDelete: (tourId: string) => void
+  /** Semestre de preços editado no painel (s2 herda configuração do s1 até haver override). */
+  semester?: AdminSemester
 }
 
-export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) {
+export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: AdminTourCardProps) {
   const { t } = useLanguage()
+  const semNs = semester
+  const isS2 = semester === "s2"
 
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -130,7 +142,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
     if (atv) {
       setIsLoadingAtivRows(true)
       import("@/app/actions/prices").then(({ fetchAllRowsForAtrativo }) =>
-        fetchAllRowsForAtrativo(atv).then(res => {
+        fetchAllRowsForAtrativo(atv, isS2).then(res => {
           if (res.success && res.rows) setAllAtivRows(res.rows)
         }).finally(() => setIsLoadingAtivRows(false))
       )
@@ -235,6 +247,11 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
           <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-indigo-600/90 text-white px-2 py-0.5 rounded-full text-[10px] font-medium backdrop-blur-sm">
             <Link2 className="w-2.5 h-2.5" />
             {tour.btms_atrativo_override}
+          </div>
+        )}
+        {isS2 && !isEditing && (
+          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-600/90 text-white backdrop-blur-sm">
+            2º Semestre
           </div>
         )}
       </div>
@@ -408,7 +425,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                 <div className="flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-amber-600" />
                   <Label className="text-amber-700 font-semibold text-sm">
-                    Valor Manual (Opcional)
+                    Valor Manual (Opcional){isS2 ? " — 2º Semestre" : ""}
                   </Label>
                 </div>
                 <p className="text-xs text-amber-500 leading-relaxed">
@@ -422,37 +439,45 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                       min="0"
                       step="0.01"
                       placeholder="Ex: 250.00"
-                      value={editedTour.manual_price ?? ""}
+                      value={isS2 ? (editedTour.manual_price_2o_semester ?? "") : (editedTour.manual_price ?? "")}
                       onChange={(e) => {
                         const val = e.target.value
                         setEditedTour(prev => ({
                           ...prev,
-                          manual_price: val === "" ? null : parseFloat(val)
+                          ...(isS2
+                            ? { manual_price_2o_semester: val === "" ? null : parseFloat(val) }
+                            : { manual_price: val === "" ? null : parseFloat(val) }),
                         }))
                       }}
                       className="pl-10 bg-white border-amber-200 text-sm font-medium"
                     />
                   </div>
-                  {editedTour.manual_price != null && editedTour.manual_price > 0 && (
+                  {(isS2 ? editedTour.manual_price_2o_semester : editedTour.manual_price) != null &&
+                    (isS2 ? editedTour.manual_price_2o_semester! : editedTour.manual_price!) > 0 && (
                     <button
                       type="button"
-                      onClick={() => setEditedTour(prev => ({ ...prev, manual_price: null }))}
+                      onClick={() => setEditedTour(prev => ({
+                        ...prev,
+                        ...(isS2 ? { manual_price_2o_semester: null } : { manual_price: null }),
+                      }))}
                       className="text-[10px] text-amber-500 hover:text-red-500 underline underline-offset-2 whitespace-nowrap"
                     >
                       Limpar
                     </button>
                   )}
                 </div>
-                {editedTour.manual_price != null && editedTour.manual_price > 0 && (
+                {(isS2 ? editedTour.manual_price_2o_semester : editedTour.manual_price) != null &&
+                  (isS2 ? editedTour.manual_price_2o_semester! : editedTour.manual_price!) > 0 && (
                   <p className="text-[11px] text-amber-600 font-medium">
-                    ✓ Valor manual ativo: {editedTour.manual_price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                    ✓ Valor manual ativo: {(isS2 ? editedTour.manual_price_2o_semester! : editedTour.manual_price!).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                     {" "}— a sincronização automática <strong>não</strong> sobrescreverá este valor.
                   </p>
                 )}
               </div>
 
               {/* ── Valor Principal do Card (Seletor BTMS) ── */}
-              {!editedTour.manual_price && (
+              {!((isS2 ? editedTour.manual_price_2o_semester : editedTour.manual_price) != null &&
+                (isS2 ? editedTour.manual_price_2o_semester! : editedTour.manual_price!) > 0) && (
                 <div className="rounded-lg border border-green-200 bg-green-50/50 p-3 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -685,10 +710,13 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                   <Label className="text-sm font-semibold">Preços Visíveis no Site</Label>
                   <button
                     type="button"
-                    onClick={() => setEditedTour(prev => ({ ...prev, visible_prices: undefined }))}
+                    onClick={() => setEditedTour(prev => ({
+                      ...prev,
+                      visible_prices: stripSemesterVisiblePrices(prev.visible_prices, semNs),
+                    }))}
                     className="text-[10px] text-gray-400 hover:text-indigo-500 underline underline-offset-2"
                   >
-                    Resetar
+                    Resetar{isS2 ? " (2º sem.)" : ""}
                   </button>
                 </div>
                 <p className="text-[11px] text-gray-400">
@@ -721,45 +749,17 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                     const n = Number(v)
                     return n > 0 ? n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) : null
                   }
-                  // Manage visible_prices entries for this section
-                  const S1_KEYS = ["s1:baixa:adulto","s1:baixa:crianca","s1:baixa:senior","s1:alta:adulto","s1:alta:crianca","s1:alta:senior","s1:ms","s1:bonitense"]
-                  const LEGACY_KEYS = ["baixa:adulto","baixa:crianca","baixa:senior","alta:adulto","alta:crianca","alta:senior","ms","bonitense"]
-                  const ALL_KEYS = [...S1_KEYS, ...LEGACY_KEYS]
-                  const vpRaw = editedTour.visible_prices
-                  const vp = Array.isArray(vpRaw)
-                    ? vpRaw.filter((v) => !isExtraRowEntry(v))
-                    : undefined
+                  // Manage visible_prices entries for this section (semestre atual; s2 herda s1)
+                  // Manage visible_prices entries for this section (semestre atual; s2 herda s1)
 
-                  function getCellEntry(cellKey: string): string | undefined {
-                    if (!vp) return cellKey // no vp = all visible, return plain key (= auto)
-                    return vp.find(v => v === `s1:${cellKey}` || v.startsWith(`s1:${cellKey}#`) || v === cellKey || v.startsWith(cellKey + "#"))
+                  function isCellVisibleLocal(cellKey: string): boolean {
+                    return isCellVisible(editedTour.visible_prices, semNs, cellKey)
                   }
-                  function isCellVisible(cellKey: string): boolean {
-                    if (!vp) return true
-                    return !!vp.find(v => v === `s1:${cellKey}` || v.startsWith(`s1:${cellKey}#`) || v === cellKey || v.startsWith(cellKey + "#"))
-                  }
-                  function getCellOverride(cellKey: string): string {
-                    const entry = getCellEntry(cellKey)
-                    if (!entry) return "__auto__"
-                    const idx = entry.indexOf("#")
-                    return idx >= 0 ? entry.substring(idx + 1) : "__auto__"
+                  function getCellOverrideLocal(cellKey: string): string {
+                    return getCellOverride(editedTour.visible_prices, semNs, cellKey)
                   }
                   function setCellEntry(cellKey: string, visible: boolean, override: string = "__auto__") {
-                    const base: string[] = vp ? [...vp] : [...ALL_KEYS]
-                    const filtered = base.filter(v => v !== cellKey && !v.startsWith(cellKey + "#") && v !== `s1:${cellKey}` && !v.startsWith(`s1:${cellKey}#`))
-                    if (!visible) {
-                      setEditedTour((prev) => ({
-                        ...prev,
-                        visible_prices: mergeVisibleWithExtraRows(
-                          filtered.length === 0 ? undefined : filtered,
-                          prev.visible_prices
-                        ),
-                      }))
-                      return
-                    }
-                    const scoped = `s1:${cellKey}`
-                    const entry = override === "__auto__" ? scoped : `${scoped}#${override}`
-                    const next = [...filtered, entry]
+                    const next = setCellEntryInList(editedTour.visible_prices, semNs, cellKey, visible, override)
                     setEditedTour((prev) => ({
                       ...prev,
                       visible_prices: mergeVisibleWithExtraRows(next, prev.visible_prices),
@@ -773,8 +773,8 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                       </div>
                       {sectionDef.rowDefs.map(rowDef => {
                         const cellKey = `${sectionDef.key}:${rowDef.id}`
-                        const visible = isCellVisible(cellKey)
-                        const override = getCellOverride(cellKey)
+                        const visible = isCellVisibleLocal(cellKey)
+                        const override = getCellOverrideLocal(cellKey)
                         // Coluna usada ao escolher uma linha específica. Para "Melhor Idade" usa
                         // o preço de adulto (BTMS não-normalizado), permitindo escolher qualquer preço.
                         const ovCampo = rowDef.overrideCampo
@@ -910,9 +910,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                   ] as const).map(g => {
                     // Use allAtivRows (no filter) — all rows from this atrativo
                     const allPriceRows: any[] = allAtivRows.length > 0 ? allAtivRows : (editedTour.prices?.rows ?? [])
-                    const S1_KEYS = ["s1:baixa:adulto","s1:baixa:crianca","s1:baixa:senior","s1:alta:adulto","s1:alta:crianca","s1:alta:senior","s1:ms","s1:bonitense"]
-                    const LEGACY_KEYS = ["baixa:adulto","baixa:crianca","baixa:senior","alta:adulto","alta:crianca","alta:senior","ms","bonitense"]
-                    const ALL_KEYS = [...S1_KEYS, ...LEGACY_KEYS]
+                    const ALL_KEYS = [...allStandardScopedKeys(semNs), ...["baixa:adulto","baixa:crianca","baixa:senior","alta:adulto","alta:crianca","alta:senior","ms","bonitense"]]
                     const vpRaw2 = editedTour.visible_prices
                     const vp = Array.isArray(vpRaw2)
                       ? vpRaw2.filter((v) => !isExtraRowEntry(v))
@@ -931,8 +929,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                       return allPriceRows.find(r => r.nomeTabela === tabela && r.atividade === atividade)
                     }
 
-                    // Estado atual de um slot (temporada), espelhando a lógica do site
-                    const readSlot = (seasonKey: SpecialSeason): { visible: boolean; override: string } => {
+                    const readSlotForNs = (ns: AdminSemester, seasonKey: SpecialSeason): { visible: boolean; override: string } => {
                       if (!vp) {
                         const inferred = autoRow ? inferSpecialSeason(autoRow) : null
                         return { visible: inferred === seasonKey, override: "__auto__" }
@@ -940,7 +937,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                       let seasonOverride: string | null | undefined = undefined
                       let legacyOverride: string | null | undefined = undefined
                       for (const v of vp) {
-                        const p = parseSpecialEntry(v, g.id, "s1")
+                        const p = parseSpecialEntry(v, g.id, ns)
                         if (!p) continue
                         if (p.season === seasonKey) { seasonOverride = p.override; break }
                         if (p.season === null && legacyOverride === undefined) legacyOverride = p.override
@@ -953,11 +950,19 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                       return { visible: false, override: "__auto__" }
                     }
 
-                    // Remove todas as entradas desta tarifa (qualquer temporada / legado)
+                    const readSlot = (seasonKey: SpecialSeason): { visible: boolean; override: string } => {
+                      const fromCurrent = readSlotForNs(semNs, seasonKey)
+                      if (semNs === "s2" && !fromCurrent.visible && fromCurrent.override === "__auto__") {
+                        const fromS1 = readSlotForNs("s1", seasonKey)
+                        if (fromS1.visible) return fromS1
+                      }
+                      return fromCurrent
+                    }
+
                     const stripTariff = (arr: string[]) => arr.filter(v => {
-                      let s = v
-                      if (s.startsWith("s1:") || s.startsWith("s2:")) s = s.substring(3)
-                      return !(s === g.id || s.startsWith(g.id + ":") || s.startsWith(g.id + "#"))
+                      if (parseSpecialEntry(v, g.id, semNs) !== null) return false
+                      if (semNs === "s1" && !/^(s1|s2):/.test(v) && parseSpecialEntry(v, g.id, undefined) !== null) return false
+                      return true
                     })
 
                     // Define um slot, migrando a tarifa para chaves explícitas por temporada
@@ -966,8 +971,8 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                       const baixaState = seasonKey === "baixa" ? { visible, override } : readSlot("baixa")
                       const base = stripTariff(vp ? [...vp] : [...ALL_KEYS])
                       const next = [...base]
-                      if (altaState.visible) next.push(buildSpecialKey(g.id, "alta", altaState.override))
-                      if (baixaState.visible) next.push(buildSpecialKey(g.id, "baixa", baixaState.override))
+                      if (altaState.visible) next.push(buildSpecialKey(g.id, "alta", altaState.override, semNs))
+                      if (baixaState.visible) next.push(buildSpecialKey(g.id, "baixa", baixaState.override, semNs))
                       setEditedTour((prev) => ({
                         ...prev,
                         visible_prices: mergeVisibleWithExtraRows(next.length ? next : undefined, prev.visible_prices),
@@ -1082,6 +1087,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
                   onVisiblePricesChange={(next) =>
                     setEditedTour((prev) => ({ ...prev, visible_prices: next }))
                   }
+                  semester={semNs}
                 />
               </div>
 
@@ -1094,16 +1100,17 @@ export function AdminTourCard({ tour, onUpdate, onDelete }: AdminTourCardProps) 
             <div className="flex items-center justify-between gap-2">
               <div>
                 {(() => {
-                  const isManual = tour.manual_price != null && tour.manual_price > 0
-                  const displayPrice = getDisplayPrice(tour)
+                  const manualVal = isS2 ? tour.manual_price_2o_semester : tour.manual_price
+                  const isManual = manualVal != null && manualVal > 0
+                  const displayPrice = getDisplayPrice(tour, "main_activity", isS2)
                   if (isManual) return (
                     <>
                       <div className="text-xs text-amber-500 mb-0.5 flex items-center gap-1">
                         <DollarSign className="w-3 h-3" />
-                        Valor Manual
+                        Valor Manual{isS2 ? " (2º Sem.)" : ""}
                       </div>
                       <div className="text-xl font-bold text-amber-700">
-                        {tour.manual_price!.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                        {manualVal!.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                       </div>
                     </>
                   )
