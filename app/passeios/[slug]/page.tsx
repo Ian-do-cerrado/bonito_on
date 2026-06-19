@@ -356,50 +356,27 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-4">{t("reserveNow")}</h3>
 
-                {tour.prices?.rows?.length ? (
-                  <TourPricesSidebar
-                    prices={tour.prices}
-                    visiblePrices={tour.visible_prices}
-                    priceDisplayOverrides={tour.price_display_overrides}
-                    preferNextSemester={preferNextSemester}
-                    tourSlug={tour.slug}
-                    onReserve={() => openModal(tour.title)}
-                    duration={tour.duration || undefined}
-                  />
-
-                ) : (
-                  <div className="mb-6">
-                    {(() => {
-                      const displayPrice = getDisplayPrice(tour, initialValueType === "min_price" ? "min_price" : "main_activity", preferNextSemester)
-                      if (displayPrice > 0) return (
-                        <>
-                          <div className="text-xs text-gray-500 mb-0.5">A partir de</div>
-                          <div className="text-2xl font-bold text-green-600">
-                            {displayPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                          </div>
-                          <p className="text-gray-600 text-sm">por pessoa (adulto)</p>
-                        </>
-                      )
-                      return (
-                        <>
-                          <div className="text-2xl font-bold text-green-600">Consulte o valor</div>
-                          <p className="text-gray-600">Entre em contato para orçamentos</p>
-                        </>
-                      )
-                    })()}
-                  </div>
-                )}
+                {(() => {
+                  const displayPrice = getDisplayPrice(
+                    tour,
+                    initialValueType === "min_price" ? "min_price" : "main_activity",
+                    preferNextSemester
+                  )
+                  return (
+                    <TourPricesSidebar
+                      prices={tour.prices ?? { rows: [], precoMinimo: 0 }}
+                      visiblePrices={tour.visible_prices}
+                      priceDisplayOverrides={tour.price_display_overrides}
+                      preferNextSemester={preferNextSemester}
+                      tourSlug={tour.slug}
+                      fallbackDisplayPrice={displayPrice > 0 ? displayPrice : undefined}
+                      onReserve={() => openModal(tour.title)}
+                      duration={tour.duration || undefined}
+                    />
+                  )
+                })()}
 
                 <div className="space-y-4 mb-6">
-                  {!tour.prices?.rows?.length && (
-                    <Button
-                      onClick={() => openModal(tour.title)}
-                      className="w-full bg-green-600 hover:bg-green-700 text-lg py-3 transition-transform duration-300 hover:scale-105"
-                    >
-                      {t("bookNow")}
-                    </Button>
-                  )}
-
                   <Button asChild variant="outline" className="w-full transition-colors duration-300 hover:bg-green-50">
                     <Link
                       href="https://wa.me/5567991395384?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20um%20atendimento%20personalizado%20para%20ir%20a%20Bonito%20MS"

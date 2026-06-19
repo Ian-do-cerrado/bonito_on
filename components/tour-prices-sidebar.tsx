@@ -20,6 +20,23 @@ function standardVisiblePrices(visiblePrices?: string[]): string[] | undefined {
   return standard.length > 0 ? standard : undefined
 }
 
+/** Há entradas explícitas de células baixa/alta/ms/bonitense (não só linhas extras). */
+function hasStandardSeasonConfig(
+  visiblePrices: string[],
+  semesterNamespace?: "s1" | "s2"
+): boolean {
+  const std = visiblePrices.filter((v) => !isExtraRowEntry(v))
+  return std.some((v) => {
+    if (/^(s1|s2):(baixa|alta):/.test(v)) return true
+    if (/^(baixa|alta):/.test(v)) return true
+    if (/^(s1|s2):(ms|bonitense)/.test(v)) return true
+    if (semesterNamespace && v.startsWith(`${semesterNamespace}:`)) return true
+    return ["adulto", "crianca", "senior", "ms", "bonitense"].some(
+      (id) => v === id || v.startsWith(`${id}#`)
+    )
+  })
+}
+
 type SemesterOverrides = {
   validityEnd?: string
   labels?: Partial<Record<"adulto" | "crianca" | "senior" | "ms" | "bonitense", string>>
@@ -46,6 +63,8 @@ interface TourPricesSidebarProps {
   } | null
   /** Slug do passeio — usado para resolver faixa etária de criança do tarifário */
   tourSlug?: string
+  /** Preço principal calculado (manual, override ou BTMS) — fallback quando a tabela ficar vazia */
+  fallbackDisplayPrice?: number
 }
 
 /** Exportado para retrocompatibilidade com outros componentes */
@@ -115,7 +134,11 @@ function getSeasonRowEntry(
   semesterNamespace?: "s1" | "s2"
 ): string | undefined {
   visiblePrices = standardVisiblePrices(visiblePrices)
-  if (!visiblePrices || !Array.isArray(visiblePrices) || visiblePrices.length === 0) return `${season}:${rowId}` // all visible
+  if (!visiblePrices || visiblePrices.length === 0) return `${season}:${rowId}` // all visible
+  // Só linhas extras configuradas → tabela padrão BTMS continua visível
+  if (!hasStandardSeasonConfig(visiblePrices, semesterNamespace)) {
+    return `${season}:${rowId}`
+  }
   const prefix = `${season}:${rowId}`
   // Prioridade: namespace do semestre → (s2 herda s1) → sem prefixo (legado).
   const prefixes: string[] = []
@@ -205,6 +228,55 @@ function SectionHeader({ label }: { label: string }) {
   )
 }
 
+function FallbackPriceTable({
+  price,
+  onReserve,
+}: {
+  price: number
+  onReserve?: () => void
+}) {
+  const formatted = fmtBRL(price)
+  if (!formatted) return null
+  return (
+    <div className="space-y-4 mb-6">
+      <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm text-sm">
+        <SectionHeader label="Alta Temporada" />
+        <PriceRow label="Adultos" value={formatted} isLast />
+      </div>
+      {onReserve && (
+        <Button
+          onClick={onReserve}
+          className="w-full bg-green-600 hover:bg-green-700 text-lg py-3 transition-transform duration-300 hover:scale-105 shadow-md"
+        >
+          Reservar Agora
+        </Button>
+      )}
+      <p className="text-[11px] text-gray-400 text-center">
+        * Valores por pessoa. Sujeitos a confirmação.
+      </p>
+    </div>
+  )
+}
+
+function resolveFallbackPrice(
+  prices: TourPriceInfo,
+  mainRow: TourPriceRowDisplay | null,
+  baixaRow: TourPriceRowDisplay | null,
+  fallbackDisplayPrice?: number
+): number | null {
+  if (fallbackDisplayPrice != null && fallbackDisplayPrice > 0) return fallbackDisplayPrice
+  if (prices.precoMinimo > 0) return prices.precoMinimo
+  const fromMain = mainRow?.adulto ?? mainRow?.garupaAdulto
+  if (fromMain != null && fromMain > 0) return fromMain
+  const fromBaixa = baixaRow?.adulto ?? baixaRow?.garupaAdulto
+  if (fromBaixa != null && fromBaixa > 0) return fromBaixa
+  for (const row of prices.rows ?? []) {
+    const v = row.adulto ?? row.garupaAdulto
+    if (v != null && v > 0) return v
+  }
+  return null
+}
+
 export function TourPricesSidebar({
   prices,
   onReserve,
@@ -214,11 +286,19 @@ export function TourPricesSidebar({
   preferNextSemester,
   priceDisplayOverrides,
   tourSlug,
+  fallbackDisplayPrice,
 }: TourPricesSidebarProps) {
-  if (!prices.rows || prices.rows.length === 0) return null
+  const rows = prices.rows ?? []
+  if (rows.length === 0) {
+    const solo = resolveFallbackPrice(prices, null, null, fallbackDisplayPrice)
+    if (solo == null) return null
+    return <FallbackPriceTable price={solo} onReserve={onReserve} />
+  }
 
-  const altaRep  = prices.mainPriceRow ?? null
-  const baixaRep = prices.baixaRow     ?? null
+  const firstPricedRow =
+    rows.find((r) => (r.adulto ?? r.garupaAdulto ?? 0) > 0) ?? null
+  const altaRep = prices.mainPriceRow ?? firstPricedRow
+  const baixaRep = prices.baixaRow ?? null
   const semester = preferNextSemester ? "s2" : "s1"
 
   // Tarifas especiais (MS / Bonitense) resolvidas por temporada — cada uma pode ter
@@ -230,8 +310,6 @@ export function TourPricesSidebar({
   const hasAnySpecial = (["ms", "bonitense"] as const).some(
     (id) => specialRowFor(id, "alta") || specialRowFor(id, "baixa")
   )
-
-  if (!altaRep && !baixaRep && !hasAnySpecial) return null
 
   // Ordem: Baixa primeiro, depois Alta (igual à imagem de referência)
   const orderedSeasons: { key: "baixa" | "alta"; label: string }[] = [
@@ -274,7 +352,13 @@ export function TourPricesSidebar({
     const val = resolveExtraRowValue(r, prices)
     return val != null && val > 0
   })
-  if (!hasSeasonContent && !hasExtraContent && !hasAnySpecial) return null
+  if (!hasSeasonContent && !hasExtraContent && !hasAnySpecial) {
+    const fallback = resolveFallbackPrice(prices, altaRep, baixaRep, fallbackDisplayPrice)
+    if (fallback != null) {
+      return <FallbackPriceTable price={fallback} onReserve={onReserve} />
+    }
+    return null
+  }
 
   // Data de validade: prefere vigFim da Alta, fallback Baixa
   const vigFim = altaRep?.vigFim || baixaRep?.vigFim
