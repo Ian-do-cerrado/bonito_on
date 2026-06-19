@@ -1,4 +1,11 @@
-import { isExtraRowEntry, listExtraRows, parseExtraRow } from "@/lib/price-table-extra-rows"
+import { isExtraRowEntry, listExtraRows, parseExtraRow, encodeExtraRow, newExtraRowId } from "@/lib/price-table-extra-rows"
+import {
+  buildSpecialKey,
+  parseSpecialEntry,
+  type SpecialSeason,
+  type SpecialTariffId,
+} from "@/lib/special-tariffs"
+import type { Tour } from "@/types"
 
 export type AdminSemester = "s1" | "s2"
 
@@ -144,4 +151,109 @@ export function stripSemesterVisiblePrices(
     return true
   })
   return filtered.length > 0 ? filtered : undefined
+}
+
+const SEASON_CELL_KEYS = STANDARD_CELL_KEYS.filter(
+  (k): k is Exclude<(typeof STANDARD_CELL_KEYS)[number], "ms" | "bonitense"> =>
+    k !== "ms" && k !== "bonitense"
+)
+
+/** Lê slot MS/Bonitense do 1º semestre (sem herança) para sincronização s1→s2. */
+function readSpecialSlotForSync(
+  visiblePrices: string[] | undefined,
+  tariffId: SpecialTariffId,
+  season: SpecialSeason
+): { visible: boolean; override: string } {
+  const vp = visiblePrices?.filter((v) => !isExtraRowEntry(v))
+  if (!vp?.length) return { visible: false, override: "__auto__" }
+
+  let seasonOverride: string | null | undefined = undefined
+  let legacyOverride: string | null | undefined = undefined
+
+  for (const v of vp) {
+    const p = parseSpecialEntry(v, tariffId, "s1")
+    if (p) {
+      if (p.season === season) {
+        seasonOverride = p.override
+        break
+      }
+      if (p.season === null && legacyOverride === undefined) legacyOverride = p.override
+      continue
+    }
+    if (!/^(s1|s2):/.test(v)) {
+      const leg = parseSpecialEntry(v, tariffId, undefined)
+      if (!leg) continue
+      if (leg.season === season) {
+        seasonOverride = leg.override
+        break
+      }
+      if (leg.season === null && legacyOverride === undefined) legacyOverride = leg.override
+    }
+  }
+
+  if (seasonOverride !== undefined) {
+    return { visible: true, override: seasonOverride ?? "__auto__" }
+  }
+  if (legacyOverride !== undefined) {
+    return { visible: true, override: legacyOverride ?? "__auto__" }
+  }
+  return { visible: false, override: "__auto__" }
+}
+
+/**
+ * Copia a configuração efetiva do 1º semestre para entradas explícitas s2: em visible_prices.
+ * Remove overrides s2 existentes antes de aplicar.
+ */
+export function syncVisiblePricesFromS1ToS2(visiblePrices?: string[]): string[] | undefined {
+  const base = stripSemesterVisiblePrices(visiblePrices, "s2")
+  const s2Entries: string[] = []
+
+  for (const cellKey of SEASON_CELL_KEYS) {
+    if (!isCellVisible(base, "s1", cellKey)) continue
+    const override = getCellOverride(base, "s1", cellKey)
+    const chunk = setCellEntryInList(undefined, "s2", cellKey, true, override)
+    if (chunk) s2Entries.push(...chunk)
+  }
+
+  for (const tariffId of ["ms", "bonitense"] as const) {
+    let addedSeasonSlot = false
+    for (const season of ["alta", "baixa"] as const) {
+      const slot = readSpecialSlotForSync(base, tariffId, season)
+      if (!slot.visible) continue
+      s2Entries.push(buildSpecialKey(tariffId, season, slot.override, "s2"))
+      addedSeasonSlot = true
+    }
+    if (!addedSeasonSlot && isCellVisible(base, "s1", tariffId)) {
+      const override = getCellOverride(base, "s1", tariffId)
+      if (override !== "__auto__") {
+        s2Entries.push(`${scopedCellKey("s2", tariffId)}#${override}`)
+      } else {
+        s2Entries.push(scopedCellKey("s2", tariffId))
+      }
+    }
+  }
+
+  const s1Extras = listExtraRows(base, "s1")
+  const s2Extras = s1Extras.map((row) =>
+    encodeExtraRow({ ...row, semester: "s2", id: newExtraRowId() })
+  )
+
+  const merged = [...(base ?? []), ...s2Entries, ...s2Extras]
+  return merged.length > 0 ? merged : undefined
+}
+
+/** Aplica sync s1→s2 nos campos de preço de um passeio (sem alterar título, descrição, etc.). */
+export function syncTourPricingS2FromS1(tour: Tour): Tour {
+  const s1Display = tour.price_display_overrides?.s1
+  return {
+    ...tour,
+    visible_prices: syncVisiblePricesFromS1ToS2(tour.visible_prices),
+    manual_price_2o_semester: tour.manual_price ?? null,
+    price_display_overrides: s1Display
+      ? {
+          ...(tour.price_display_overrides ?? {}),
+          s2: { ...s1Display },
+        }
+      : tour.price_display_overrides,
+  }
 }

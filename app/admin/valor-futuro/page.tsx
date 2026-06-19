@@ -5,7 +5,7 @@ import { AdminTourCard } from "@/components/admin-tour-card"
 import { AddTourDialog } from "@/components/add-tour-dialog"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Plus, ArrowLeft, LogOut, RefreshCw, BarChart3 } from "lucide-react"
+import { Plus, ArrowLeft, LogOut, RefreshCw, BarChart3, ArrowDownToLine } from "lucide-react"
 import Link from "next/link"
 import { Tour } from "@/types"
 import { createClient } from "@/lib/supabase/client"
@@ -15,6 +15,7 @@ import {
   createTour,
   updateTour,
   deleteTour,
+  syncAllToursS2FromS1,
 } from "@/app/actions/tour-admin"
 import { useToast } from "@/hooks/use-toast"
 
@@ -22,6 +23,7 @@ export default function AdminValorFuturoPage() {
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isSyncingFromS1, setIsSyncingFromS1] = useState(false)
   const router = useRouter()
   const { t } = useLanguage()
   const { toast } = useToast()
@@ -76,6 +78,42 @@ export default function AdminValorFuturoPage() {
       })
     } finally {
       setIsRefreshing(false)
+    }
+  }
+
+  const handleSyncFromS1 = async () => {
+    const ok = window.confirm(
+      "Copiar a configuração de preços do 1º semestre para o 2º em todos os passeios?\n\n" +
+        "Isso atualiza: células visíveis, overrides BTMS, linhas extras, preço manual e labels/idades.\n" +
+        "Overrides já gravados no 2º semestre serão substituídos."
+    )
+    if (!ok) return
+
+    setIsSyncingFromS1(true)
+    try {
+      const result = await syncAllToursS2FromS1()
+      if (result.success) {
+        await loadData()
+        toast({
+          title: "Sincronização concluída",
+          description: `${result.updated} passeio(s) atualizado(s) com os valores do 1º semestre.`,
+        })
+      } else {
+        toast({
+          title: "Erro na sincronização",
+          description: result.error ?? "Não foi possível sincronizar os passeios.",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Error syncing from s1:", error)
+      toast({
+        title: "Erro",
+        description: "Erro ao sincronizar com o 1º semestre.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSyncingFromS1(false)
     }
   }
 
@@ -198,6 +236,17 @@ export default function AdminValorFuturoPage() {
             </div>
 
             <div className="flex items-center space-x-4">
+              <Button
+                onClick={handleSyncFromS1}
+                disabled={isSyncingFromS1 || isRefreshing}
+                variant="outline"
+                size="sm"
+                className="hover:scale-105 transition-transform border-violet-200 text-violet-700 hover:bg-violet-50"
+              >
+                <ArrowDownToLine className={`w-4 h-4 mr-2 ${isSyncingFromS1 ? "animate-pulse" : ""}`} />
+                {isSyncingFromS1 ? "Sincronizando..." : "Sincronizar com 1º Semestre"}
+              </Button>
+
               <Button
                 onClick={loadData}
                 disabled={isRefreshing}

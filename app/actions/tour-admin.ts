@@ -4,6 +4,7 @@ import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
 import type { Tour } from "@/types"
+import { syncTourPricingS2FromS1 } from "@/lib/semester-admin-prices"
 
 export type AdminSaveResult = {
   success: boolean
@@ -192,6 +193,71 @@ export async function updateTour(tour: Tour): Promise<AdminSaveResult> {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Erro ao atualizar passeio",
+    }
+  }
+}
+
+export async function syncAllToursS2FromS1(): Promise<{
+  success: boolean
+  updated: number
+  error?: string
+}> {
+  const supabase = await createClient()
+  try {
+    await requireAdmin(supabase)
+
+    const { data: rows, error } = await supabase
+      .from("tours")
+      .select("id, slug, visible_prices, manual_price, manual_price_2o_semester, price_display_overrides")
+    if (error) {
+      return { success: false, updated: 0, error: formatDbError(error) }
+    }
+
+    let updated = 0
+    let lastError: string | undefined
+
+    for (const row of rows ?? []) {
+      const synced = syncTourPricingS2FromS1({
+        id: row.id,
+        visible_prices: row.visible_prices ?? undefined,
+        manual_price: row.manual_price ?? undefined,
+        manual_price_2o_semester: row.manual_price_2o_semester ?? undefined,
+        price_display_overrides: row.price_display_overrides ?? undefined,
+      } as Tour)
+
+      const { error: updateError } = await supabase
+        .from("tours")
+        .update({
+          visible_prices: synced.visible_prices ?? null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", row.id)
+
+      if (updateError) {
+        lastError = formatDbError(updateError)
+        continue
+      }
+
+      try {
+        await applyTourGovernanceFields(supabase, row.id, synced)
+        updated++
+      } catch (govError) {
+        lastError = formatDbError(govError as PostgrestError)
+      }
+    }
+
+    revalidateTourPaths()
+    return {
+      success: updated > 0 || (rows?.length ?? 0) === 0,
+      updated,
+      error: updated === 0 && lastError ? lastError : undefined,
+    }
+  } catch (error) {
+    console.error("Error in syncAllToursS2FromS1:", error)
+    return {
+      success: false,
+      updated: 0,
+      error: error instanceof Error ? error.message : "Erro ao sincronizar passeios",
     }
   }
 }
