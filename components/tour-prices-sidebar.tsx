@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button"
 import type { TourPriceInfo, TourPriceRowDisplay } from "@/lib/supabase/price-columns"
 import {
-  isExtraRowEntry,
   listExtraRowsForSemester,
   resolveExtraRowValue,
   type PriceExtraPlacement,
@@ -13,29 +12,11 @@ import { resolveSpecialForSeason } from "@/lib/special-tariffs"
 import { parseManualOverride } from "@/lib/price-overrides"
 import { resolveChildAgeLabel } from "@/lib/resolve-child-age"
 import { formatInfantFreeLabel, resolveInfantFree } from "@/lib/tour-infant-free"
-
-function standardVisiblePrices(visiblePrices?: string[]): string[] | undefined {
-  if (!visiblePrices?.length) return visiblePrices
-  const standard = visiblePrices.filter((v) => !isExtraRowEntry(v))
-  return standard.length > 0 ? standard : undefined
-}
-
-/** Há entradas explícitas de células baixa/alta/ms/bonitense (não só linhas extras). */
-function hasStandardSeasonConfig(
-  visiblePrices: string[],
-  semesterNamespace?: "s1" | "s2"
-): boolean {
-  const std = visiblePrices.filter((v) => !isExtraRowEntry(v))
-  return std.some((v) => {
-    if (/^(s1|s2):(baixa|alta):/.test(v)) return true
-    if (/^(baixa|alta):/.test(v)) return true
-    if (/^(s1|s2):(ms|bonitense)/.test(v)) return true
-    if (semesterNamespace && v.startsWith(`${semesterNamespace}:`)) return true
-    return ["adulto", "crianca", "senior", "ms", "bonitense"].some(
-      (id) => v === id || v.startsWith(`${id}#`)
-    )
-  })
-}
+import {
+  getCellOverride,
+  isCellVisible,
+  type AdminSemester,
+} from "@/lib/semester-admin-prices"
 
 type SemesterOverrides = {
   validityEnd?: string
@@ -119,41 +100,26 @@ function formatDate(s: string | null | undefined): string {
 }
 
 /**
- * Verifica se uma linha de temporada está visível e retorna a entrada correspondente.
- * Suporta:
- *  - Novo com override: ["baixa:adulto#TABELA BT 2026#Contemplação"] — valor específico
- *  - Novo sem override: ["baixa:adulto"] — valor automático
- *  - Legacy: ["adulto"] — aplica-se a todas as temporadas
- *
- * Retorna undefined se oculto, ou a string da entrada (pode ter #override).
+ * Linha BTMS automática para uma temporada quando baixaRow/mainPriceRow não resolvem.
  */
-function getSeasonRowEntry(
-  rowId: string,
-  season: "alta" | "baixa",
-  visiblePrices?: string[],
-  semesterNamespace?: "s1" | "s2"
-): string | undefined {
-  visiblePrices = standardVisiblePrices(visiblePrices)
-  if (!visiblePrices || visiblePrices.length === 0) return `${season}:${rowId}` // all visible
-  // Só linhas extras configuradas → tabela padrão BTMS continua visível
-  if (!hasStandardSeasonConfig(visiblePrices, semesterNamespace)) {
-    return `${season}:${rowId}`
-  }
-  const prefix = `${season}:${rowId}`
-  // Prioridade: namespace do semestre → (s2 herda s1) → sem prefixo (legado).
-  const prefixes: string[] = []
-  if (semesterNamespace) prefixes.push(`${semesterNamespace}:${prefix}`)
-  if (semesterNamespace === "s2") prefixes.push(`s1:${prefix}`)
-  prefixes.push(prefix)
-  for (const p of prefixes) {
-    const entry = visiblePrices.find((v) => v === p || v.startsWith(p + "#"))
-    if (entry) return entry
-  }
-  // Legacy: plain row id
-  if (visiblePrices.some(v => !v.includes(":"))) {
-    return visiblePrices.includes(rowId) ? rowId : undefined
-  }
-  return undefined
+function pickAutoRowForSeason(
+  rows: TourPriceRowDisplay[],
+  season: "alta" | "baixa"
+): TourPriceRowDisplay | null {
+  const isBaixa = season === "baixa"
+  const candidates = rows.filter((r) => {
+    const t = (r.nomeTabela ?? "").toUpperCase()
+    const temp = (r.temporada ?? "").toUpperCase()
+    if (isBaixa) {
+      return temp === "BAIXA" || (t.includes("BT") && !t.includes("BONITENSE"))
+    }
+    return temp === "ALTA" || r.isNormal || (/\bAT\b/.test(t) && !t.includes("BT"))
+  })
+  return (
+    candidates.find((r) => (r.adulto ?? r.garupaAdulto ?? 0) > 0) ??
+    candidates[0] ??
+    null
+  )
 }
 
 /**
@@ -166,27 +132,29 @@ function resolveSeasonRowValue(
   campo: (row: TourPriceRowDisplay) => number | null | undefined,
   overrideCampo: (row: TourPriceRowDisplay) => number | null | undefined,
   visiblePrices: string[] | undefined,
-  prices: { rows?: any[]; baixaRow?: TourPriceRowDisplay | null; mainPriceRow?: TourPriceRowDisplay | null },
-  semesterNamespace?: "s1" | "s2"
+  prices: { rows?: TourPriceRowDisplay[]; baixaRow?: TourPriceRowDisplay | null; mainPriceRow?: TourPriceRowDisplay | null },
+  semesterNamespace: AdminSemester
 ): number | null {
-  const entry = getSeasonRowEntry(rowId, season, visiblePrices, semesterNamespace)
-  if (!entry) return null
-  // Check for override: "baixa:adulto#tabela#atividade"
-  const hashIdx = entry.indexOf("#")
-  if (hashIdx >= 0) {
-    const override = entry.substring(hashIdx + 1) // "tabela#atividade" ou "__manual__#valor"
+  const cellKey = `${season}:${rowId}`
+  if (!isCellVisible(visiblePrices, semesterNamespace, cellKey)) return null
+
+  const override = getCellOverride(visiblePrices, semesterNamespace, cellKey)
+  if (override !== "__auto__") {
     const manual = parseManualOverride(override)
     if (manual != null) return manual
     const sepIdx = override.indexOf("#")
     if (sepIdx >= 0) {
       const tabela = override.substring(0, sepIdx)
       const atividade = override.substring(sepIdx + 1)
-      const row = prices.rows?.find((r: any) => r.nomeTabela === tabela && r.atividade === atividade)
-      return row ? (overrideCampo(row as TourPriceRowDisplay) ?? null) : null
+      const row = prices.rows?.find(
+        (r) => r.nomeTabela === tabela && r.atividade === atividade
+      )
+      return row ? (overrideCampo(row) ?? null) : null
     }
   }
-  // Auto: use matched season row
-  const autoRow = season === "baixa" ? prices.baixaRow : prices.mainPriceRow
+
+  const preset = season === "baixa" ? prices.baixaRow : prices.mainPriceRow
+  const autoRow = preset ?? pickAutoRowForSeason(prices.rows ?? [], season)
   return autoRow ? (campo(autoRow) ?? null) : null
 }
 

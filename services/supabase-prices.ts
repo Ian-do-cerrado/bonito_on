@@ -13,6 +13,8 @@ import type {
   TourPriceInfo,
   TourPriceRowDisplay,
 } from "@/lib/supabase/price-columns"
+import { isExtraRowEntry, parseExtraRow } from "@/lib/price-table-extra-rows"
+import { isManualOverride } from "@/lib/price-overrides"
 
 /** Pontuação de similaridade entre título do tour e nome da atividade (0-1) */
 function nameSimilarity(tourTitle: string, atividade: string): number {
@@ -1253,14 +1255,24 @@ export function findPricesForTour(
     if (preferredBonitenseTabela) neededTabelas.add(preferredBonitenseTabela)
 
     for (const entry of visiblePrices ?? []) {
+      if (isExtraRowEntry(entry)) {
+        const extra = parseExtraRow(entry)
+        if (extra?.tabela && extra?.atividade) {
+          neededPairs.add(`${extra.tabela}${PAIR_SEP}${extra.atividade}`)
+        }
+        continue
+      }
       const hashIdx = entry.indexOf("#")
       if (hashIdx < 0) continue
       const override = entry.substring(hashIdx + 1)
+      if (isManualOverride(override)) continue
       const sepIdx = override.indexOf("#")
       if (sepIdx < 0) continue
       const tabela = override.substring(0, sepIdx)
       const atividade = override.substring(sepIdx + 1)
-      neededPairs.add(`${tabela}${PAIR_SEP}${atividade}`)
+      if (tabela && atividade) {
+        neededPairs.add(`${tabela}${PAIR_SEP}${atividade}`)
+      }
     }
 
     if (neededPairs.size > 0 || neededTabelas.size > 0) {

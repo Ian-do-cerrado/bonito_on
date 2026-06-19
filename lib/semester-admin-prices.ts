@@ -50,7 +50,15 @@ export function findCellEntry(
   }
 
   if (ns === "s1") {
-    return vp.find((v) => v === cellKey || v.startsWith(`${cellKey}#`))
+    const directLegacy = vp.find((v) => v === cellKey || v.startsWith(`${cellKey}#`))
+    if (directLegacy) return directLegacy
+  }
+
+  // Legacy: entradas planas ("adulto", "crianca") aplicam-se a baixa e alta.
+  if (vp.some((v) => !v.includes(":"))) {
+    const rowId = cellKey.includes(":") ? cellKey.split(":")[1]! : cellKey
+    const leg = vp.find((v) => v === rowId || v.startsWith(`${rowId}#`))
+    if (leg) return leg
   }
 
   return undefined
