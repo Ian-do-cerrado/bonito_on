@@ -1,38 +1,104 @@
 import { createClient } from "@/lib/supabase/client"
+import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js"
 import { Tour2Data } from "@/lib/supabase/types"
 import type { Package } from "@/types/package"
 import type { Attraction } from "@/components/attractions-section"
-import type { BlogPost } from "@/types/index" // Declare BlogPost variable
-import { DatabaseTour } from "@/lib/supabase/types" // Import DatabaseTour
+import type { BlogPost, Tour } from "@/types/index"
+
+export type AdminSaveResult = {
+  success: boolean
+  error?: string
+  /** Campos de 2º semestre não foram gravados — migração pendente no Supabase */
+  governanceSkipped?: boolean
+}
+
+function formatDbError(error: PostgrestError): string {
+  return error.message || error.code || "Erro desconhecido no banco"
+}
+
+function isMissingColumnError(error: PostgrestError): boolean {
+  return (
+    error.code === "PGRST204" ||
+    /Could not find the '([^']+)' column/.test(error.message ?? "")
+  )
+}
+
+function buildTourCoreRow(tour: Tour | Omit<Tour, "id">) {
+  return {
+    title: tour.title,
+    description: tour.description,
+    title_en: tour.title_en,
+    description_en: tour.description_en,
+    title_es: tour.title_es,
+    description_es: tour.description_es,
+    price: tour.price,
+    duration: tour.duration,
+    difficulty: tour.difficulty,
+    category: tour.category,
+    image: tour.image,
+    gallery: tour.gallery,
+    highlights: tour.highlights,
+    included: tour.included,
+    not_included: tour.notIncluded,
+    requirements: tour.requirements,
+    best_season: tour.bestSeason,
+    max_group_size: tour.maxGroupSize,
+    location: tour.location,
+    slug: tour.slug,
+    rating: tour.rating,
+    reviews_count: tour.reviewsCount,
+    preferred_price_atividade: tour.preferred_price_atividade,
+    preferred_price_tabela: tour.preferred_price_tabela,
+    preferred_baixa_tabela: tour.preferred_baixa_tabela ?? null,
+    preferred_ms_tabela: tour.preferred_ms_tabela ?? null,
+    preferred_bonitense_tabela: tour.preferred_bonitense_tabela ?? null,
+    visible_prices: tour.visible_prices ?? null,
+    btms_atrativo_override: tour.btms_atrativo_override ?? null,
+    manual_price: tour.manual_price ?? null,
+    price_2o_semester: tour.price_2o_semester ?? null,
+    updated_at: new Date().toISOString(),
+  }
+}
+
+function buildTourGovernanceRow(tour: Tour | Omit<Tour, "id">) {
+  return {
+    manual_price_2o_semester: tour.manual_price_2o_semester ?? null,
+    price_display_overrides: tour.price_display_overrides ?? null,
+  }
+}
+
+async function applyTourGovernanceFields(
+  supabase: SupabaseClient,
+  tourId: string,
+  tour: Tour | Omit<Tour, "id">
+): Promise<Pick<AdminSaveResult, "governanceSkipped">> {
+  const { error } = await supabase
+    .from("tours")
+    .update(buildTourGovernanceRow(tour))
+    .eq("id", tourId)
+
+  if (!error) return {}
+
+  if (isMissingColumnError(error)) {
+    console.warn(
+      "Colunas de governança de semestre ausentes em tours. Execute migrations/add_semester_pricing_governance.sql no Supabase.",
+      error.message
+    )
+    return { governanceSkipped: true }
+  }
+
+  throw error
+}
 
 const supabase = createClient()
 
 // TOURS CRUD
-export async function createTour(
-  tour: Omit<DatabaseTour, "id" | "created_at" | "updated_at" | "slug">, // Explicitly omit slug
-): Promise<DatabaseTour | null> {
+export async function createTour(tour: Omit<Tour, "id">): Promise<Tour | null> {
   try {
-    const { data, error } = await supabase
+    const client = createClient()
+    const { data, error } = await client
       .from("tours")
-      .insert({
-        title: tour.title,
-        description: tour.description,
-        price: tour.price,
-        duration: tour.duration || null,
-        price_high_season: tour.price_high_season || null,
-        price_ms_low_season: tour.price_ms_low_season || null,
-        price_ms_hs: tour.price_ms_hs || null,
-        price_child_ls: tour.price_child_ls || null,
-        price_child_hs: tour.price_child_hs || null,
-        price_senior_hs: tour.price_senior_hs || null,
-        price_senior_low_season: tour.price_senior_low_season || null,
-        min_child_age: tour.min_child_age || null,
-        image: tour.image || null,
-        gallery: tour.gallery || null,
-        rating: tour.rating,
-        category: tour.category,
-        slug: tour.title ? tour.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-*|-*$/g, "") : null, // Generate slug internally
-      })
+      .insert(buildTourCoreRow(tour))
       .select()
       .single()
 
@@ -41,49 +107,47 @@ export async function createTour(
       return null
     }
 
-    // Return the created tour with all properties
-    return data
+    try {
+      await applyTourGovernanceFields(client, data.id, tour)
+    } catch (govError) {
+      console.error("Error applying tour governance fields:", govError)
+      return null
+    }
+
+    return data as Tour
   } catch (error) {
     console.error("Error in createTour:", error)
     return null
   }
 }
 
-export async function updateTour(tour: DatabaseTour): Promise<boolean> {
+export async function updateTour(tour: Tour): Promise<AdminSaveResult> {
   try {
-    const { error } = await supabase
+    const client = createClient()
+    const { error } = await client
       .from("tours")
-      .update({
-        title: tour.title,
-        description: tour.description,
-        price: tour.price,
-        duration: tour.duration || null,
-        price_high_season: tour.price_high_season || null,
-        price_ms_low_season: tour.price_ms_low_season || null,
-        price_ms_hs: tour.price_ms_hs || null,
-        chd_price_ls: tour.chd_price_ls || null,
-        price_child_hs: tour.price_child_hs || null,
-        price_senior_high_season: tour.price_senior_high_season || null,
-        price_senior_low_season: tour.price_senior_low_season || null,
-        min_child_age: tour.min_child_age || null,
-        image: tour.image || null,
-        gallery: tour.gallery || null,
-        rating: tour.rating,
-        category: tour.category,
-        slug: tour.slug || null, // Ensure slug is handled
-        updated_at: new Date().toISOString(),
-      })
+      .update(buildTourCoreRow(tour))
       .eq("id", tour.id)
 
     if (error) {
       console.error("Error updating tour:", error)
-      return false
+      return { success: false, error: formatDbError(error) }
     }
 
-    return true
+    try {
+      const { governanceSkipped } = await applyTourGovernanceFields(client, tour.id, tour)
+      return { success: true, governanceSkipped }
+    } catch (govError) {
+      const err = govError as PostgrestError
+      console.error("Error updating tour governance fields:", govError)
+      return { success: false, error: formatDbError(err) }
+    }
   } catch (error) {
     console.error("Error in updateTour:", error)
-    return false
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Erro ao atualizar passeio",
+    }
   }
 }
 

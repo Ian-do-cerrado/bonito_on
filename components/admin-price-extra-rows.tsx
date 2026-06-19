@@ -163,7 +163,11 @@ export function AdminPriceExtraRows({
             )}
           </p>
         </div>
-        {!semesterProp && (
+        {semesterProp ? (
+          <span className="px-2.5 py-1 text-[10px] font-bold uppercase bg-violet-600 text-white rounded-md shrink-0">
+            {semesterProp === "s2" ? "2º Sem" : "1º Sem"}
+          </span>
+        ) : (
           <div className="flex rounded-md border border-gray-200 overflow-hidden shrink-0">
             {(["s1", "s2"] as const).map((s) => (
               <button

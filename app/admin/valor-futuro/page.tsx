@@ -90,18 +90,20 @@ export default function AdminValorFuturoPage() {
   }
 
   const handleUpdateTour = async (updatedTour: Tour) => {
-    const success = await updateTour(updatedTour)
-    if (success) {
+    const result = await updateTour(updatedTour)
+    if (result.success) {
       setTours(tours.map((tour) => (tour.id === updatedTour.id ? updatedTour : tour)))
       toast({
         title: "Sucesso",
-        description: "Passeio atualizado com sucesso!",
+        description: result.governanceSkipped
+          ? "Passeio salvo. Preços do 2º semestre exigem migração SQL no Supabase (add_semester_pricing_governance.sql)."
+          : "Passeio atualizado com sucesso!",
       })
       return true
     }
     toast({
       title: "Erro",
-      description: "Erro ao atualizar passeio",
+      description: result.error ?? "Erro ao atualizar passeio",
       variant: "destructive",
     })
     return false
