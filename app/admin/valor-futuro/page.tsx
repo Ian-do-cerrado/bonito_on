@@ -15,7 +15,7 @@ import {
   createTour,
   updateTour,
   deleteTour,
-} from "@/services/admin-supabase"
+} from "@/app/actions/tour-admin"
 import { useToast } from "@/hooks/use-toast"
 
 export default function AdminValorFuturoPage() {

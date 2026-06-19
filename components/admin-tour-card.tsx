@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -46,6 +46,12 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: Adm
   const [isSaving, setIsSaving] = useState(false)
   const [editedTour, setEditedTour] = useState<Tour>(tour)
   const [availableAtrativos, setAvailableAtrativos] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!isEditing) {
+      setEditedTour(tour)
+    }
+  }, [tour, isEditing])
   const [isLoadingAtrativos, setIsLoadingAtrativos] = useState(false)
   const [isTranslating, setIsTranslating] = useState(false)
   // All BTMS rows for this tour's atrativo (unfiltered) — used for price cell pickers

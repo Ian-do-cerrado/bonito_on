@@ -25,6 +25,8 @@ import {
   createTour,
   updateTour,
   deleteTour,
+} from "@/app/actions/tour-admin"
+import {
   createPackage,
   updatePackage,
   deletePackage,
@@ -244,9 +246,8 @@ export default function AdminPage() {
   const handleUpdateTour = async (updatedTour: Tour) => {
     const result = await updateTour(updatedTour)
     if (result.success) {
-      setTours(tours.map((tour) => (tour.id === updatedTour.id ? updatedTour : tour)))
+      setTours((prev) => prev.map((tour) => (tour.id === updatedTour.id ? updatedTour : tour)))
       setTours2oSemester((prev) => prev.map((tour) => (tour.id === updatedTour.id ? updatedTour : tour)))
-      // Revalidar cache do site público sem bloquear
       clearTourCache(updatedTour.slug).catch(console.error)
       toast({
         title: "Sucesso",
@@ -255,14 +256,13 @@ export default function AdminPage() {
           : "Passeio atualizado com sucesso e site atualizado!",
       })
       return true
-    } else {
-      toast({
-        title: "Erro",
-        description: result.error ?? "Erro ao atualizar passeio",
-        variant: "destructive",
-      })
-      return false
     }
+    toast({
+      title: "Erro",
+      description: result.error ?? "Erro ao atualizar passeio",
+      variant: "destructive",
+    })
+    return false
   }
 
   const handleDeleteTour = async (tourId: string) => {
