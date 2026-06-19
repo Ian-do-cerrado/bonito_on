@@ -21,6 +21,22 @@ export function allStandardScopedKeys(ns: AdminSemester): string[] {
   return STANDARD_CELL_KEYS.map((k) => scopedCellKey(ns, k))
 }
 
+const LEGACY_ROW_IDS = ["adulto", "crianca", "senior"] as const
+
+/**
+ * true quando há células baixa/alta explícitas (s1:baixa:adulto, baixa:adulto ou legado adulto/crianca/senior).
+ * false quando visible_prices só tem ms/bonitense (formato legado) — nesse caso a tabela padrão BTMS fica visível.
+ */
+export function hasExplicitStandardSeasonCells(visiblePrices?: string[]): boolean {
+  const vp = visiblePrices?.filter((v) => !isExtraRowEntry(v))
+  if (!vp?.length) return false
+  return vp.some((v) => {
+    if (/^(s1|s2):(baixa|alta):/.test(v)) return true
+    if (/^(baixa|alta):/.test(v)) return true
+    return LEGACY_ROW_IDS.some((id) => v === id || v.startsWith(`${id}#`))
+  })
+}
+
 function entryMatchesCell(v: string, ns: AdminSemester, cellKey: string): boolean {
   const scoped = scopedCellKey(ns, cellKey)
   if (v === scoped || v.startsWith(`${scoped}#`)) return true
@@ -71,6 +87,13 @@ export function isCellVisible(
 ): boolean {
   const vp = visiblePrices?.filter((v) => !isExtraRowEntry(v))
   if (!vp?.length) return true
+  // Legado: só ms/bonitense configurados → tabela padrão baixa/alta continua visível
+  if (
+    (cellKey.startsWith("baixa:") || cellKey.startsWith("alta:")) &&
+    !hasExplicitStandardSeasonCells(visiblePrices)
+  ) {
+    return true
+  }
   return findCellEntry(visiblePrices, ns, cellKey) !== undefined
 }
 
