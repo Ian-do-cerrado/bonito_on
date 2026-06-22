@@ -15,6 +15,7 @@ import { useLanguage } from "@/contexts/language-context"
 import Image from "next/image"
 import type { Tour } from "@/components/tours-section"
 import { getDisplayPrice } from "@/lib/tour-price-utils"
+import { isExternalImageUrl } from "@/lib/image-url"
 import { AdminPriceExtraRows } from "@/components/admin-price-extra-rows"
 import { isExtraRowEntry } from "@/lib/price-table-extra-rows"
 import { parseSpecialEntry, inferSpecialSeason, buildSpecialKey, type SpecialSeason } from "@/lib/special-tariffs"
@@ -243,7 +244,7 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: Adm
           alt={tour.title} 
           fill 
           className="object-cover"
-          unoptimized={tour.image?.endsWith(".webp")}
+          unoptimized={isExternalImageUrl(tour.image) || tour.image?.endsWith(".webp")}
         />
         <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold ${getCategoryColor(tour.category)}`}>
           {getCategoryLabel(tour.category)}

@@ -44,3 +44,10 @@ export function resolveImageUrl(path: string | null | undefined): string {
   }
   return p.startsWith("/") ? p : `/${p}`
 }
+
+/** URLs http(s) não devem passar pelo otimizador da Vercel (evita 402 em storage Supabase). */
+export function isExternalImageUrl(path: string | null | undefined): boolean {
+  if (!path || typeof path !== "string") return false
+  const p = path.trim()
+  return p.startsWith("http://") || p.startsWith("https://")
+}

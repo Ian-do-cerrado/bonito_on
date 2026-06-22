@@ -20,7 +20,7 @@ import { getDisplayPrice } from "@/lib/tour-price-utils"
 import { getTranslatedDescription, getTranslatedTitle } from "@/lib/dynamic-translations"
 import { formatDescription } from "@/lib/text-formatter"
 import { createSlug } from "@/lib/utils"
-import { resolveImageUrl } from "@/lib/image-url"
+import { resolveImageUrl, isExternalImageUrl } from "@/lib/image-url"
 
 import { useSearchParams } from "next/navigation"
 
@@ -173,7 +173,13 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
     <SiteLayout>
       {/* Hero Section */}
       <section className="relative h-96 pt-16">
-        <Image src={tour.image || "/images/placeholder.svg"} alt={tour.title} fill className="object-cover" />
+        <Image
+          src={tour.image || "/images/placeholder.svg"}
+          alt={tour.title}
+          fill
+          className="object-cover"
+          unoptimized={isExternalImageUrl(tour.image)}
+        />
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute bottom-8 left-8">
           <Badge className={getCategoryColor(tour.category)}>{getCategoryLabel(tour.category)}</Badge>
@@ -213,6 +219,7 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 priority={index === 0}
                                 className="object-cover object-center transition-opacity duration-300"
+                                unoptimized={isExternalImageUrl(image)}
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement
                                   target.src = "/images/placeholder.svg"
@@ -250,6 +257,7 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
                               alt={`Miniatura ${index + 1}`}
                               fill
                               className="object-cover"
+                              unoptimized={isExternalImageUrl(image)}
                             />
                           </button>
                         ))}
@@ -263,6 +271,7 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
                       alt={tour.title}
                       fill
                       className="object-cover object-center"
+                      unoptimized={isExternalImageUrl(tour.image)}
                     />
                   </div>
                 )}

@@ -10,6 +10,7 @@ import { Tour } from "@/types/index"
 import { cleanDescriptionPrices } from "@/lib/description-cleaner"
 import { getDisplayPrice } from "@/lib/tour-price-utils"
 import { getTranslatedDescription, getTranslatedTitle } from "@/lib/dynamic-translations"
+import { isExternalImageUrl } from "@/lib/image-url"
 
 interface TourCardProps {
   tour: Tour
@@ -65,6 +66,7 @@ export function TourCard({ tour, preferNextSemester }: TourCardProps) {
           alt={tour.title}
           fill
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          unoptimized={isExternalImageUrl(tour.image)}
         />
         {/* Dark gradient overlay that appears on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out pointer-events-none" />
