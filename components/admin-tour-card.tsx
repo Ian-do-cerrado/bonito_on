@@ -139,22 +139,37 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: Adm
   }
 
 
+  const loadAllAtivRowsForAtrativo = async (atv: string) => {
+    if (!atv.trim()) {
+      setAllAtivRows(editedTour.prices?.rows ?? [])
+      return
+    }
+    setIsLoadingAtivRows(true)
+    try {
+      const { fetchAllRowsForAtrativo } = await import("@/app/actions/prices")
+      const res = await fetchAllRowsForAtrativo(atv.trim(), isS2)
+      if (res.success && res.rows && res.rows.length > 0) {
+        setAllAtivRows(res.rows)
+      } else {
+        setAllAtivRows(editedTour.prices?.rows ?? [])
+      }
+    } catch (error) {
+      console.error("Erro ao carregar linhas do atrativo:", error)
+      setAllAtivRows(editedTour.prices?.rows ?? [])
+    } finally {
+      setIsLoadingAtivRows(false)
+    }
+  }
+
   const handleEditClick = () => {
     setIsEditing(true)
     loadAvailableAtrativos()
-    // Lazy-load all BTMS rows for this tour's atrativo
     const atv = editedTour.btms_atrativo_override
       ?? (editedTour.prices?.rows?.[0] as any)?.atrativo
       ?? ""
     if (atv) {
-      setIsLoadingAtivRows(true)
-      import("@/app/actions/prices").then(({ fetchAllRowsForAtrativo }) =>
-        fetchAllRowsForAtrativo(atv, isS2).then(res => {
-          if (res.success && res.rows) setAllAtivRows(res.rows)
-        }).finally(() => setIsLoadingAtivRows(false))
-      )
+      void loadAllAtivRowsForAtrativo(atv)
     } else {
-      // Fallback: use the filtered rows already available
       setAllAtivRows(editedTour.prices?.rows ?? [])
     }
   }
@@ -173,6 +188,11 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: Adm
       preferred_bonitense_tabela: undefined,
       price: 0,
     }))
+    if (override) {
+      void loadAllAtivRowsForAtrativo(override)
+    } else {
+      setAllAtivRows(editedTour.prices?.rows ?? [])
+    }
   }
 
   const handleSave = async () => {

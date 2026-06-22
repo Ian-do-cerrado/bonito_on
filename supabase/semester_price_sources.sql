@@ -51,10 +51,11 @@ LEFT JOIN public.btms_atrativos a
 LEFT JOIN public.btms_atividades ativ
   ON ativ.cdgbtms = t.cdgbtms_atividade;
 
+-- BTMS usa vig_inicio em 01/01 para tabelas anuais (AT/BT 2026); o split semestral
+-- é aplicado na lógica da aplicação, não nesta view.
 CREATE OR REPLACE VIEW public.atrativo_atividade_precos_s2 AS
 SELECT *
-FROM public.atrativo_atividade_precos_s1
-WHERE vig_inicio >= DATE '2026-07-01';
+FROM public.atrativo_atividade_precos_s1;
 
 CREATE TABLE IF NOT EXISTS public.btms_prices_1o_semestre AS
 SELECT *
@@ -79,7 +80,6 @@ BEGIN
   TRUNCATE TABLE public.btms_prices_2o_semestre;
   INSERT INTO public.btms_prices_2o_semestre
   SELECT *
-  FROM public.atrativo_atividade_precos_s1
-  WHERE vig_inicio >= split_date;
+  FROM public.atrativo_atividade_precos_s1;
 END;
 $$;

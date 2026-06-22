@@ -36,12 +36,80 @@ function nameSimilarity(tourTitle: string, atividade: string): number {
 
 const supabase = createClient()
 const DEFAULT_SEMESTER_SPLIT = process.env.NEXT_PUBLIC_SEMESTER_SPLIT_DATE ?? "2026-07-01"
+/** View completa do BTMS — fonte canônica para catálogo e picker do admin. */
+const CANONICAL_PRICE_SOURCE = "atrativo_atividade_precos"
 
 function getSemesterSourceCandidates(preferNextSemester?: boolean): string[] {
   if (preferNextSemester) {
-    return ["btms_prices_2o_semestre", "atrativo_atividade_precos_s2", "atrativo_atividade_precos"]
+    return ["btms_prices_2o_semestre", "atrativo_atividade_precos_s2", CANONICAL_PRICE_SOURCE]
   }
-  return ["btms_prices_1o_semestre", "atrativo_atividade_precos_s1", "atrativo_atividade_precos"]
+  return ["btms_prices_1o_semestre", "atrativo_atividade_precos_s1", CANONICAL_PRICE_SOURCE]
+}
+
+function sortDisplayRowsBySemester(
+  displayRows: TourPriceRowDisplay[],
+  preferNextSemester?: boolean
+): void {
+  if (preferNextSemester) {
+    displayRows.sort((a, b) => {
+      const aIsSecondSem = isOnOrAfter(a.vigInicio, DEFAULT_SEMESTER_SPLIT)
+      const bIsSecondSem = isOnOrAfter(b.vigInicio, DEFAULT_SEMESTER_SPLIT)
+      if (aIsSecondSem && !bIsSecondSem) return -1
+      if (!aIsSecondSem && bIsSecondSem) return 1
+      return 0
+    })
+  } else {
+    displayRows.sort((a, b) => {
+      const aIsFirstSem = !!a.vigInicio && !isOnOrAfter(a.vigInicio, DEFAULT_SEMESTER_SPLIT)
+      const bIsFirstSem = !!b.vigInicio && !isOnOrAfter(b.vigInicio, DEFAULT_SEMESTER_SPLIT)
+      if (aIsFirstSem && !bIsFirstSem) return -1
+      if (!aIsFirstSem && bIsFirstSem) return 1
+      return 0
+    })
+  }
+}
+
+function dedupePriceRows(rows: AtrativoAtividadePrecoRow[]): AtrativoAtividadePrecoRow[] {
+  const seen = new Set<string>()
+  const out: AtrativoAtividadePrecoRow[] = []
+  for (const row of rows) {
+    const key = [
+      row.atrativo ?? "",
+      row.atividade ?? "",
+      row.nome_tabela_preco ?? "",
+      row.vig_inicio ?? "",
+    ].join("|")
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(row)
+  }
+  return out
+}
+
+async function queryAllPriceRowsFromSource(
+  db: SupabaseClient,
+  source: string
+): Promise<AtrativoAtividadePrecoRow[] | null> {
+  const { data, error } = await db
+    .from(source)
+    .select("*")
+    .order("vig_inicio", { ascending: true })
+  if (error || !data?.length) return null
+  return data as AtrativoAtividadePrecoRow[]
+}
+
+async function queryPriceRowsForAtrativoFromSource(
+  db: SupabaseClient,
+  source: string,
+  atrativo: string
+): Promise<AtrativoAtividadePrecoRow[] | null> {
+  const { data, error } = await db
+    .from(source)
+    .select("*")
+    .ilike("atrativo", `%${atrativo}%`)
+    .order("vig_inicio", { ascending: true })
+  if (error || !data?.length) return null
+  return data as AtrativoAtividadePrecoRow[]
 }
 
 function isOnOrAfter(date: string | null | undefined, split: string): boolean {
@@ -192,12 +260,13 @@ export async function getAllPricesFromView(
 ): Promise<AtrativoAtividadePrecoRow[]> {
   const db = client ?? supabase
   try {
+    const canonical = await queryAllPriceRowsFromSource(db, CANONICAL_PRICE_SOURCE)
+    if (canonical) return canonical
+
     for (const source of getSemesterSourceCandidates(preferNextSemester)) {
-      const { data, error } = await db
-        .from(source)
-        .select("*")
-        .order("vig_inicio", { ascending: true })
-      if (!error && data) return data as AtrativoAtividadePrecoRow[]
+      if (source === CANONICAL_PRICE_SOURCE) continue
+      const rows = await queryAllPriceRowsFromSource(db, source)
+      if (rows) return rows
     }
     return []
   } catch (err) {
@@ -216,16 +285,27 @@ export async function getAllDisplayRowsForAtrativo(
   preferNextSemester?: boolean
 ): Promise<TourPriceRowDisplay[]> {
   const db = client ?? supabase
+  const needle = atrativo.trim()
+  if (!needle) return []
+
   try {
-    for (const source of getSemesterSourceCandidates(preferNextSemester)) {
-      const { data, error } = await db
-        .from(source)
-        .select("*")
-        .ilike("atrativo", `%${atrativo}%`)
-        .order("vig_inicio", { ascending: true })
-      if (!error && data) return (data as AtrativoAtividadePrecoRow[]).map((row) => toDisplayRow(row))
+    let rawRows =
+      (await queryPriceRowsForAtrativoFromSource(db, CANONICAL_PRICE_SOURCE, needle)) ?? []
+
+    if (rawRows.length === 0) {
+      for (const source of getSemesterSourceCandidates(preferNextSemester)) {
+        if (source === CANONICAL_PRICE_SOURCE) continue
+        const rows = await queryPriceRowsForAtrativoFromSource(db, source, needle)
+        if (rows) {
+          rawRows = rows
+          break
+        }
+      }
     }
-    return []
+
+    const displayRows = dedupePriceRows(rawRows).map((row) => toDisplayRow(row))
+    sortDisplayRowsBySemester(displayRows, preferNextSemester)
+    return displayRows
   } catch (err) {
     console.error("Error in getAllDisplayRowsForAtrativo:", err)
     return []
@@ -1291,26 +1371,7 @@ export function findPricesForTour(
   }
 
   let displayRows = matching.map((r) => toDisplayRow(r, tourSlug, tourTitle))
-
-  if (preferNextSemester) {
-    // Prioritize second semester rows (starting on or after July 1, 2026) while maintaining database order for others
-    displayRows.sort((a, b) => {
-      const aIsSecondSem = isOnOrAfter(a.vigInicio, DEFAULT_SEMESTER_SPLIT)
-      const bIsSecondSem = isOnOrAfter(b.vigInicio, DEFAULT_SEMESTER_SPLIT)
-      if (aIsSecondSem && !bIsSecondSem) return -1
-      if (!aIsSecondSem && bIsSecondSem) return 1
-      return 0
-    })
-  } else {
-    // Prioritize current/first semester rows (starting before July 1, 2026) while maintaining database order for others
-    displayRows.sort((a, b) => {
-      const aIsFirstSem = !!a.vigInicio && !isOnOrAfter(a.vigInicio, DEFAULT_SEMESTER_SPLIT)
-      const bIsFirstSem = !!b.vigInicio && !isOnOrAfter(b.vigInicio, DEFAULT_SEMESTER_SPLIT)
-      if (aIsFirstSem && !bIsFirstSem) return -1
-      if (!aIsFirstSem && bIsFirstSem) return 1
-      return 0
-    })
-  }
+  sortDisplayRowsBySemester(displayRows, preferNextSemester)
 
   // (Filtro de balneário removido — restrição invisível que anulava escolhas do admin.
   //  Admin controla preços via preferred_price_atividade, visible_prices e manual_price.)
