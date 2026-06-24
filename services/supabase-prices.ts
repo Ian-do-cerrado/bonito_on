@@ -7,6 +7,10 @@ import type { SupabaseClient } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase/client"
 import { createSlug } from "@/lib/utils"
 import { getFriendlyTableName } from "@/lib/table-name-map"
+import {
+  isBaixaTemporadaTable,
+  preferSecondSemesterAltaRow,
+} from "@/lib/price-season-utils"
 import { simplifyActivityName } from "@/lib/activity-name-simplifier"
 import type {
   AtrativoAtividadePrecoRow,
@@ -1386,14 +1390,18 @@ export function findPricesForTour(
     ? displayRows.find((r) => r.nomeTabela === preferredMsTabela)
     : displayRows.find((r) => isSulMatoGrossense(r) && !isBonitense(r))
 
-  // Extrai linha de Baixa Temporada (preferência manual ou auto via "BT" no nome)
+  // Extrai linha de Baixa Temporada (preferência manual ou auto via tabelas BT)
   const regularRows = displayRows.filter((r) => !isBonitense(r) && !isSulMatoGrossense(r))
   const baixaRow = preferredBaixaTabela
     ? displayRows.find((r) => r.nomeTabela === preferredBaixaTabela)
-    : regularRows.find((r) => {
-        const t = (r.nomeTabela ?? "").toUpperCase()
-        return t.includes("BT") && !t.includes("BONITENSE")
-      }) ?? regularRows.find((r) => r.temporada === "BAIXA")
+    : pickMainPriceRow(
+        regularRows.filter((r) => isBaixaTemporadaTable(r.nomeTabela, r.temporada)),
+        tourTitle,
+        tourSlug,
+        "BAIXA"
+      ) ??
+      regularRows.find((r) => isBaixaTemporadaTable(r.nomeTabela, r.temporada)) ??
+      regularRows.find((r) => r.temporada === "BAIXA")
 
   // Determina a linha principal: prefere a escolha manual do admin, senão usa automático
   let mainPriceRow: TourPriceRowDisplay | null | undefined
@@ -1405,6 +1413,10 @@ export function findPricesForTour(
     ) ?? pickMainPriceRow(displayRows, tourTitle, tourSlug, selectedSeason)
   } else {
     mainPriceRow = pickMainPriceRow(displayRows, tourTitle, tourSlug, selectedSeason)
+  }
+
+  if (preferNextSemester) {
+    mainPriceRow = preferSecondSemesterAltaRow(mainPriceRow, displayRows) ?? mainPriceRow
   }
 
   // Calculate precoMinimo prioritizing the correct semester rows if they are available

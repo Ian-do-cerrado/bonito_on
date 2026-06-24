@@ -17,6 +17,7 @@ import {
   isCellVisible,
   type AdminSemester,
 } from "@/lib/semester-admin-prices"
+import { isAltaTemporadaTable, isBaixaTemporadaTable } from "@/lib/price-season-utils"
 
 type SemesterOverrides = {
   validityEnd?: string
@@ -73,7 +74,7 @@ const SEASON_ROWS = [
   },
   {
     id: "crianca",
-    label: "Crianças (5 -12 anos)",
+    label: "Criança",
     getValue: (r: TourPriceRowDisplay) => r.crianca,
     overrideGetValue: (r: TourPriceRowDisplay) => r.crianca,
   },
@@ -107,14 +108,9 @@ function pickAutoRowForSeason(
   season: "alta" | "baixa"
 ): TourPriceRowDisplay | null {
   const isBaixa = season === "baixa"
-  const candidates = rows.filter((r) => {
-    const t = (r.nomeTabela ?? "").toUpperCase()
-    const temp = (r.temporada ?? "").toUpperCase()
-    if (isBaixa) {
-      return temp === "BAIXA" || (t.includes("BT") && !t.includes("BONITENSE"))
-    }
-    return temp === "ALTA" || r.isNormal || (/\bAT\b/.test(t) && !t.includes("BT"))
-  })
+  const candidates = rows.filter((r) =>
+    isBaixa ? isBaixaTemporadaTable(r.nomeTabela, r.temporada) : isAltaTemporadaTable(r.nomeTabela, r.temporada)
+  )
   return (
     candidates.find((r) => (r.adulto ?? r.garupaAdulto ?? 0) > 0) ??
     candidates[0] ??
@@ -340,7 +336,12 @@ export function TourPricesSidebar({
     }
     return priceDisplayOverrides.s1
   })()
-  const childLabelByAge = resolveChildAgeLabel(tourSlug, semesterOverrides)
+  const childLabelByAge = resolveChildAgeLabel(
+    tourSlug,
+    semesterOverrides,
+    priceDisplayOverrides,
+    semester
+  )
   const infantFreeConfig = resolveInfantFree(tourSlug)
   const seasonRowLabel: Record<string, string> = {
     adulto: semesterOverrides?.labels?.adulto || "Adultos",

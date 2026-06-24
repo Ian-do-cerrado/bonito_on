@@ -16,6 +16,7 @@ import Image from "next/image"
 import type { Tour } from "@/components/tours-section"
 import { getDisplayPrice } from "@/lib/tour-price-utils"
 import { isExternalImageUrl } from "@/lib/image-url"
+import { filterRowsForSeasonPicker } from "@/lib/price-season-utils"
 import { AdminPriceExtraRows } from "@/components/admin-price-extra-rows"
 import { isExtraRowEntry } from "@/lib/price-table-extra-rows"
 import { parseSpecialEntry, inferSpecialSeason, buildSpecialKey, type SpecialSeason } from "@/lib/special-tariffs"
@@ -805,12 +806,14 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: Adm
                         // Coluna usada ao escolher uma linha específica. Para "Melhor Idade" usa
                         // o preço de adulto (BTMS não-normalizado), permitindo escolher qualquer preço.
                         const ovCampo = rowDef.overrideCampo
-                        // Options: ALL rows (including those where the value is null/0)
-                        // Sorted: rows WITH a value for the override column first, then rows without
-                        const allOpts = allPriceRows
+                        const sectionRows = filterRowsForSeasonPicker(
+                          allPriceRows,
+                          sectionDef.key,
+                          isS2 && sectionDef.key === "alta"
+                        )
                         const opts = [
-                          ...allOpts.filter(r => Number(r[ovCampo]) > 0),
-                          ...allOpts.filter(r => !(Number(r[ovCampo]) > 0)),
+                          ...sectionRows.filter(r => Number(r[ovCampo]) > 0),
+                          ...sectionRows.filter(r => !(Number(r[ovCampo]) > 0)),
                         ]
                         // Modo do seletor: auto, manual ou uma linha do BTMS
                         const isManual = isManualOverride(override)

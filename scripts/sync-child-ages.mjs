@@ -14,6 +14,7 @@ import { fileURLToPath } from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, "..")
 const DATA_FILE = resolve(ROOT, "lib/tour-child-ages-data.ts")
+const INFANT_FILE = resolve(ROOT, "lib/tour-infant-free.ts")
 const APPLY = process.argv.includes("--apply")
 const FORCE = process.argv.includes("--force")
 
@@ -50,76 +51,105 @@ function normalizeAgeText(text) {
   return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
 }
 
-function parseChildAgeFromText(text) {
-  if (!text?.trim()) return null
+function extractAllChildRanges(text) {
   const t = normalizeAgeText(text)
-
-  const rangePatterns = [
-    /crianc[a-z]*\s*(?:de\s*)?(\d{1,2})\s*(?:a|ate|-)\s*(\d{1,2})\s*anos?/,
-    /crianc[a-z]*\s*(\d{1,2})\s*(?:a|ate|-)\s*(\d{1,2})\s*ano\b/,
-    /(\d{1,2})\s*(?:a|ate|-)\s*(\d{1,2})\s*anos?\s*(?:\(|\/)?\s*crianc/,
-  ]
-  for (const re of rangePatterns) {
-    const m = t.match(re)
-    if (m) {
-      const childMin = parseInt(m[1], 10)
-      const childMax = parseInt(m[2], 10)
-      if (childMin <= childMax) return { childMin, childMax }
-    }
+  const ranges = []
+  const re = /crianc[a-z]*\s*(?:de\s*)?(\d{1,2})\s*(?:a|ate|-)\s*(\d{1,2})\s*anos?/g
+  let m
+  while ((m = re.exec(t)) !== null) {
+    const childMin = parseInt(m[1], 10)
+    const childMax = parseInt(m[2], 10)
+    if (childMin <= childMax) ranges.push({ childMin, childMax })
   }
+  return ranges
+}
+
+function getBaixaTemporadaFocus(text) {
+  const t = normalizeAgeText(text)
+  const match = t.match(/baixa\s*temporada[\s\S]*?(?=mais valores|alta\s*temporada|$)/i)
+  return match ? match[0] : t
+}
+
+/** Extrai faixa CHD principal do bloco de baixa temporada (ignora tiers free/infantil). */
+function pickPrimaryChildAge(text, postSlug = "") {
+  if (!text?.trim()) return null
+  const focus = getBaixaTemporadaFocus(text)
+  const isMergulho = postSlug.includes("mergulho")
 
   const fromPatterns = [
-    /crianc[a-z]*\s*(?:a\s*)?partir\s*de\s*(\d{1,2})\s*anos?/,
     /crianc[a-z]*\s*\+\s*(\d{1,2})\s*anos?/,
-    /(?:adulto\s*e\s*)?crianc[a-z]*\s*a\s*partir\s*de\s*(\d{1,2})\s*anos?/,
-    /crianca\s*a\s*partir\s*de\s*(\d{1,2})\s*anos?/,
-    /idade\s*minima[:\s]+(\d{1,2})\s*anos?\s*de\s*idade/,
-    /garupas?\s*(?:sao\s*)?(?:permitidas\s*)?a\s*partir\s*de\s*(\d{1,2})\s*anos?/,
+    /crianc[a-z]*\s*(?:acima|mais)\s*de\s*(\d{1,2})\s*anos?/,
+    /crianc[a-z]*\s*a\s*partir\s*de\s*(\d{1,2})\s*anos?/,
+    /adulto\s*e\s*crianc[a-z]*\s*a\s*partir\s*de\s*(\d{1,2})\s*anos?/,
+    /flutuacao\s*\/\s*crianc[a-z]*\s*acima\s*de\s*(\d{1,2})\s*anos?/,
   ]
   for (const re of fromPatterns) {
-    const m = t.match(re)
+    const m = focus.match(re)
     if (m) return { childMin: parseInt(m[1], 10), childMax: null }
+  }
+
+  const ranges = extractAllChildRanges(focus)
+  if (ranges.length) {
+    const hasOlderTier =
+      ranges.some((r) => r.childMin >= 6) ||
+      /crianc[a-z]*\s*(?:mais|acima)\s*de/.test(focus)
+    let pool = ranges
+    if (hasOlderTier) {
+      pool = ranges.filter((r) => !(r.childMax <= 5 && r.childMin < 6))
+    }
+    if (!pool.length) pool = ranges
+    const sorted = [...pool].sort(
+      (a, b) => b.childMin - a.childMin || b.childMax - a.childMax
+    )
+    const main = sorted.find((r) => r.childMin >= 5) ?? sorted[0]
+    return { childMin: main.childMin, childMax: main.childMax }
+  }
+
+  if (!isMergulho) {
+    const minAge = focus.match(/idade\s*minima[:\s]+(\d{1,2})\s*anos?/)
+    if (minAge) {
+      const n = parseInt(minAge[1], 10)
+      if (n <= 12) return { childMin: n, childMax: null }
+    }
   }
 
   return null
 }
 
-/** Slug do header tarifário → slugs do site que herdam a mesma faixa */
+function pickInfantFree(text) {
+  const t = normalizeAgeText(text)
+  const m = t.match(
+    /crianc[a-z]*\s*(?:de\s*)?0\s*(?:a|ate|-)\s*(\d{1,2})\s*anos?\s*:?\s*free/
+  )
+  if (m) return { min: 0, max: parseInt(m[1], 10) }
+  return null
+}
+
+/** Slug da URL do post tarifário → slugs do site bonitoon.com.br */
 const TARIFARIO_SLUG_ALIASES = {
   "abismo-anhumas": ["abismo-anhumas", "flutuacao-abismo-anhumas", "mergulho-com-cilindro-abismo-anhumas"],
   "gruta-da-catedral-antiga-gruta-sao-mateus": ["gruta-da-catedral-antiga-gruta-sao-mateus"],
   "gruta-de-sao-miguel": ["gruta-de-sao-miguel"],
   "gruta-do-lago-azul": ["gruta-do-lago-azul"],
-  "flutuacao-na-praia-da-figueira-balneario-com-atividades": [
-    "flutuacao-praia-da-figueira",
-    "praia-da-figueira",
-  ],
+  "flutuacao-na-praia-da-figueira-balneario-com-atividades": ["flutuacao-praia-da-figueira", "praia-da-figueira"],
   "rio-azul-fervedouro": ["rio-azul-fervedouro"],
-  "gruta-do-mimoso": ["gruta-do-mimoso", "mergulho-com-cilindro-gruta-do-mimoso"],
-  "nascente-azul-flutuacao-com-balneario": [
-    "nascente-azul-flutuacao-com-balneario",
-    "nascente-azul-flutuacao-com-balneario-1",
-  ],
+  "gruta-do-mimoso": ["gruta-do-mimoso"],
+  "gruta-do-mimoso-1": ["mergulho-com-cilindro-gruta-do-mimoso"],
+  "nascente-azul-flutuacao-com-balneario": ["nascente-azul-flutuacao-com-balneario", "nascente-azul-flutuacao-com-balneario-1"],
   "barra-do-sucuri": ["barra-do-sucuri"],
-  "lagoa-misteriosa-flutuacao": ["lagoa-misteriosa", "mergulho-com-cilindro-lagoa-misteriosa"],
-  "rio-da-prata": ["rio-da-prata", "mergulho-com-cilindro-no-rio-da-prata", "cavalgada-rio-da-prata"],
+  "lagoa-misteriosa": ["lagoa-misteriosa"],
+  "mergulho-com-cilindro-lagoa-misteriosa": ["mergulho-com-cilindro-lagoa-misteriosa"],
+  "rio-da-prata": ["rio-da-prata", "mergulho-com-cilindro-no-rio-da-prata", "cavalgada-rio-da-prata", "lobo-guara-bike-adventure-bike-tour-no-rio-da-prata"],
   "rio-sucuri": ["rio-sucuri"],
   "aquario-natural": ["aquario-natural"],
   "canions-do-salobra": ["canions-do-salobra"],
-  "eco-serrana-trilhas-e-cachoeiras-com-almoco": [
-    "eco-serrana-trilhas-e-cachoeiras-com-almoco",
-    "eco-serrana",
-  ],
+  "eco-serrana-trilhas-e-cachoeiras-com-almoco": ["eco-serrana-trilhas-e-cachoeiras-com-almoco", "eco-serrana"],
   "estancia-mimosa-com-almoco": ["estancia-mimosa", "cavalgada-estancia-mimosa"],
   "parque-das-cachoeiras": ["parque-das-cachoeiras"],
   "cachoeiras-serra-da-bodoquena-com-almoco": ["cachoeiras-serra-da-bodoquena-com-almoco"],
-  "boca-da-onca-meia-trilha-buraco-do-macaco": ["boca-da-onca-buraco-do-macaco"],
+  "boca-da-onca-meia-trilha-buraco-do-macaco": ["boca-da-onca-buraco-do-macaco", "boca-da-onca-meia-trilha-buraco-do-macaco"],
   "boca-da-onca-trilha-discovery": ["boca-da-onca-trilha-discovery"],
-  "boca-da-onca-trilha-adventure": [
-    "boca-da-onca-trilha-adventure",
-    "boca-da-onca-trilha-adventure-1",
-    "boca-da-onca-rapel-trilha-adventure",
-  ],
+  "boca-da-onca-trilha-adventure": ["boca-da-onca-trilha-adventure", "boca-da-onca-trilha-adventure-1", "boca-da-onca-rapel-trilha-adventure"],
   "fazenda-ceita-core": ["fazenda-ceita-core"],
   "cachoeiras-rio-do-peixe": ["cachoeiras-rio-do-peixe"],
   "quadriciclo-balneario-no-estrela-do-formoso": ["quadriciclo-balneario-no-estrela-do-formoso"],
@@ -131,9 +161,7 @@ const TARIFARIO_SLUG_ALIASES = {
   "boia-cross-eco-park-porto-da-ilha": ["boia-cross-eco-park-porto-da-ilha"],
   "passeio-de-duck-no-eco-park-porto-da-ilha": ["passeio-de-duck-no-eco-park-porto-da-ilha"],
   "passeio-de-bote-no-porto-da-ilha": ["passeio-de-bote-no-porto-da-ilha", "bonito-passeio-de-bote-no-ilha-bonita"],
-  "parque-ecologico-rio-formoso-formoso-adventure-tirolesa-arvorismo": [
-    "formoso-adventure-tirolesa-arvorismo",
-  ],
+  "formoso-adventure-tirolesa-arvorismo": ["formoso-adventure-tirolesa-arvorismo"],
   "parque-ecologico-boia-cross": ["parque-ecologico-boia-cross"],
   "nascente-azul-combo-adventure": ["nascente-azul-combo-adventure"],
   "boia-cross-cabanas": ["boia-cross-cabanas"],
@@ -148,7 +176,9 @@ const TARIFARIO_SLUG_ALIASES = {
   "bosque-das-aguas": ["bosque-das-aguas"],
   "balneario-ecopark-porto-da-ilha": ["balneario-ecopark-porto-da-ilha"],
   "balneario-municipal": ["balneario-municipal"],
+  "balneário-municipal": ["balneario-municipal"],
   "balneario-cachoeiras-serra-da-bodoquena-com-almoco": ["balneario-cachoeiras-serra-da-bodoquena-com-almoco"],
+  "balneário-cachoeiras-serra-da-bodoquena-com-almoço": ["balneario-cachoeiras-serra-da-bodoquena-com-almoco"],
   "balneario-jardim-ecopark": ["balneario-jardim-ecopark"],
   "refugio-da-barra": ["refugio-da-barra"],
   "praia-da-figueira": ["praia-da-figueira"],
@@ -160,110 +190,57 @@ const TARIFARIO_SLUG_ALIASES = {
   "projeto-salobra-passeio-encontro-das-aguas": ["projeto-salobra-passeio-encontro-das-aguas"],
   "fazenda-san-francisco": ["fazenda-san-francisco"],
   "pantanal-experiencia": ["pantanal-experiencia"],
+  "mergulho-com-cilindro-no-rio-da-prata": ["mergulho-com-cilindro-no-rio-da-prata"],
+  "mergulho-com-cilindro-gruta-do-mimoso": ["mergulho-com-cilindro-gruta-do-mimoso"],
+  "mergulho-com-cilindro-discovery-porto-da-ilha": ["mergulho-com-cilindro-discovery-porto-da-ilha"],
 }
 
-/** Faixas confirmadas no tarifário tarifariobonitoon.com.br (1º semestre 2026). */
-const TARIFARIO_CHILD_AGES = {
+/** Correções quando um post do tarifário cobre várias atividades com faixas diferentes. */
+const SITE_SLUG_OVERRIDES = {
   "abismo-anhumas": { childMin: 5, childMax: 12 },
-  "flutuacao-abismo-anhumas": { childMin: 5, childMax: 12 },
+  "flutuacao-abismo-anhumas": { childMin: 8, childMax: 12 },
   "mergulho-com-cilindro-abismo-anhumas": { childMin: 5, childMax: 12 },
-  "gruta-do-lago-azul": { childMin: 6, childMax: null },
-  "gruta-de-sao-miguel": { childMin: 5, childMax: 12 },
-  "gruta-da-catedral-antiga-gruta-sao-mateus": { childMin: 5, childMax: 12 },
-  "gruta-do-mimoso": { childMin: 5, childMax: 12 },
   "mergulho-com-cilindro-gruta-do-mimoso": { childMin: 5, childMax: 12 },
-  "rio-sucuri": { childMin: 4, childMax: null },
-  "barra-do-sucuri": { childMin: 5, childMax: 12 },
-  "rio-da-prata": { childMin: 5, childMax: 12 },
-  "mergulho-com-cilindro-no-rio-da-prata": { childMin: 5, childMax: 12 },
-  "cavalgada-rio-da-prata": { childMin: 5, childMax: 12 },
-  "lobo-guara-bike-adventure-bike-tour-no-rio-da-prata": { childMin: 5, childMax: 12 },
-  "aquario-natural": { childMin: 5, childMax: 12 },
-  "lagoa-misteriosa": { childMin: 5, childMax: 12 },
   "mergulho-com-cilindro-lagoa-misteriosa": { childMin: 5, childMax: 12 },
-  "nascente-azul-flutuacao-com-balneario": { childMin: 5, childMax: 12 },
-  "nascente-azul-flutuacao-com-balneario-1": { childMin: 5, childMax: 12 },
-  "flutuacao-praia-da-figueira": { childMin: 5, childMax: 12 },
-  "praia-da-figueira": { childMin: 5, childMax: 12 },
-  "rio-azul-fervedouro": { childMin: 5, childMax: 12 },
-  "canions-do-salobra": { childMin: 8, childMax: null },
-  "eco-serrana": { childMin: 6, childMax: 11 },
-  "eco-serrana-trilhas-e-cachoeiras-com-almoco": { childMin: 6, childMax: 11 },
-  "estancia-mimosa": { childMin: 6, childMax: 11 },
-  "cavalgada-estancia-mimosa": { childMin: 6, childMax: 11 },
-  "parque-das-cachoeiras": { childMin: 6, childMax: 11 },
-  "cachoeiras-serra-da-bodoquena-com-almoco": { childMin: 6, childMax: 11 },
-  "boca-da-onca-buraco-do-macaco": { childMin: 7, childMax: 11 },
-  "boca-da-onca-trilha-discovery": { childMin: 7, childMax: 11 },
-  "boca-da-onca-trilha-adventure": { childMin: 7, childMax: 11 },
-  "boca-da-onca-trilha-adventure-1": { childMin: 7, childMax: 11 },
+  "mergulho-com-cilindro-no-rio-da-prata": { childMin: 5, childMax: 12 },
   "boca-da-onca-rapel-trilha-adventure": { childMin: 7, childMax: 11 },
-  "fazenda-ceita-core": { childMin: 5, childMax: 12 },
-  "cachoeiras-rio-do-peixe": { childMin: 6, childMax: 12 },
-  "passaporte-eco-park-porto-da-ilha-boia-stand-up": { childMin: 5, childMax: 11 },
-  "bike-boat-eco-park-porto-da-ilha": { childMin: 5, childMax: 11 },
-  "stand-up-paddle-eco-park-porto-da-ilha": { childMin: 5, childMax: 11 },
-  "barco-eletrico-eco-park-porto-da-ilha": { childMin: 5, childMax: 11 },
-  "boia-cross-eco-park-porto-da-ilha": { childMin: 5, childMax: 11 },
-  "passeio-de-duck-no-eco-park-porto-da-ilha": { childMin: 5, childMax: 11 },
-  "passeio-de-bote-no-porto-da-ilha": { childMin: 5, childMax: 11 },
-  "bonito-passeio-de-bote-no-ilha-bonita": { childMin: 5, childMax: 11 },
-  "combo-bote-ou-combo-duck-eco-park-porto-da-ilha": { childMin: 5, childMax: 11 },
   "mergulho-com-cilindro-discovery-porto-da-ilha": { childMin: 5, childMax: 11 },
-  "balneario-ecopark-porto-da-ilha": { childMin: 5, childMax: 11 },
-  "formoso-adventure-tirolesa-arvorismo": { childMin: 5, childMax: 12 },
-  "parque-ecologico-boia-cross": { childMin: 5, childMax: 12 },
-  "boia-cross-cabanas": { childMin: 5, childMax: 11 },
-  "cabanas-arvorismo": { childMin: 5, childMax: 11 },
-  "quadriciclo-serra-da-bodoquena": { childMin: 6, childMax: null },
-  "quadriciclo-trilha-boiadeira": { childMin: 6, childMax: null },
-  "quadriciclo-rotta-zagaia": { childMin: 6, childMax: null },
-  "quadriciclo-balneario-no-estrela-do-formoso": { childMin: 6, childMax: null },
-  "cavalgada-parque-ecologico-rio-formoso": { childMin: 5, childMax: 12 },
-  "cavalgada-recanto-do-peao": { childMin: 5, childMax: 12 },
-  "balneario-nascente-azul": { childMin: 5, childMax: 11 },
-  "balneario-estrela-do-formoso": { childMin: 5, childMax: 12 },
-  "observacao-de-aves-balneario-no-estrela-do-formoso": { childMin: 5, childMax: 12 },
-  "bosque-das-aguas": { childMin: 5, childMax: 12 },
-  "balneario-municipal": { childMin: 5, childMax: 11 },
-  "balneario-cachoeiras-serra-da-bodoquena-com-almoco": { childMin: 6, childMax: null },
-  "balneario-jardim-ecopark": { childMin: 5, childMax: 12 },
-  "refugio-da-barra": { childMin: 5, childMax: 12 },
-  "balneario-do-sol": { childMin: 5, childMax: 11 },
-  "buraco-das-araras": { childMin: 5, childMax: 12 },
-  "bio-park": { childMin: 5, childMax: 12 },
-  "projeto-jiboia": { childMin: 5, childMax: 12 },
-  "nascente-azul-combo-adventure": { childMin: 5, childMax: 12 },
-  "rota-aventura": { childMin: 5, childMax: 12 },
-  "projeto-salobra-passeio-encontro-das-aguas": { childMin: 5, childMax: 12 },
-  "fazenda-san-francisco": { childMin: 5, childMax: 12 },
-  "pantanal-experiencia": { childMin: 5, childMax: 12 },
 }
 
-async function fetchTarifarioSections() {
+const INFANT_FREE_ALIASES = {
+  "eco-serrana-trilhas-e-cachoeiras-com-almoco": ["eco-serrana", "eco-serrana-trilhas-e-cachoeiras-com-almoco"],
+  "balneario-municipal": ["balneario-municipal"],
+  "balneário-municipal": ["balneario-municipal"],
+  "balneario-cachoeiras-serra-da-bodoquena-com-almoco": ["balneario-cachoeiras-serra-da-bodoquena-com-almoco"],
+  "balneário-cachoeiras-serra-da-bodoquena-com-almoço": ["balneario-cachoeiras-serra-da-bodoquena-com-almoco"],
+}
+
+async function fetchTarifarioPostUrls() {
   const res = await fetch("https://www.tarifariobonitoon.com.br/")
   const html = await res.text()
-
-  const sections = []
-
-  // Wix: títulos em <h2> ou data com class rich-text
-  const h2Re = /<h2[^>]*>([\s\S]*?)<\/h2>/gi
-  let hm
-  const h2Titles = []
-  while ((hm = h2Re.exec(html)) !== null) {
-    const title = hm[1].replace(/<[^>]+>/g, "").trim()
-    if (title && !title.includes("Confira o Tarif")) h2Titles.push({ title, index: hm.index })
+  const urls = new Set()
+  for (const m of html.matchAll(/href="([^"]*\/post\/[^"]+)"/gi)) {
+    let u = m[1]
+    if (!u.startsWith("http")) {
+      u = `https://www.tarifariobonitoon.com.br${u.startsWith("/") ? "" : "/"}${u}`
+    }
+    urls.add(u.split("?")[0].replace(/\/$/, ""))
   }
+  return [...urls]
+}
 
-  for (let i = 0; i < h2Titles.length; i++) {
-    const start = h2Titles[i].index
-    const end = h2Titles[i + 1]?.index ?? html.length
-    const chunk = html.slice(start, end)
-    const body = chunk.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")
-    sections.push({ title: h2Titles[i].title, body, slug: createSlug(h2Titles[i].title) })
-  }
-
-  return sections
+async function fetchTarifarioPost(url) {
+  const res = await fetch(url)
+  const html = await res.text()
+  const titleMatch = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)
+  const title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, "").trim() : ""
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+  const pathSlug = decodeURIComponent(url.split("/post/")[1] || "")
+  return { url, title, pathSlug, text }
 }
 
 function expandToTourSlugs(tarifarioSlug, ages) {
@@ -277,6 +254,13 @@ function expandToTourSlugs(tarifarioSlug, ages) {
   return out
 }
 
+function expandInfantFree(tarifarioSlug, config) {
+  const out = {}
+  const aliases = INFANT_FREE_ALIASES[tarifarioSlug] ?? TARIFARIO_SLUG_ALIASES[tarifarioSlug] ?? [tarifarioSlug]
+  for (const s of aliases) out[s] = config
+  return out
+}
+
 function agesToTsValue(ages) {
   if (ages.childMax == null) {
     return `{ childMin: ${ages.childMin}, childMax: null }`
@@ -284,8 +268,11 @@ function agesToTsValue(ages) {
   return `{ childMin: ${ages.childMin}, childMax: ${ages.childMax} }`
 }
 
-function writeDataFile(mapping) {
-  const entries = Object.entries(mapping).sort(([a], [b]) => a.localeCompare(b))
+function writeDataFile(mapping, tourSlugs) {
+  const allowed = new Set(tourSlugs)
+  const entries = Object.entries(mapping)
+    .filter(([slug]) => allowed.has(slug))
+    .sort(([a], [b]) => a.localeCompare(b))
   const body = entries.map(([slug, ages]) => `  "${slug}": ${agesToTsValue(ages)},`).join("\n")
 
   const content = `/**
@@ -306,6 +293,42 @@ ${body}
   console.log(`Wrote ${entries.length} entries → ${DATA_FILE}`)
 }
 
+function writeInfantFreeFile(mapping, tourSlugs) {
+  const allowed = new Set(tourSlugs)
+  const entries = Object.entries(mapping)
+    .filter(([slug]) => allowed.has(slug))
+    .sort(([a], [b]) => a.localeCompare(b))
+  const body = entries.map(([slug, cfg]) => `  "${slug}": { min: ${cfg.min}, max: ${cfg.max} },`).join("\n")
+  const content = `export type InfantFreeConfig = {
+  min: number
+  max: number
+}
+
+/** Passeios com crianças gratuitas em faixa etária inferior à tarifa CHD. */
+export const TOUR_INFANT_FREE_BY_SLUG: Record<string, InfantFreeConfig> = {
+${body}
+}
+
+export function resolveInfantFree(tourSlug?: string): InfantFreeConfig | null {
+  if (!tourSlug) return null
+  return TOUR_INFANT_FREE_BY_SLUG[tourSlug] ?? null
+}
+
+export function formatInfantFreeLabel(config: InfantFreeConfig): string {
+  return \`\${config.min} a \${config.max} anos\`
+}
+`
+  writeFileSync(INFANT_FILE, content, "utf8")
+  console.log(`Wrote ${entries.length} infant-free entries → ${INFANT_FILE}`)
+}
+
+function formatChildAgeLabel(ages) {
+  if (ages?.childMin == null && ages?.childMin !== 0) return "Crianças (5-12 anos)"
+  const min = ages.childMin
+  if (ages.childMax == null) return `Crianças (a partir de ${min} anos)`
+  return `Criança de ${min} a ${ages.childMax} anos`
+}
+
 async function applyToDatabase(mapping, tours) {
   let updated = 0
   let skipped = 0
@@ -324,15 +347,24 @@ async function applyToDatabase(mapping, tours) {
       continue
     }
 
+    const criancaLabel = formatChildAgeLabel(ages)
     const next = {
       ...existing,
       s1: {
         ...(existing.s1 ?? {}),
         ages,
+        labels: {
+          ...(existing.s1?.labels ?? {}),
+          crianca: criancaLabel,
+        },
       },
       s2: {
         ...(existing.s2 ?? {}),
         ages: existing.s2?.ages ?? ages,
+        labels: {
+          ...(existing.s2?.labels ?? {}),
+          crianca: existing.s2?.labels?.crianca ?? criancaLabel,
+        },
       },
     }
 
@@ -364,52 +396,80 @@ async function main() {
 
   console.log(`Loaded ${tours.length} tours`)
 
-  let sections = []
+  const mapping = {}
+  const infantFree = {}
+  let posts = []
+
   try {
-    sections = await fetchTarifarioSections()
-    console.log(`Tarifario sections parsed: ${sections.length}`)
+    const urls = await fetchTarifarioPostUrls()
+    console.log(`Fetching ${urls.length} tarifario posts...`)
+    for (const url of urls) {
+      try {
+        const post = await fetchTarifarioPost(url)
+        if (post.text.includes("Não foi possível encontrar esta página")) continue
+        posts.push(post)
+        await new Promise((r) => setTimeout(r, 150))
+      } catch (e) {
+        console.warn(`  skip ${url}: ${e.message}`)
+      }
+    }
+    console.log(`Parsed ${posts.length} tarifario posts`)
   } catch (e) {
-    console.warn("Could not fetch tarifario live:", e.message)
+    console.warn("Could not fetch tarifario:", e.message)
   }
 
-  const mapping = { ...TARIFARIO_CHILD_AGES }
+  for (const post of posts) {
+    const slugKeys = [post.pathSlug, createSlug(post.title)].filter(Boolean)
+    const ages = pickPrimaryChildAge(post.text, post.pathSlug)
+    const infant = pickInfantFree(post.text)
 
-  for (const section of sections) {
-    const ages = parseChildAgeFromText(section.body)
-    if (!ages) continue
-    Object.assign(mapping, expandToTourSlugs(section.slug, ages))
-  }
-
-  // Match remaining tours by title similarity to tarifario sections
-  for (const tour of tours) {
-    if (mapping[tour.slug]) continue
-    const tourSlugNorm = createSlug(tour.title)
-    for (const section of sections) {
-      const ages = parseChildAgeFromText(section.body)
-      if (!ages) continue
-      const secSlug = section.slug
-      if (
-        tourSlugNorm.includes(secSlug) ||
-        secSlug.includes(tourSlugNorm) ||
-        createSlug(section.title) === tourSlugNorm
-      ) {
-        mapping[tour.slug] = ages
-        break
+    if (ages) {
+      for (const key of slugKeys) {
+        Object.assign(mapping, expandToTourSlugs(key, ages))
+      }
+    }
+    if (infant) {
+      for (const key of slugKeys) {
+        Object.assign(infantFree, expandInfantFree(key, infant))
       }
     }
   }
 
-  // Default 5-12 for tours still missing (common Bonito standard when no info)
+  Object.assign(mapping, SITE_SLUG_OVERRIDES)
+
+  for (const tour of tours) {
+    if (!mapping[tour.slug]) {
+      const tourSlugNorm = createSlug(tour.title)
+      for (const post of posts) {
+        const ages = pickPrimaryChildAge(post.text, post.pathSlug)
+        if (!ages) continue
+        const keys = [post.pathSlug, createSlug(post.title)]
+        if (keys.some((k) => tourSlugNorm.includes(k) || k.includes(tourSlugNorm))) {
+          mapping[tour.slug] = ages
+          break
+        }
+      }
+    }
+  }
+
   for (const tour of tours) {
     if (!mapping[tour.slug]) {
       mapping[tour.slug] = { childMin: 5, childMax: 12 }
     }
   }
 
-  writeDataFile(mapping)
+  writeDataFile(mapping, tours.map((t) => t.slug))
+  if (Object.keys(infantFree).length) writeInfantFreeFile(infantFree, tours.map((t) => t.slug))
 
   console.log("\nSample mappings:")
-  for (const slug of ["rio-sucuri", "gruta-do-lago-azul", "estancia-mimosa", "canions-do-salobra"]) {
+  for (const slug of [
+    "rio-sucuri",
+    "barra-do-sucuri",
+    "gruta-do-lago-azul",
+    "flutuacao-abismo-anhumas",
+    "balneario-municipal",
+    "estancia-mimosa",
+  ]) {
     console.log(`  ${slug}:`, JSON.stringify(mapping[slug]))
   }
 
@@ -421,7 +481,7 @@ async function main() {
   if (APPLY) {
     await applyToDatabase(mapping, tours)
   } else {
-    console.log("\nRun with --apply to persist price_display_overrides in Supabase")
+    console.log("\nRun with --apply --force to persist price_display_overrides in Supabase")
   }
 }
 

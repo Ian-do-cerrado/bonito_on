@@ -5,7 +5,6 @@ import {
   parsedToAges,
 } from "@/lib/child-age-parser"
 import { DEFAULT_CHILD_AGES, TOUR_CHILD_AGE_BY_SLUG } from "@/lib/tour-child-ages-data"
-import { TOUR_INFANT_FREE_BY_SLUG } from "@/lib/tour-infant-free"
 import type { Tour } from "@/types"
 
 type SemesterOverrides = Tour["price_display_overrides"] extends infer T
@@ -48,21 +47,19 @@ export function resolveChildAges(
 
 export function resolveChildAgeLabel(
   tourSlug: string | undefined,
-  semesterOverrides?: SemesterOverrides | null
+  semesterOverrides?: SemesterOverrides | null,
+  priceDisplayOverrides?: PriceDisplayOverrides | null,
+  semester: "s1" | "s2" = "s1"
 ): string {
   if (semesterOverrides?.labels?.crianca) {
     return semesterOverrides.labels.crianca
   }
-  // Infantil gratuito em faixa separada (ex.: 0-5 Free) — linha CHD sem repetir idade.
-  if (tourSlug && TOUR_INFANT_FREE_BY_SLUG[tourSlug]) {
-    return "Criança"
-  }
-  if (semesterOverrides?.ages?.childMin != null) {
-    return formatChildAgeLabel(semesterOverrides.ages)
-  }
-  const ages = tourSlug && TOUR_CHILD_AGE_BY_SLUG[tourSlug]
-    ? TOUR_CHILD_AGE_BY_SLUG[tourSlug]
-    : DEFAULT_CHILD_AGES
+
+  const ages =
+    semesterOverrides?.ages?.childMin != null
+      ? semesterOverrides.ages
+      : resolveChildAges(tourSlug, priceDisplayOverrides, semester)
+
   return formatChildAgeLabel(ages)
 }
 
