@@ -18,6 +18,10 @@ import { getDisplayPrice } from "@/lib/tour-price-utils"
 import { isExternalImageUrl } from "@/lib/image-url"
 import { filterRowsForSeasonPicker } from "@/lib/price-season-utils"
 import { AdminPriceExtraRows } from "@/components/admin-price-extra-rows"
+import { AdminTourGalleryEditor } from "@/components/admin-tour-gallery-editor"
+import { createSlug } from "@/lib/utils"
+import { resolveImageUrl } from "@/lib/image-url"
+import { toDbImagePath } from "@/lib/tour-image-storage"
 import { isExtraRowEntry } from "@/lib/price-table-extra-rows"
 import { parseSpecialEntry, inferSpecialSeason, buildSpecialKey, type SpecialSeason } from "@/lib/special-tariffs"
 import { buildManualOverride, parseManualOverride, isManualOverride } from "@/lib/price-overrides"
@@ -199,7 +203,14 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: Adm
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      const success = await onUpdate(editedTour)
+      const gallery = (editedTour.gallery ?? []).map(toDbImagePath).filter(Boolean)
+      const tourToSave: Tour = {
+        ...editedTour,
+        slug: editedTour.slug?.trim() || createSlug(editedTour.title),
+        gallery,
+        image: toDbImagePath(editedTour.image) || gallery[0] || editedTour.image,
+      }
+      const success = await onUpdate(tourToSave)
       if (success !== false) {
         setIsEditing(false)
       }
@@ -261,11 +272,11 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: Adm
     <Card className="overflow-hidden">
       <div className="relative h-48">
         <Image 
-          src={tour.image || "/placeholder.svg"} 
+          src={resolveImageUrl(isEditing ? editedTour.image : tour.image) || "/placeholder.svg"} 
           alt={tour.title} 
           fill 
           className="object-cover"
-          unoptimized={isExternalImageUrl(tour.image) || tour.image?.endsWith(".webp")}
+          unoptimized={isExternalImageUrl(isEditing ? editedTour.image : tour.image) || (isEditing ? editedTour.image : tour.image)?.endsWith(".webp")}
         />
         <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold ${getCategoryColor(tour.category)}`}>
           {getCategoryLabel(tour.category)}
@@ -659,13 +670,13 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: Adm
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="image">{t("imageUrl")}</Label>
-                <Input
-                  value={editedTour.image}
-                  onChange={(e) => setEditedTour({ ...editedTour, image: e.target.value })}
-                />
-              </div>
+              <AdminTourGalleryEditor
+                slug={editedTour.slug || createSlug(editedTour.title)}
+                title={editedTour.title}
+                image={editedTour.image}
+                gallery={editedTour.gallery}
+                onChange={(updates) => setEditedTour((prev) => ({ ...prev, ...updates }))}
+              />
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -1127,6 +1138,26 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: Adm
         ) : (
           <>
             <p className="text-gray-600 text-sm line-clamp-3">{tour.description}</p>
+            {tour.gallery && tour.gallery.length > 0 && (
+              <div>
+                <p className="text-xs font-medium text-gray-500 mb-2">
+                  Galeria ({tour.gallery.length} foto{tour.gallery.length === 1 ? "" : "s"})
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {tour.gallery.map((img, idx) => (
+                    <div key={`${img}-${idx}`} className="relative h-14 w-20 rounded-md overflow-hidden border">
+                      <Image
+                        src={resolveImageUrl(img)}
+                        alt={`Galeria ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                        unoptimized={isExternalImageUrl(img) || img.endsWith(".webp")}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="flex items-center justify-between gap-2">
               <div>
                 {(() => {

@@ -14,6 +14,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Languages, Loader2 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { AdminTourPriceLinkForm, hasTourPricingConfigured } from "@/components/admin-tour-price-link-form"
+import { AdminTourGalleryEditor } from "@/components/admin-tour-gallery-editor"
+import { createSlug } from "@/lib/utils"
+import { toDbImagePath } from "@/lib/tour-image-storage"
 
 interface AddTourDialogProps {
   open: boolean
@@ -34,7 +37,8 @@ function createEmptyTour(): Omit<Tour, "id"> {
     btms_atrativo_override: undefined,
     preferred_price_atividade: undefined,
     preferred_price_tabela: undefined,
-    image: "/placeholder.svg?height=300&width=400",
+    image: "/images/placeholder.svg",
+    gallery: [],
     category: "adventure",
     slug: "",
     highlights: [],
@@ -90,11 +94,23 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (newTour.title && newTour.description && hasTourPricingConfigured(newTour)) {
-      onAdd(newTour)
-      setNewTour(createEmptyTour())
-      onOpenChange(false)
-    }
+    if (!newTour.title || !newTour.description || !hasTourPricingConfigured(newTour)) return
+
+    const slug = newTour.slug?.trim() || createSlug(newTour.title)
+    const gallery = (newTour.gallery ?? []).map(toDbImagePath).filter(Boolean)
+    const image =
+      toDbImagePath(newTour.image) ||
+      gallery[0] ||
+      newTour.image
+
+    onAdd({
+      ...newTour,
+      slug,
+      gallery,
+      image,
+    })
+    setNewTour(createEmptyTour())
+    onOpenChange(false)
   }
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -227,14 +243,13 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
             </Select>
           </div>
 
-          <div>
-            <Label htmlFor="image">{t("imageUrl")}</Label>
-            <Input
-              id="image"
-              value={newTour.image}
-              onChange={(e) => setNewTour({ ...newTour, image: e.target.value })}
-            />
-          </div>
+          <AdminTourGalleryEditor
+            slug={newTour.slug?.trim() || createSlug(newTour.title)}
+            title={newTour.title}
+            image={newTour.image}
+            gallery={newTour.gallery}
+            onChange={(updates) => setNewTour((prev) => ({ ...prev, ...updates }))}
+          />
 
           <div className="grid grid-cols-2 gap-4">
             <div>
