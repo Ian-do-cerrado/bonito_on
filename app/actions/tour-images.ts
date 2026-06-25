@@ -1,7 +1,8 @@
 "use server"
 
 import type { SupabaseClient } from "@supabase/supabase-js"
-import { createClient } from "@/lib/supabase/server"
+import { createSessionClient } from "@/lib/supabase/session"
+import { createServiceClient } from "@/lib/supabase/service"
 import {
   TOUR_IMAGES_BUCKET,
   TOUR_IMAGE_ALLOWED_TYPES,
@@ -57,8 +58,10 @@ export async function uploadTourGalleryImages(
       return { success: false, error: "Nenhum arquivo selecionado." }
     }
 
-    const supabase = await createClient()
-    await requireAdmin(supabase)
+    const sessionClient = await createSessionClient()
+    await requireAdmin(sessionClient)
+
+    const storageClient = createServiceClient()
 
     const existingGalleryRaw = formData.get("existingGallery")
     const existingGallery: string[] = existingGalleryRaw
@@ -80,7 +83,7 @@ export async function uploadTourGalleryImages(
       const storagePath = nextGalleryFileName(cleanSlug, gallerySnapshot, ext)
       const buffer = Buffer.from(await file.arrayBuffer())
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError } = await storageClient.storage
         .from(TOUR_IMAGES_BUCKET)
         .upload(storagePath, buffer, {
           contentType: file.type || "image/jpeg",
@@ -115,10 +118,11 @@ export async function deleteTourStorageImage(
       return { success: true }
     }
 
-    const supabase = await createClient()
-    await requireAdmin(supabase)
+    const sessionClient = await createSessionClient()
+    await requireAdmin(sessionClient)
 
-    const { error } = await supabase.storage.from(TOUR_IMAGES_BUCKET).remove([path])
+    const storageClient = createServiceClient()
+    const { error } = await storageClient.storage.from(TOUR_IMAGES_BUCKET).remove([path])
     if (error) {
       console.error("Erro ao remover imagem:", error)
       return { success: false, error: error.message || "Falha ao remover imagem." }
