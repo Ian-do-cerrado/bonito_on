@@ -13,6 +13,7 @@ import { Tour } from "@/types/index"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Languages, Loader2 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { AdminTourPriceLinkForm, hasTourPricingConfigured } from "@/components/admin-tour-price-link-form"
 
 interface AddTourDialogProps {
   open: boolean
@@ -20,10 +21,8 @@ interface AddTourDialogProps {
   onAdd: (tour: Omit<Tour, "id">) => void
 }
 
-export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps) {
-  const { t } = useLanguage()
-  const [isTranslating, setIsTranslating] = useState(false)
-  const [newTour, setNewTour] = useState<Omit<Tour, "id">>({
+function createEmptyTour(): Omit<Tour, "id"> {
+  return {
     title: "",
     description: "",
     title_en: "",
@@ -31,6 +30,10 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
     title_es: "",
     description_es: "",
     price: 0,
+    manual_price: null,
+    btms_atrativo_override: undefined,
+    preferred_price_atividade: undefined,
+    preferred_price_tabela: undefined,
     image: "/placeholder.svg?height=300&width=400",
     category: "adventure",
     slug: "",
@@ -41,7 +44,13 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
     location: "",
     bestSeason: "",
     maxGroupSize: 0,
-  })
+  }
+}
+
+export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps) {
+  const { t } = useLanguage()
+  const [isTranslating, setIsTranslating] = useState(false)
+  const [newTour, setNewTour] = useState<Omit<Tour, "id">>(createEmptyTour)
 
   const handleTranslate = async () => {
     if (!newTour.title || !newTour.description) return
@@ -81,14 +90,22 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (newTour.title && newTour.description && newTour.price > 0) {
+    if (newTour.title && newTour.description && hasTourPricingConfigured(newTour)) {
       onAdd(newTour)
+      setNewTour(createEmptyTour())
       onOpenChange(false)
     }
   }
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setNewTour(createEmptyTour())
+    }
+    onOpenChange(nextOpen)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("addNewTour")}</DialogTitle>
@@ -175,39 +192,39 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
             </TabsContent>
           </Tabs>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="price">{t("price")}</Label>
-              <Input
-                id="price"
-                type="number"
-                value={newTour.price}
-                onChange={(e) => setNewTour({ ...newTour, price: Number(e.target.value) })}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="category">{t("category")}</Label>
-              <Select
-                value={newTour.category}
-                onValueChange={(value) => setNewTour({ ...newTour, category: value as any })}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="adventure">{t("adventure")}</SelectItem>
-                  <SelectItem value="contemplation">{t("contemplation")}</SelectItem>
-                  <SelectItem value="cave">{t("cave")}</SelectItem>
-                  <SelectItem value="waterfall">{t("waterfall")}</SelectItem>
-                  <SelectItem value="rappelling">{t("rappelling")}</SelectItem>
-                  <SelectItem value="horseback">{t("horseback")}</SelectItem>
-                  <SelectItem value="biking">{t("biking")}</SelectItem>
-                  <SelectItem value="scubaDiving">{t("scubaDiving")}</SelectItem>
-                  <SelectItem value="floating">{t("floating")}</SelectItem>
-                  <SelectItem value="resort">{t("resort")}</SelectItem>
-                  <SelectItem value="pantanal">{t("pantanal")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <AdminTourPriceLinkForm
+            active={open}
+            value={{
+              btms_atrativo_override: newTour.btms_atrativo_override,
+              manual_price: newTour.manual_price,
+              preferred_price_atividade: newTour.preferred_price_atividade,
+              preferred_price_tabela: newTour.preferred_price_tabela,
+              prices: newTour.prices,
+            }}
+            onChange={(updates) => setNewTour((prev) => ({ ...prev, ...updates }))}
+          />
+
+          <div>
+            <Label htmlFor="category">{t("category")}</Label>
+            <Select
+              value={newTour.category}
+              onValueChange={(value) => setNewTour({ ...newTour, category: value as Tour["category"] })}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="adventure">{t("adventure")}</SelectItem>
+                <SelectItem value="contemplation">{t("contemplation")}</SelectItem>
+                <SelectItem value="cave">{t("cave")}</SelectItem>
+                <SelectItem value="waterfall">{t("waterfall")}</SelectItem>
+                <SelectItem value="rappelling">{t("rappelling")}</SelectItem>
+                <SelectItem value="horseback">{t("horseback")}</SelectItem>
+                <SelectItem value="biking">{t("biking")}</SelectItem>
+                <SelectItem value="scubaDiving">{t("scubaDiving")}</SelectItem>
+                <SelectItem value="floating">{t("floating")}</SelectItem>
+                <SelectItem value="resort">{t("resort")}</SelectItem>
+                <SelectItem value="pantanal">{t("pantanal")}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
@@ -282,7 +299,7 @@ export function AddTourDialog({ open, onOpenChange, onAdd }: AddTourDialogProps)
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               {t("cancel")}
             </Button>
             <Button type="submit" className="bg-green-600 hover:bg-green-700">
