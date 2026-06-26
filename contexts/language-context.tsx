@@ -301,8 +301,8 @@ export const translations: Translations = {
   contactForMoreInfo: { pt: "Entre em contato para mais informações e reservas", en: "Contact us for more information and reservations", es: "Contáctenos para más información y reservas", zh: "联系我们以获取更多信息并预订" },
   priceTitle: { pt: "Preço", en: "Price", es: "Precio", zh: "价格" },
   checkPrices: { pt: "Consultar Preços", en: "Check Prices", es: "Consultar Precios", zh: "查看价格" },
-  priceOnRequest: { pt: "Sob consulta", en: "On request", es: "Consultar precio", zh: "询价" },
-  contactForQuote: { pt: "Entre em contato para orçamentos", en: "Contact us for a quote", es: "Contáctenos para un presupuesto", zh: "联系我们获取报价" },
+  priceOnRequest: { pt: "Valor a consultar", en: "On request", es: "Consultar precio", zh: "询价" },
+  contactForQuote: { pt: "Entre em contato para orçamento", en: "Contact us for a quote", es: "Contáctenos para un presupuesto", zh: "联系我们获取报价" },
   quickResponseGuaranteed: { pt: "Resposta rápida garantida", en: "Quick response guaranteed", es: "Respuesta rápida garantizada", zh: "保证快速回复" },
 
   // Tour Prices Sidebar
