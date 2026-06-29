@@ -159,7 +159,7 @@ export default function PackageDetailPage({ params: paramsPromise }: PackageDeta
               <Clock className="w-3 h-3 mr-1" />
               {packageData.duration}
             </Badge>
-            {packageData.price > 0 && packageData.originalPrice && (
+            {packageData.originalPrice && (
               <Badge className="bg-red-500 text-white">
                 {Math.round(((packageData.originalPrice - packageData.price) / packageData.originalPrice) * 100)}% OFF
               </Badge>
@@ -346,28 +346,19 @@ export default function PackageDetailPage({ params: paramsPromise }: PackageDeta
                 <h3 className="text-xl font-semibold mb-4">{t("reservePackage")}</h3>
 
                 <div className="mb-6">
-                  {packageData.price > 0 ? (
-                    <>
-                      {packageData.originalPrice && (
-                        <div className="text-lg text-gray-500 line-through mb-1">
-                          R$ {packageData.originalPrice.toFixed(2).replace(".", ",")}
-                        </div>
-                      )}
-                      <div className="text-3xl font-bold text-green-600 mb-2">
-                        R$ {packageData.price.toFixed(2).replace(".", ",")}
-                      </div>
-                      <p className="text-gray-600">{t("perPerson")}</p>
-                      {packageData.originalPrice && (
-                        <p className="text-sm text-green-600 font-medium">
-                          {t("savingsOf")} R$ {(packageData.originalPrice - packageData.price).toFixed(2).replace(".", ",")}
-                        </p>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <div className="text-3xl font-bold text-green-600 mb-2">{t("priceOnRequest")}</div>
-                      <p className="text-gray-600">{t("contactForQuote")}</p>
-                    </>
+                  {packageData.originalPrice && (
+                    <div className="text-lg text-gray-500 line-through mb-1">
+                      R$ {packageData.originalPrice.toFixed(2).replace(".", ",")}
+                    </div>
+                  )}
+                  <div className="text-3xl font-bold text-green-600 mb-2">
+                    R$ {packageData.price.toFixed(2).replace(".", ",")}
+                  </div>
+                  <p className="text-gray-600">{t("perPerson")}</p>
+                  {packageData.originalPrice && (
+                    <p className="text-sm text-green-600 font-medium">
+                      {t("savingsOf")} R$ {(packageData.originalPrice - packageData.price).toFixed(2).replace(".", ",")}
+                    </p>
                   )}
                 </div>
 

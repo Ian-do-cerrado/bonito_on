@@ -69,15 +69,10 @@ export default function PackagesPage() {
 
     // Sort packages
     filtered.sort((a, b) => {
-      const aHasPrice = a.price > 0
-      const bHasPrice = b.price > 0
-
       switch (sortBy) {
         case "price-asc":
-          if (aHasPrice !== bHasPrice) return aHasPrice ? -1 : 1
           return a.price - b.price
         case "price-desc":
-          if (aHasPrice !== bHasPrice) return aHasPrice ? -1 : 1
           return b.price - a.price
         case "duration-asc":
           return Number.parseInt(a.duration) - Number.parseInt(b.duration)
@@ -245,7 +240,7 @@ export default function PackagesPage() {
                     <Image src={pkg.image || "/placeholder.svg"} alt={pkg.title} fill className="object-cover" />
                     <div className="absolute top-4 left-4 flex gap-2">
                       <Badge className={getCategoryColor(pkg.category)}>{getCategoryLabel(pkg.category)}</Badge>
-                      {pkg.price > 0 && pkg.originalPrice && (
+                      {pkg.originalPrice && (
                         <Badge className="bg-red-500 text-white">
                           {Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100)}% OFF
                         </Badge>
@@ -278,28 +273,19 @@ export default function PackagesPage() {
 
                     <div className="flex items-center justify-between">
                       <div>
-                        {pkg.price > 0 ? (
-                          <>
-                            {pkg.originalPrice && (
-                              <div className="text-sm text-gray-500 line-through">
-                                R$ {pkg.originalPrice.toFixed(2).replace(".", ",")}
-                              </div>
-                            )}
-                            <div className="text-2xl font-bold text-green-600">
-                              R$ {pkg.price.toFixed(2).replace(".", ",")}
-                            </div>
-                            <div className="text-sm text-gray-600">{t("perPerson")}</div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="text-2xl font-bold text-green-600">{t("priceOnRequest")}</div>
-                            <div className="text-sm text-gray-600">{t("contactForQuote")}</div>
-                          </>
+                        {pkg.originalPrice && (
+                          <div className="text-sm text-gray-500 line-through">
+                            R$ {pkg.originalPrice.toFixed(2).replace(".", ",")}
+                          </div>
                         )}
+                        <div className="text-2xl font-bold text-green-600">
+                          R$ {pkg.price.toFixed(2).replace(".", ",")}
+                        </div>
+                        <div className="text-sm text-gray-600">por pessoa</div>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <Link href={`/pacotes/${pkg.slug || createSlug(pkg.title)}`}>
+                        <Link href={`/pacotes/${createSlug(pkg.title)}`}>
                           <Button size="sm" className="bg-green-600 hover:bg-green-700">
                             Ver Detalhes
                           </Button>
