@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic"
 export default async function HomePage() {
   const supabase = createApiClient()
   const [tours, packages, attractions] = await Promise.all([
-    getAllTours(supabase).catch(() => []),
+    getAllTours(supabase, true).catch(() => []),
     getAllPackages(supabase).catch(() => []),
     getAllAttractions(supabase).catch(() => []),
   ])

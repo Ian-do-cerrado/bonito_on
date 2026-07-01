@@ -21,6 +21,7 @@ import { getTranslatedDescription, getTranslatedTitle } from "@/lib/dynamic-tran
 import { formatDescription } from "@/lib/text-formatter"
 import { createSlug } from "@/lib/utils"
 import { resolveImageUrl, isExternalImageUrl } from "@/lib/image-url"
+import { resolvePreferNextSemesterPublic, semesterLinkQuery } from "@/lib/semester-config"
 
 import { useSearchParams } from "next/navigation"
 
@@ -37,7 +38,7 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
     params && typeof params === "object" && "then" in params ? use(params) : (params as { slug: string })
   const slug = resolvedParams.slug
   const searchParams = useSearchParams()
-  const preferNextSemester = searchParams.get("semester") === "2"
+  const preferNextSemester = resolvePreferNextSemesterPublic(searchParams.get("semester"))
   const { t, language, initialValueType } = useLanguage()
   const [tour, setTour] = useState<Tour | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -48,7 +49,7 @@ export default function TourDetailPage({ params }: TourDetailPageProps) {
     const fetchTour = async () => {
       setIsLoading(true)
       try {
-        const queryParams = preferNextSemester ? "?semester=2" : ""
+        const queryParams = semesterLinkQuery(preferNextSemester)
         const res = await fetch(`/api/tours/${encodeURIComponent(slug)}${queryParams}`)
         if (res.ok) {
           const tourData: Tour = await res.json()

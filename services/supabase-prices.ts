@@ -39,7 +39,8 @@ function nameSimilarity(tourTitle: string, atividade: string): number {
 }
 
 const supabase = createClient()
-const DEFAULT_SEMESTER_SPLIT = process.env.NEXT_PUBLIC_SEMESTER_SPLIT_DATE ?? "2026-07-01"
+import { DEFAULT_SEMESTER_SPLIT_DATE } from "@/lib/semester-config"
+const DEFAULT_SEMESTER_SPLIT = DEFAULT_SEMESTER_SPLIT_DATE
 /** View completa do BTMS — fonte canônica para catálogo e picker do admin. */
 const CANONICAL_PRICE_SOURCE = "atrativo_atividade_precos"
 

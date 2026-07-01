@@ -18,6 +18,7 @@ import {
   syncAllToursS2FromS1,
 } from "@/app/actions/tour-admin"
 import { useToast } from "@/hooks/use-toast"
+import { S1_FUTURE_LABEL } from "@/lib/semester-config"
 
 export default function AdminValorFuturoPage() {
   const [user, setUser] = useState<any>(null)
@@ -65,7 +66,7 @@ export default function AdminValorFuturoPage() {
   const loadData = async () => {
     setIsRefreshing(true)
     try {
-      const res = await fetch("/api/tours?semester=2", { cache: "no-store" })
+      const res = await fetch("/api/tours?semester=1", { cache: "no-store" })
       if (!res.ok) throw new Error("Falha ao carregar passeios")
       const toursData: Tour[] = await res.json()
       setTours(toursData)
@@ -73,7 +74,7 @@ export default function AdminValorFuturoPage() {
       console.error("Error loading data:", error)
       toast({
         title: "Erro",
-        description: "Erro ao carregar dados do 2º semestre",
+        description: "Erro ao carregar dados do 1º semestre (futuro)",
         variant: "destructive",
       })
     } finally {
@@ -205,7 +206,7 @@ export default function AdminValorFuturoPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando painel do 2º semestre...</p>
+          <p className="text-gray-600">Carregando {S1_FUTURE_LABEL}...</p>
         </div>
       </div>
     )
@@ -228,9 +229,9 @@ export default function AdminValorFuturoPage() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Editar Passeios — 2º Semestre</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Editar Passeios — {S1_FUTURE_LABEL}</h1>
                 <p className="text-gray-600">
-                  Mesmos passeios e painel do 1º semestre, com tarifas BTMS do próximo semestre. Alterações de preço do 2º sem. partem da configuração atual do 1º sem.
+                  Tarifas com vigência a partir de jan/2027 (valores futuros). Não são exibidas como vigentes no site — o público continua vendo o 2º semestre.
                 </p>
               </div>
             </div>
@@ -307,7 +308,7 @@ export default function AdminValorFuturoPage() {
                 tour={tour}
                 onUpdate={handleUpdateTour}
                 onDelete={handleDeleteTour}
-                semester="s2"
+                semester="s1"
               />
             </div>
           ))}

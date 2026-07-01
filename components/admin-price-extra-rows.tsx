@@ -48,7 +48,7 @@ export function AdminPriceExtraRows({
   onVisiblePricesChange,
   semester: semesterProp,
 }: AdminPriceExtraRowsProps) {
-  const [semesterInternal, setSemesterInternal] = useState<"s1" | "s2">(semesterProp ?? "s1")
+  const [semesterInternal, setSemesterInternal] = useState<"s1" | "s2">(semesterProp ?? "s2")
   const semester = semesterProp ?? semesterInternal
 
   const extraRows = useMemo(

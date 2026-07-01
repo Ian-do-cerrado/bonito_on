@@ -14,7 +14,8 @@ export async function GET(
       return NextResponse.json({ error: "Slug required" }, { status: 400 })
     }
     const { searchParams } = new URL(request.url)
-    const preferNextSemester = searchParams.get("semester") === "2"
+    const { resolvePreferNextSemester } = await import("@/lib/semester-config")
+    const preferNextSemester = resolvePreferNextSemester(searchParams.get("semester"))
     const supabase = createApiClient()
     const tour = await getTourBySlug(slug, supabase, preferNextSemester)
     if (!tour) {

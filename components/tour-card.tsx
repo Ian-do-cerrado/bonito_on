@@ -9,6 +9,7 @@ import Link from "next/link"
 import { Tour } from "@/types/index"
 import { cleanDescriptionPrices } from "@/lib/description-cleaner"
 import { getDisplayPrice } from "@/lib/tour-price-utils"
+import { semesterLinkQuery } from "@/lib/semester-config"
 import { getTranslatedDescription, getTranslatedTitle } from "@/lib/dynamic-translations"
 import { isExternalImageUrl } from "@/lib/image-url"
 
@@ -55,7 +56,7 @@ export function TourCard({ tour, preferNextSemester }: TourCardProps) {
     }
   }
 
-  const queryParam = preferNextSemester ? "?semester=2" : ""
+  const queryParam = semesterLinkQuery(preferNextSemester ?? true)
 
   return (
     <Card className="group overflow-hidden border border-gray-100 bg-white rounded-2xl shadow-sm h-full flex flex-col">

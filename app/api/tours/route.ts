@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic"
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const preferNextSemester = searchParams.get("semester") === "2"
+    const { resolvePreferNextSemester } = await import("@/lib/semester-config")
+    const preferNextSemester = resolvePreferNextSemester(searchParams.get("semester"))
     const supabase = createApiClient()
     const tours = await getAllTours(supabase, preferNextSemester)
     return NextResponse.json(tours)

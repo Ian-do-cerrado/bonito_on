@@ -67,7 +67,7 @@ SELECT *
 FROM public.atrativo_atividade_precos_s2
 WHERE false;
 
-CREATE OR REPLACE FUNCTION public.refresh_btms_semester_tables(split_date date DEFAULT DATE '2026-07-01')
+CREATE OR REPLACE FUNCTION public.refresh_btms_semester_tables(split_date date DEFAULT DATE '2027-01-01')
 RETURNS void
 LANGUAGE plpgsql
 AS $$

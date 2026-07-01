@@ -33,7 +33,7 @@ CREATE INDEX IF NOT EXISTS idx_price_sync_runs_started_at
 INSERT INTO public.admin_settings (key, value, updated_at)
 VALUES (
   'semester_split',
-  '{"second_semester_start":"2026-07-01"}'::jsonb,
+  '{"second_semester_start":"2027-01-01"}'::jsonb,
   now()
 )
 ON CONFLICT (key) DO NOTHING;

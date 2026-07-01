@@ -108,11 +108,11 @@ export async function getSemesterSplitDate(): Promise<string> {
       .eq("key", "semester_split")
       .single()
 
-    if (error || !data) return "2026-07-01"
-    return parseSemesterSplitDate(data.value) ?? "2026-07-01"
+    if (error || !data) return "2027-01-01"
+    return parseSemesterSplitDate(data.value) ?? "2027-01-01"
   } catch (err) {
     console.error("Erro ao buscar data de corte do semestre:", err)
-    return "2026-07-01"
+    return "2027-01-01"
   }
 }
 

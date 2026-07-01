@@ -11,12 +11,13 @@ import { ChevronLeft, ChevronRight, Search } from "lucide-react"
 import type { Tour } from "@/services/supabase-tours"
 import { gsap } from "gsap"
 import { SiteLayout } from "@/components/site-layout"
+import { PUBLIC_DEFAULT_PREFER_S2, S2_CURRENT_LABEL, semesterLinkQuery } from "@/lib/semester-config"
 
 interface ToursTarifarioProps {
   preferNextSemester?: boolean
 }
 
-export function ToursTarifario({ preferNextSemester = false }: ToursTarifarioProps) {
+export function ToursTarifario({ preferNextSemester = PUBLIC_DEFAULT_PREFER_S2 }: ToursTarifarioProps) {
   const { t } = useLanguage()
   const [tours, setTours] = useState<Tour[]>([])
   const [activeCategory, setActiveCategory] = useState<Tour["category"] | "all">("all")
@@ -49,7 +50,7 @@ export function ToursTarifario({ preferNextSemester = false }: ToursTarifarioPro
       }
 
       try {
-        const url = preferNextSemester ? "/api/tours?semester=2" : "/api/tours"
+        const url = `/api/tours${semesterLinkQuery(preferNextSemester)}`
         const res = await fetch(url)
         if (!res.ok) throw new Error("Failed to fetch tours")
         const toursData: Tour[] = await res.json()
@@ -204,17 +205,21 @@ export function ToursTarifario({ preferNextSemester = false }: ToursTarifarioPro
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 sm:mb-12 gap-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight text-center sm:text-left title-gsap">
-            {preferNextSemester ? "Passeios em Bonito (2º Semestre)" : "Passeios em Bonito"}
+            {preferNextSemester
+              ? `Passeios em Bonito (${S2_CURRENT_LABEL})`
+              : "Passeios em Bonito — prévia de valores futuros"}
           </h2>
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-            <Link href={preferNextSemester ? "/tarifario" : "/tarifario-2o-semestre"} className="w-full sm:w-auto btn-gsap">
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto border-green-600 text-green-600 hover:bg-green-50 rounded-full font-medium"
-              >
-                {preferNextSemester ? "Ver Tarifas do 1º Semestre" : "Ver Tarifas do 2º Semestre"}
-              </Button>
-            </Link>
+            {!preferNextSemester && (
+              <Link href="/tarifario" className="w-full sm:w-auto btn-gsap">
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-auto border-green-600 text-green-600 hover:bg-green-50 rounded-full font-medium"
+                >
+                  Ver tarifas vigentes (S2)
+                </Button>
+              </Link>
+            )}
             <div className="relative w-full sm:w-64 search-gsap">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input

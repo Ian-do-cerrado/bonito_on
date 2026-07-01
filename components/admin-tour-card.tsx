@@ -43,7 +43,7 @@ interface AdminTourCardProps {
   semester?: AdminSemester
 }
 
-export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s1" }: AdminTourCardProps) {
+export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s2" }: AdminTourCardProps) {
   const { t } = useLanguage()
   const semNs = semester
   const isS2 = semester === "s2"

@@ -43,6 +43,7 @@ import { getMaintenanceMode, setMaintenanceMode, getInitialValueType, setInitial
 import { fetchAllAdminData } from "@/app/actions/admin-data"
 import { clearTourCache } from "@/app/actions/revalidate"
 import { gsap } from "gsap"
+import { S1_FUTURE_LABEL, S2_CURRENT_LABEL } from "@/lib/semester-config"
 
 const FIRST_SEM_MAIN_CELL_KEY = "s1:alta:adulto"
 const SECOND_SEM_MAIN_CELL_KEY = "s2:alta:adulto"
@@ -97,15 +98,15 @@ export default function AdminPage() {
   const [isUpdatingMaintenance, setIsUpdatingMaintenance] = useState(false)
   const [isUpdatingInitialValue, setIsUpdatingInitialValue] = useState(false)
   const [activeTab, setActiveTab] = useState<"pricing" | "tours" | "blog" | "packages" | "attractions" | "tours-2o-semester" | "next-semester">("pricing")
-  const [tours2oSemester, setTours2oSemester] = useState<Tour[]>([])
-  const [isLoadingTours2o, setIsLoadingTours2o] = useState(false)
-  const [searchQuery2o, setSearchQuery2o] = useState("")
+  const [toursS1Future, setToursS1Future] = useState<Tour[]>([])
+  const [isLoadingToursS1, setIsLoadingToursS1] = useState(false)
+  const [searchQueryS1, setSearchQueryS1] = useState("")
   const [activeCategory, setActiveCategory] = useState<Tour["category"] | "all">("all")
   const [activeAttractionCategory, setActiveAttractionCategory] = useState<Attraction["category"]>("gastronomy")
   const [lastSyncDate, setLastSyncDate] = useState<string | null>(null)
   const [syncRuns, setSyncRuns] = useState<Array<{ id: string; semester: string; status: string; started_at: string; rows_loaded: number; tours_updated: number }>>([])
   const [pricingSearch, setPricingSearch] = useState("")
-  const [pricingSemester, setPricingSemester] = useState<"s1" | "s2">("s1")
+  const [pricingSemester, setPricingSemester] = useState<"s1" | "s2">("s2")
 
   useEffect(() => {
     if (!isLoading) {
@@ -157,28 +158,26 @@ export default function AdminPage() {
   }, [user])
 
   useEffect(() => {
-    const shouldLoadS2 =
-      activeTab === "tours-2o-semester" ||
-      (activeTab === "pricing" && pricingSemester === "s2")
+    const shouldLoadS1 = activeTab === "pricing" && pricingSemester === "s1"
 
-    if (shouldLoadS2 && tours2oSemester.length === 0) {
-      const fetchTours2o = async () => {
-        setIsLoadingTours2o(true)
+    if (shouldLoadS1 && toursS1Future.length === 0) {
+      const fetchToursS1 = async () => {
+        setIsLoadingToursS1(true)
         try {
-          const res = await fetch("/api/tours?semester=2")
+          const res = await fetch("/api/tours?semester=1")
           if (res.ok) {
             const data = await res.json()
-            setTours2oSemester(data)
+            setToursS1Future(data)
           }
         } catch (e) {
           console.error(e)
         } finally {
-          setIsLoadingTours2o(false)
+          setIsLoadingToursS1(false)
         }
       }
-      fetchTours2o()
+      fetchToursS1()
     }
-  }, [activeTab, pricingSemester, tours2oSemester.length, user])
+  }, [activeTab, pricingSemester, toursS1Future.length, user])
 
   const loadData = async () => {
     setIsRefreshing(true)
@@ -190,16 +189,15 @@ export default function AdminPage() {
       setAttractions(Array.isArray(attractionsData) ? attractionsData : [])
       setBlogPosts(Array.isArray(blogData) ? blogData : [])
 
-      const shouldLoadS2 =
-        activeTab === "tours-2o-semester" ||
-        (activeTab === "pricing" && pricingSemester === "s2") ||
-        tours2oSemester.length > 0
+      const shouldLoadS1 =
+        (activeTab === "pricing" && pricingSemester === "s1") ||
+        toursS1Future.length > 0
 
-      if (shouldLoadS2) {
-        const res = await fetch("/api/tours?semester=2")
+      if (shouldLoadS1) {
+        const res = await fetch("/api/tours?semester=1")
         if (res.ok) {
           const data = await res.json()
-          setTours2oSemester(data)
+          setToursS1Future(data)
         }
       }
       
@@ -247,7 +245,7 @@ export default function AdminPage() {
     const result = await updateTour(updatedTour)
     if (result.success) {
       setTours((prev) => prev.map((tour) => (tour.id === updatedTour.id ? updatedTour : tour)))
-      setTours2oSemester((prev) => prev.map((tour) => (tour.id === updatedTour.id ? updatedTour : tour)))
+      setToursS1Future((prev) => prev.map((tour) => (tour.id === updatedTour.id ? updatedTour : tour)))
       clearTourCache(updatedTour.slug).catch(console.error)
       toast({
         title: "Sucesso",
@@ -573,7 +571,7 @@ export default function AdminPage() {
   ]
 
   const filteredAttractions = attractions.filter((attraction) => attraction.category === activeAttractionCategory)
-  const pricingRows = pricingSemester === "s1" ? tours : tours2oSemester
+  const pricingRows = pricingSemester === "s2" ? tours : toursS1Future
   const pricingRowsFiltered = pricingRows.filter((tour) =>
     tour.title.toLowerCase().includes(pricingSearch.toLowerCase())
   )
@@ -819,7 +817,7 @@ export default function AdminPage() {
               className="rounded-lg font-medium data-[state=active]:bg-green-600 data-[state=active]:text-white transition-all hover:scale-105"
               asChild
             >
-              <Link href="/admin/valor-futuro">Editar 2º Semestre</Link>
+              <Link href="/admin/valor-futuro">{S1_FUTURE_LABEL}</Link>
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -837,8 +835,8 @@ export default function AdminPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="s1">S1 (vigente)</SelectItem>
-                      <SelectItem value="s2">S2 (proximo semestre)</SelectItem>
+                      <SelectItem value="s2">{S2_CURRENT_LABEL}</SelectItem>
+                      <SelectItem value="s1">{S1_FUTURE_LABEL}</SelectItem>
                     </SelectContent>
                   </Select>
                 </CardContent>
@@ -902,10 +900,9 @@ export default function AdminPage() {
                     <tbody className="divide-y divide-gray-100 text-sm">
                       {pricingRowsFiltered.map((tour) => {
                         const isS2 = pricingSemester === "s2"
-                        const tourS1 = tours.find((t) => t.id === tour.id) ?? tour
-                        const display = getDisplayPrice(tourS1, "main_activity", isS2)
+                        const display = getDisplayPrice(tour, "main_activity", isS2)
                         const calculated = getDisplayPrice(
-                          { ...tourS1, manual_price: null, manual_price_2o_semester: null, price_2o_semester: null, price: 0 } as any,
+                          { ...tour, manual_price: null, manual_price_2o_semester: null, price_2o_semester: null, price: 0 } as any,
                           "main_activity",
                           isS2
                         )
@@ -944,7 +941,7 @@ export default function AdminPage() {
                                   const success = await handleUpdateTour(updated)
                                   if (success) {
                                     setTours((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
-                                    setTours2oSemester((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
+                                    setToursS1Future((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
                                   }
                                 }}
                               >
@@ -986,7 +983,7 @@ export default function AdminPage() {
                                     const success = await handleUpdateTour(updated)
                                     if (success) {
                                       setTours((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
-                                      setTours2oSemester((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
+                                      setToursS1Future((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
                                     }
                                   }
                                 }}
@@ -1013,7 +1010,7 @@ export default function AdminPage() {
                                   const success = await handleUpdateTour(updated)
                                   if (success) {
                                     setTours((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
-                                    setTours2oSemester((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
+                                    setToursS1Future((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
                                   }
                                 }}
                               >
@@ -1055,7 +1052,7 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTours.map((tour, index) => (
                 <div key={tour.id} className="admin-card-gsap" style={{ animationDelay: `${index * 100}ms` }}>
-                  <AdminTourCard tour={tour} onUpdate={handleUpdateTour} onDelete={handleDeleteTour} />
+                  <AdminTourCard tour={tour} onUpdate={handleUpdateTour} onDelete={handleDeleteTour} semester="s2" />
                 </div>
               ))}
             </div>
@@ -1079,9 +1076,9 @@ export default function AdminPage() {
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Preços Manuais - 2º Semestre</h3>
+                <h3 className="text-lg font-bold text-gray-900">Preços manuais — {S2_CURRENT_LABEL}</h3>
                 <p className="text-sm text-gray-500">
-                  Defina valores manuais para o 2º Semestre (vigência após julho). Deixe em branco para usar as tarifas automáticas do BTMS.
+                  Valores exibidos hoje no site (2º semestre BTMS). Deixe em branco para usar tarifas automáticas.
                 </p>
               </div>
               <div className="relative w-full sm:w-64">
@@ -1089,17 +1086,17 @@ export default function AdminPage() {
                 <Input
                   type="text"
                   placeholder="Buscar passeio..."
-                  value={searchQuery2o}
-                  onChange={(e) => setSearchQuery2o(e.target.value)}
+                  value={searchQueryS1}
+                  onChange={(e) => setSearchQueryS1(e.target.value)}
                   className="pl-10 rounded-full bg-white border-gray-200 focus:border-green-500 focus:ring-green-500"
                 />
               </div>
             </div>
 
-            {isLoadingTours2o ? (
+            {isRefreshing ? (
               <div className="text-center py-12 text-gray-500 flex items-center justify-center gap-2">
                 <RefreshCw className="w-4 h-4 animate-spin text-green-600" />
-                Carregando passeios e tarifas do 2º Semestre...
+                Carregando passeios...
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -1107,20 +1104,17 @@ export default function AdminPage() {
                   <thead>
                     <tr className="border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase">
                       <th className="py-3 px-4">Passeio</th>
-                      <th className="py-3 px-4">Preço Atual (1º Sem)</th>
-                      <th className="py-3 px-4">Calculado 2º Sem (BTMS)</th>
-                      <th className="py-3 px-4 w-72">Valor do Card/Página (BTMS 2º Sem)</th>
-                      <th className="py-3 px-4 w-48">Preço Manual 2º Sem</th>
+                      <th className="py-3 px-4">Calculado BTMS (S2)</th>
+                      <th className="py-3 px-4 w-72">Valor do Card/Página (BTMS S2)</th>
+                      <th className="py-3 px-4 w-48">Preço Manual S2</th>
                       <th className="py-3 px-4 text-right font-medium">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-sm">
-                    {tours2oSemester
-                      .filter((tour) => tour.title.toLowerCase().includes(searchQuery2o.toLowerCase()))
+                    {tours
+                      .filter((tour) => tour.title.toLowerCase().includes(searchQueryS1.toLowerCase()))
                       .map((tour) => {
                         const calculated2o = getDisplayPrice({ ...tour, price_2o_semester: null }, 'main_activity', true)
-                        const tour1o = tours.find((t) => t.id === tour.id)
-                        const currentPrice = tour1o ? getDisplayPrice(tour1o, 'main_activity', false) : 0
                         const secondSemOverride = getVisiblePriceOverride(tour.visible_prices, SECOND_SEM_MAIN_CELL_KEY)
                         const secondSemSelectValue = secondSemOverride ?? "__auto__"
                         const allPriceRows = Array.isArray(tour.prices?.rows) ? tour.prices.rows : []
@@ -1143,16 +1137,6 @@ export default function AdminPage() {
                                 <span className="font-semibold text-gray-900">{tour.title}</span>
                               </div>
                             </td>
-                            <td className="py-3 px-4 text-gray-500 font-medium">
-                              {currentPrice > 0
-                                ? currentPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-                                : "—"}
-                              {tour.manual_price != null && tour.manual_price > 0 && (
-                                <span className="ml-1.5 text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded">
-                                  Manual
-                                </span>
-                              )}
-                            </td>
                             <td className="py-3 px-4 text-green-700 font-medium">
                               {calculated2o > 0
                                 ? calculated2o.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -1170,7 +1154,6 @@ export default function AdminPage() {
                                   const updated = { ...tour, visible_prices: nextVisiblePrices }
                                   const success = await handleUpdateTour(updated)
                                   if (success) {
-                                    setTours2oSemester((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
                                     setTours((prev) => prev.map((item) => (item.id === tour.id ? updated : item)))
                                   }
                                 }}
@@ -1213,7 +1196,7 @@ export default function AdminPage() {
                                       const updated = { ...tour, manual_price_2o_semester: parsed }
                                       const success = await handleUpdateTour(updated)
                                       if (success) {
-                                        setTours2oSemester(prev => prev.map(t => t.id === tour.id ? updated : t))
+                                        setTours(prev => prev.map(t => t.id === tour.id ? updated : t))
                                       }
                                     }
                                   }}
@@ -1238,7 +1221,6 @@ export default function AdminPage() {
                                     }
                                     const success = await handleUpdateTour(updated)
                                     if (success) {
-                                      setTours2oSemester(prev => prev.map(t => t.id === tour.id ? updated : t))
                                       setTours(prev => prev.map(t => t.id === tour.id ? updated : t))
                                     }
                                   }}
@@ -1251,9 +1233,9 @@ export default function AdminPage() {
                           </tr>
                         )
                       })}
-                    {tours2oSemester.filter((tour) => tour.title.toLowerCase().includes(searchQuery2o.toLowerCase())).length === 0 && (
+                    {tours.filter((tour) => tour.title.toLowerCase().includes(searchQueryS1.toLowerCase())).length === 0 && (
                       <tr>
-                        <td colSpan={6} className="text-center py-8 text-gray-400">
+                        <td colSpan={5} className="text-center py-8 text-gray-400">
                           Nenhum passeio encontrado
                         </td>
                       </tr>
