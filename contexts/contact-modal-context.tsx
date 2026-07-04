@@ -19,11 +19,15 @@ export function ContactModalProvider({ children }: { children: React.ReactNode }
   const [attraction, setAttraction] = useState<string | null>(null);
   const pathname = usePathname();
 
-  // Never open the modal when already on the contact page
-  const isContactPage = pathname === "/contato";
+  // Páginas onde o modal automático de captação nunca deve aparecer
+  // (a página de contato já tem o formulário; a landing /pacotes-promo é auto-contida)
+  const modalSuppressedRoutes = ["/contato", "/pacotes-promo"];
+  const isModalSuppressed = modalSuppressedRoutes.some(
+    (route) => pathname === route || pathname?.startsWith(`${route}/`),
+  );
 
   useEffect(() => {
-    if (isContactPage) return;
+    if (isModalSuppressed) return;
 
     // Verifica se o modal automático já foi mostrado nesta sessão
     const autoModalShown = sessionStorage.getItem("autoModalShown")
@@ -35,18 +39,18 @@ export function ContactModalProvider({ children }: { children: React.ReactNode }
     }, 4000)
 
     return () => clearTimeout(timer)
-  }, [isContactPage])
+  }, [isModalSuppressed])
 
-  // Close the modal whenever the user navigates to /contato
+  // Fecha o modal ao navegar para uma rota onde ele é suprimido
   useEffect(() => {
-    if (isContactPage) {
+    if (isModalSuppressed) {
       setIsOpen(false)
       setAttraction(null)
     }
-  }, [isContactPage])
+  }, [isModalSuppressed])
 
   const openModal = (attraction?: string) => {
-    if (isContactPage) return; // suppress on contact page
+    if (isModalSuppressed) return; // suppress on pages that opt out
     if (attraction) setAttraction(attraction)
     setIsOpen(true)
   }
