@@ -5,13 +5,16 @@ export function Hero() {
   return (
     <section id="top" className="relative isolate overflow-hidden">
       <div className="absolute inset-0 -z-10">
-        <img
-          src="/pacotes-promo/hero-bonito.jpg"
-          alt="Bonito, MS — rio de águas cristalinas"
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="/pacotes-promo/hero-bonito.jpg"
           className="h-full w-full object-cover"
-          width={1920}
-          height={1280}
-        />
+        >
+          <source src="/file.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 promo-hero-gradient" />
       </div>
 
