@@ -1,0 +1,62 @@
+/* Tokens do clone (oklch convertido para HSL) escopados na landing.
+   Herdam para toda a subárvore de .promo-scope — não vazam pro resto do site. */
+.promo-scope {
+  --background: 77.8 63.7% 98.9%;
+  --foreground: 140.4 32.5% 6%;
+  --card: 0 0% 100%;
+  --card-foreground: 140.4 32.5% 6%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 140.4 32.5% 6%;
+  --primary: 150.5 100% 35.7%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 137.1 34.5% 94%;
+  --secondary-foreground: 140.8 27.4% 11.7%;
+  --muted: 128.8 20.5% 95.1%;
+  --muted-foreground: 137.9 6.3% 37.9%;
+  --accent: 137.9 55.7% 90%;
+  --accent-foreground: 145.7 62.4% 9.8%;
+  --border: 137 12.5% 89.1%;
+  --input: 137 12.5% 89.1%;
+  --ring: 150.5 100% 35.7%;
+  --radius: 1rem;
+
+  font-family: var(--promo-font-sans), ui-sans-serif, system-ui, sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+
+.promo-scope h1,
+.promo-scope h2,
+.promo-scope h3,
+.promo-scope h4 {
+  font-family: var(--promo-font-display), var(--promo-font-sans), ui-sans-serif, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* --- Camada 2: tokens fora do tailwind.config do site --- */
+
+.promo-shadow-soft { box-shadow: 0 4px 20px -6px oklch(0.55 0.15 155 / 0.15); }
+.promo-shadow-card { box-shadow: 0 12px 40px -12px oklch(0.35 0.1 155 / 0.18); }
+.promo-shadow-premium { box-shadow: 0 30px 60px -20px oklch(0.35 0.15 155 / 0.35); }
+.hover\:promo-shadow-card:hover { box-shadow: 0 12px 40px -12px oklch(0.35 0.1 155 / 0.18); }
+
+.promo-bg-primary-dark { background-color: hsl(146.5 100% 18.9%); }
+.hover\:promo-bg-primary-dark:hover { background-color: hsl(146.5 100% 18.9%); }
+.promo-text-primary-dark { color: hsl(146.5 100% 18.9%); }
+
+.promo-hero-gradient {
+  background: linear-gradient(
+    180deg,
+    oklch(0.15 0.05 155 / 0.15) 0%,
+    oklch(0.15 0.05 155 / 0.55) 60%,
+    oklch(0.12 0.05 155 / 0.85) 100%
+  );
+}
+
+.promo-text-balance { text-wrap: balance; }
+
+.promo-bg-whatsapp { background-color: hsl(133.6 49% 51.9%); }
+.promo-bg-whatsapp-40 { background-color: hsl(133.6 49% 51.9% / 0.4); }
+
+.promo-bg-brand-dark { background-color: hsl(141.8 56.2% 5.4%); }
+.promo-bg-brand-dark-95 { background-color: hsl(141.8 56.2% 5.4% / 0.95); }
