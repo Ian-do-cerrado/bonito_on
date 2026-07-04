@@ -19,7 +19,7 @@ export function PackageCard({ pkg }: { pkg: Pkg }) {
     >
       <PackageCarousel images={pkg.images} />
 
-      <div className="flex flex-1 flex-col p-6 lg:p-8">
+      <div className={`flex flex-1 flex-col p-6 lg:p-8${pkg.days === 2 ? " justify-center" : ""}`}>
         {pkg.featured && (
           <span className="absolute right-6 top-6 z-10 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground promo-shadow-soft">
             <Star className="h-3 w-3 fill-current" /> Mais escolhido

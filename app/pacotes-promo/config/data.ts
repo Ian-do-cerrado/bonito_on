@@ -63,7 +63,6 @@ export const packages: Pkg[] = [
     desc: "Ideal para quem possui pouco tempo e deseja conhecer os principais atrativos de Bonito.",
     tours: ["Flutuação Rio da Prata", "Estância Mimosa", "Gruta do Mimoso"],
     includes: ["Equipamentos", "Guias credenciados", "Almoço na Estância Mimosa"],
-    excludes: ["Transporte", "Hospedagem", "Bebidas"],
     images: [
       { src: "/pacotes-promo/pkg2-1.webp", alt: "Gruta do Mimoso" },
       { src: "/pacotes-promo/pkg2-2.webp", alt: "Mergulho na Gruta do Mimoso" },

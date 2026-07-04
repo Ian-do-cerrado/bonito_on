@@ -1,4 +1,5 @@
-import { MapPin, Check, ArrowRight } from "lucide-react";
+import { MapPin, Check } from "lucide-react";
+import { WhatsAppIcon } from "./whatsapp-icon";
 
 /* ---------- HERO ---------- */
 export function Hero() {
@@ -48,10 +49,10 @@ export function Hero() {
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
             <a
               href="#pacotes"
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-semibold text-primary-foreground promo-shadow-premium transition-all hover:promo-bg-primary-dark hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-semibold text-primary-foreground promo-shadow-premium transition-all hover:promo-bg-primary-dark hover:-translate-y-0.5"
             >
+              <WhatsAppIcon className="h-5 w-5" />
               Quero montar meu roteiro
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#pacotes"
