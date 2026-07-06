@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="border-t border-white/10 promo-bg-brand-dark py-16 text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-4 lg:px-8">
         <div className="md:col-span-2">
-          <img src="/pacotes-promo/logo.svg" alt="Bonito ON" className="h-12 w-auto" />
+          <img src="/pacotes-promo/logo-bonito-on.png" alt="Bonito ON" className="h-8 w-auto sm:h-9" />
           <p className="mt-4 max-w-sm text-sm text-white/70">
             Especialistas em roteiros para Bonito/MS. Pacotes prontos, atendimento humano e as
             melhores atrações do destino.

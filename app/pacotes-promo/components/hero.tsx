@@ -30,7 +30,7 @@ export function Hero() {
           </h1>
 
           <p className="mt-6 max-w-2xl promo-text-balance text-base leading-relaxed text-white/85 sm:text-lg">
-            Escolha entre roteiros de 2, 3 ou 4 dias e viva experiências inesquecíveis com
+            Escolha entre roteiros de 2 a 5 dias e viva experiências inesquecíveis com
             flutuações, cachoeiras, grutas e aventura em um dos destinos mais incríveis do
             Brasil.
           </p>

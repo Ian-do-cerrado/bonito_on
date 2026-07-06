@@ -3,10 +3,10 @@ import { whatsappUrl } from "../config/data";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 promo-bg-brand-dark-95 text-white backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 promo-bg-brand-dark-95 text-white backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a href="#top" className="flex items-center gap-2">
-          <img src="/pacotes-promo/logo.svg" alt="Bonito ON" className="h-10 w-auto sm:h-12" />
+          <img src="/pacotes-promo/logo-bonito-on.png" alt="Bonito ON" className="h-6 w-auto sm:h-7" />
         </a>
         <a
           href={whatsappUrl}

@@ -6,7 +6,7 @@ export function FinalCTA() {
     <section className="relative isolate overflow-hidden py-24 sm:py-32">
       <div className="absolute inset-0 -z-10">
         <img
-          src="/pacotes-promo/estrela-formoso.jpg"
+          src="/pacotes-promo/estrela-do-formoso-2.jpeg"
           alt=""
           className="h-full w-full object-cover"
           loading="lazy"

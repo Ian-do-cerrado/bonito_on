@@ -1,4 +1,4 @@
-import { Waves, Check, X, Star } from "lucide-react";
+import { Waves, Check, X, Star, ImageOff } from "lucide-react";
 import { WhatsAppIcon } from "./whatsapp-icon";
 import { PackageCarousel } from "./package-carousel";
 import { WHATSAPP_NUMBER, type Pkg } from "../config/data";
@@ -11,15 +11,22 @@ export function PackageCard({ pkg }: { pkg: Pkg }) {
   return (
     <article
       className={[
-        "relative flex flex-col overflow-hidden rounded-3xl border bg-card transition-all",
+        "relative flex h-full flex-col overflow-hidden rounded-3xl border bg-card transition-all",
         pkg.featured
-          ? "border-primary/50 promo-shadow-premium lg:-translate-y-4 lg:scale-[1.02]"
-          : "border-border/70 promo-shadow-soft hover:-translate-y-1 hover:promo-shadow-card",
+          ? "border-primary/50 promo-shadow-premium"
+          : "border-border/70 promo-shadow-soft hover:promo-shadow-card",
       ].join(" ")}
     >
-      <PackageCarousel images={pkg.images} />
+      {pkg.images.length > 0 ? (
+        <PackageCarousel images={pkg.images} />
+      ) : (
+        <div className="flex aspect-square w-full flex-col items-center justify-center gap-2 bg-secondary/60 text-muted-foreground">
+          <ImageOff className="h-6 w-6" />
+          <span className="text-xs font-medium">Fotos em breve</span>
+        </div>
+      )}
 
-      <div className={`flex flex-1 flex-col p-6 lg:p-8${pkg.days === 2 ? " justify-center" : ""}`}>
+      <div className="flex flex-1 flex-col p-6 lg:p-8">
         {pkg.featured && (
           <span className="absolute right-6 top-6 z-10 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground promo-shadow-soft">
             <Star className="h-3 w-3 fill-current" /> Mais escolhido
@@ -34,7 +41,7 @@ export function PackageCard({ pkg }: { pkg: Pkg }) {
       <h3 className="mt-3 text-xl font-bold leading-snug">{pkg.title}</h3>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{pkg.desc}</p>
 
-      <div className="mt-6 space-y-4 border-t border-border/60 pt-6 text-sm">
+      <div className="mt-6 flex-1 space-y-4 border-t border-border/60 pt-6 text-sm">
         <div>
           <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground/70">
             Passeios
@@ -84,12 +91,7 @@ export function PackageCard({ pkg }: { pkg: Pkg }) {
         href={`https://wa.me/${WHATSAPP_NUMBER}?text=${buildMsg()}`}
         target="_blank"
         rel="noopener noreferrer"
-        className={[
-          "mt-8 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition-all",
-          pkg.featured
-            ? "bg-primary text-primary-foreground promo-shadow-soft hover:promo-bg-primary-dark"
-            : "border border-primary/40 bg-background text-primary hover:bg-primary hover:text-primary-foreground",
-        ].join(" ")}
+        className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground promo-shadow-soft transition-all hover:promo-bg-primary-dark"
       >
         <WhatsAppIcon className="h-4 w-4" />
         Quero esse pacote

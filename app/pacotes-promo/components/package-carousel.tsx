@@ -8,7 +8,11 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 
-export function PackageCarousel({ images }: { images: { src: string; alt: string }[] }) {
+export function PackageCarousel({
+  images,
+}: {
+  images: { src: string; alt: string; tour: string }[];
+}) {
   return (
     <Carousel opts={{ loop: true }} className="group relative">
       <CarouselContent>
@@ -21,6 +25,9 @@ export function PackageCarousel({ images }: { images: { src: string; alt: string
                 loading="lazy"
                 className="h-full w-full object-cover"
               />
+              <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-black/60 to-transparent px-3 py-1.5 text-[11px] font-medium text-white/90">
+                {img.tour}
+              </span>
             </div>
           </CarouselItem>
         ))}

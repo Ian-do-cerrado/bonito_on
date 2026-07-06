@@ -1,4 +1,4 @@
-import { comparisonRows } from "../config/data";
+import { comparisonRows, packages } from "../config/data";
 
 /* ---------- COMPARISON ---------- */
 export function Comparison() {
@@ -16,23 +16,26 @@ export function Comparison() {
 
         <div className="mt-12 overflow-hidden rounded-3xl border border-border/70 bg-card promo-shadow-soft">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-sm">
+            <table className="w-full min-w-[900px] text-sm">
               <thead>
                 <tr className="bg-secondary/60 text-left">
                   <th className="px-6 py-5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Recurso
                   </th>
-                  {["2 dias", "3 dias", "4 dias"].map((d, i) => (
+                  {packages.map((p) => (
                     <th
-                      key={d}
+                      key={p.id}
                       className={[
                         "px-6 py-5 text-center text-sm font-bold",
-                        i === 1 ? "bg-primary/10 text-primary" : "text-foreground",
+                        p.featured ? "bg-primary/10 text-primary" : "text-foreground",
                       ].join(" ")}
                     >
-                      {d}
-                      {i === 1 && (
-                        <span className="ml-2 inline-block rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">
+                      {p.days} dias
+                      <span className="mt-1 block text-xs font-medium normal-case text-muted-foreground">
+                        {p.shortLabel}
+                      </span>
+                      {p.featured && (
+                        <span className="mt-1 inline-block rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">
                           Popular
                         </span>
                       )}
@@ -52,7 +55,7 @@ export function Comparison() {
                         key={i}
                         className={[
                           "px-6 py-4 text-center",
-                          i === 1 ? "bg-primary/5 font-semibold promo-text-primary-dark" : "",
+                          packages[i]?.featured ? "bg-primary/5 font-semibold promo-text-primary-dark" : "",
                         ].join(" ")}
                       >
                         {v}

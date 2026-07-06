@@ -4,7 +4,6 @@ import { Sora, Inter } from "next/font/google";
 import "./promo.css";
 import { Header } from "./components/header";
 import { Hero } from "./components/hero";
-import { WhyUs } from "./components/why-us";
 import { Packages } from "./components/packages";
 import { Comparison } from "./components/comparison";
 import { HowItWorks } from "./components/how-it-works";
@@ -23,9 +22,8 @@ export default function PacotesPromoPage() {
   return (
     <div className={`promo-scope min-h-screen ${sora.variable} ${inter.variable}`}>
       <Header />
-      <main>
+      <main className="pt-20">
         <Hero />
-        <WhyUs />
         <Packages />
         <Comparison />
         <HowItWorks />
