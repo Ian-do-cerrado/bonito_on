@@ -27,7 +27,7 @@ export function PackagesCarousel({ packages }: { packages: Pkg[] }) {
 
   return (
     <div className="mt-16">
-      <Carousel setApi={setApi} opts={{ align: "start" }} className="w-full">
+      <Carousel setApi={setApi} opts={{ align: "center", loop: true }} className="w-full">
         <CarouselContent className="-ml-6">
           {packages.map((p) => (
             <CarouselItem key={p.id} className="basis-[88%] pl-6 sm:basis-1/2 lg:basis-1/3">
