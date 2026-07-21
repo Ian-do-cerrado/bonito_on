@@ -12,7 +12,7 @@ export const TOUR_CHILD_AGE_BY_SLUG: Record<string, ChildAgeAges> = {
   "abismo-anhumas": { childMin: 5, childMax: 12 },
   "aquario-natural": { childMin: 8, childMax: 12 },
   "balneario-cachoeiras-serra-da-bodoquena-com-almoco": { childMin: 6, childMax: null },
-  "balneario-do-sol": { childMin: 5, childMax: 12 },
+  "balneario-do-sol": { childMin: 11, childMax: 13 },
   "balneario-ecopark-porto-da-ilha": { childMin: 5, childMax: 11 },
   "balneario-estrela-do-formoso": { childMin: 7, childMax: 12 },
   "balneario-jardim-ecopark": { childMin: 6, childMax: 12 },

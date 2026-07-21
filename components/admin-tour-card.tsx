@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RichTextEditor } from "@/components/rich-text-editor"
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Edit, Trash2, Save, X, Languages, Loader2, Link2, Link2Off, DollarSign, BarChart3 } from "lucide-react"
+import { Edit, Trash2, Save, X, Languages, Loader2, Link2, Link2Off, DollarSign, BarChart3, Users } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
@@ -25,6 +25,7 @@ import { toDbImagePath } from "@/lib/tour-image-storage"
 import { isExtraRowEntry } from "@/lib/price-table-extra-rows"
 import { parseSpecialEntry, inferSpecialSeason, buildSpecialKey, type SpecialSeason } from "@/lib/special-tariffs"
 import { buildManualOverride, parseManualOverride, isManualOverride } from "@/lib/price-overrides"
+import { resolveChildAges, resolveChildAgeLabel } from "@/lib/resolve-child-age"
 import {
   type AdminSemester,
   getCellOverride,
@@ -742,6 +743,179 @@ export function AdminTourCard({ tour, onUpdate, onDelete, semester = "s2" }: Adm
                   ))}
                 </div>
               </div>
+
+              {/* ── Faixa Etária de Crianças (Idades) ── */}
+              {(() => {
+                const childSemOverride = editedTour.price_display_overrides?.[semNs]
+                  ?? (semNs === "s2" ? editedTour.price_display_overrides?.s1 : undefined)
+
+                const currentChildMin = childSemOverride?.ages?.childMin
+                const currentChildMax = childSemOverride?.ages?.childMax
+                const currentChildLabel = childSemOverride?.labels?.crianca
+
+                const defaultChildAges = resolveChildAges(editedTour.slug, null, semNs)
+                const previewChildLabel = resolveChildAgeLabel(
+                  editedTour.slug,
+                  childSemOverride,
+                  editedTour.price_display_overrides,
+                  semNs
+                )
+
+                const updateChildAgeOverride = (
+                  field: "childMin" | "childMax" | "criancaLabel",
+                  val: string
+                ) => {
+                  setEditedTour((prev) => {
+                    const currentAll = prev.price_display_overrides ?? {}
+                    const currentSem = currentAll[semNs] ?? {}
+                    const currentAges = currentSem.ages ?? {}
+                    const currentLabels = currentSem.labels ?? {}
+
+                    let nextAges = { ...currentAges }
+                    let nextLabels = { ...currentLabels }
+
+                    if (field === "childMin") {
+                      if (val === "" || val === null || val === undefined) {
+                        delete nextAges.childMin
+                      } else {
+                        nextAges.childMin = Number(val)
+                      }
+                    } else if (field === "childMax") {
+                      if (val === "" || val === null || val === undefined) {
+                        delete nextAges.childMax
+                      } else {
+                        nextAges.childMax = Number(val)
+                      }
+                    } else if (field === "criancaLabel") {
+                      if (!val.trim()) {
+                        delete nextLabels.crianca
+                      } else {
+                        nextLabels.crianca = val.trim()
+                      }
+                    }
+
+                    const nextSem = {
+                      ...currentSem,
+                      ages: Object.keys(nextAges).length > 0 ? nextAges : undefined,
+                      labels: Object.keys(nextLabels).length > 0 ? nextLabels : undefined,
+                    }
+
+                    const nextAll = {
+                      ...currentAll,
+                      [semNs]: nextSem,
+                    }
+
+                    if (semNs === "s1" && !currentAll.s2) {
+                      nextAll.s2 = { ...nextSem }
+                    }
+
+                    return {
+                      ...prev,
+                      price_display_overrides: nextAll,
+                    }
+                  })
+                }
+
+                const resetChildAgeOverride = () => {
+                  setEditedTour((prev) => {
+                    const currentAll = prev.price_display_overrides ?? {}
+                    const currentSem = currentAll[semNs] ?? {}
+
+                    let nextSem = { ...currentSem }
+                    delete nextSem.ages
+                    if (nextSem.labels) {
+                      const nextLabels = { ...nextSem.labels }
+                      delete nextLabels.crianca
+                      nextSem.labels = Object.keys(nextLabels).length > 0 ? nextLabels : undefined
+                    }
+
+                    const nextAll = {
+                      ...currentAll,
+                      [semNs]: nextSem,
+                    }
+
+                    return {
+                      ...prev,
+                      price_display_overrides: nextAll,
+                    }
+                  })
+                }
+
+                const hasOverride = currentChildMin != null || currentChildMax != null || !!currentChildLabel
+
+                return (
+                  <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-3 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-blue-600" />
+                        <Label className="text-blue-700 font-semibold text-sm">
+                          Faixa Etária de Crianças (Idades)
+                        </Label>
+                      </div>
+                      {hasOverride && (
+                        <button
+                          type="button"
+                          onClick={resetChildAgeOverride}
+                          className="text-[10px] text-blue-500 hover:text-red-500 underline underline-offset-2"
+                        >
+                          Resetar Padrão
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-blue-600 leading-relaxed">
+                      Ajuste a faixa de idades cobradas para crianças neste passeio (ex: de 11 a 13 anos).
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor={`childMin-${tour.id}`} className="text-xs text-gray-600">
+                          Idade Mínima (anos)
+                        </Label>
+                        <Input
+                          id={`childMin-${tour.id}`}
+                          type="number"
+                          min={0}
+                          max={18}
+                          placeholder={`Padrão: ${defaultChildAges.childMin ?? 5}`}
+                          value={currentChildMin ?? ""}
+                          onChange={(e) => updateChildAgeOverride("childMin", e.target.value)}
+                          className="bg-white border-blue-200 text-sm h-8"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor={`childMax-${tour.id}`} className="text-xs text-gray-600">
+                          Idade Máxima (anos)
+                        </Label>
+                        <Input
+                          id={`childMax-${tour.id}`}
+                          type="number"
+                          min={0}
+                          max={18}
+                          placeholder={defaultChildAges.childMax == null ? "Sem máx." : `Padrão: ${defaultChildAges.childMax}`}
+                          value={currentChildMax ?? ""}
+                          onChange={(e) => updateChildAgeOverride("childMax", e.target.value)}
+                          className="bg-white border-blue-200 text-sm h-8"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor={`childLabel-${tour.id}`} className="text-xs text-gray-600">
+                        Rótulo Personalizado da Criança (opcional)
+                      </Label>
+                      <Input
+                        id={`childLabel-${tour.id}`}
+                        type="text"
+                        placeholder={`Ex: ${previewChildLabel}`}
+                        value={currentChildLabel ?? ""}
+                        onChange={(e) => updateChildAgeOverride("criancaLabel", e.target.value)}
+                        className="bg-white border-blue-200 text-sm h-8"
+                      />
+                    </div>
+                    <p className="text-[11px] text-blue-700 font-medium">
+                      Exibição na tabela de preços: <em>{previewChildLabel}</em>
+                    </p>
+                  </div>
+                )
+              })()}
 
               {/* ── Preços Visíveis no Site ──────────────────────── */}
               <div className="space-y-3 pt-2 border-t border-gray-100">

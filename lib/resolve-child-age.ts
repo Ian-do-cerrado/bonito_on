@@ -22,7 +22,7 @@ function pickSemesterOverrides(
   if (!priceDisplayOverrides) return undefined
   if (semester === "s2") {
     const s2 = priceDisplayOverrides.s2
-    if (s2?.ages?.childMin != null) return s2
+    if (s2?.ages?.childMin != null || s2?.labels?.crianca != null) return s2
     return priceDisplayOverrides.s1
   }
   return priceDisplayOverrides.s1
