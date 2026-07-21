@@ -990,7 +990,19 @@ export default function AdminPage() {
                                 className="h-8 text-xs"
                               />
                             </td>
-                            <td className="py-3 px-3 text-right">
+                            <td className="py-3 px-3 text-right flex items-center justify-end gap-1">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 px-2 text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+                                onClick={() => {
+                                  setActiveTab("tours")
+                                  setActiveCategory("all")
+                                }}
+                              >
+                                <Edit className="w-3.5 h-3.5 mr-1" />
+                                Editar Card
+                              </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
