@@ -193,22 +193,55 @@ export function AdminPriceExtraRows({
               PRICE_EXTRA_PLACEMENT_OPTIONS.find((p) => p.id === row.placement)?.label ?? row.placement
             const fieldLabel =
               PRICE_EXTRA_FIELD_OPTIONS.find((f) => f.id === row.field)?.label ?? row.field
+            const isManual = row.manualValue != null
+
             return (
               <li
                 key={row.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2"
+                className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2"
               >
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-800 truncate">{row.label}</p>
-                  <p className="text-[10px] text-gray-400 truncate">
-                    {row.manualValue != null && row.manualValue > 0
+                <div className="min-w-0 flex-1 space-y-1">
+                  <Input
+                    className="h-8 text-xs font-semibold text-gray-800 bg-transparent border-none hover:bg-gray-50 focus:bg-white focus:ring-1 focus:ring-indigo-500 px-2 py-0.5 rounded"
+                    value={row.label}
+                    onChange={(e) => {
+                      const updated = extraRows.map((r) =>
+                        r.id === row.id ? { ...r, label: e.target.value } : r
+                      )
+                      persistRows(updated)
+                    }}
+                  />
+                  <p className="text-[10px] text-gray-400 truncate pl-2">
+                    {isManual
                       ? `${placementLabel} · Valor manual`
                       : `${placementLabel} · ${fieldLabel} · ${row.atividade}`}
                   </p>
                 </div>
-                <span className="text-sm font-semibold text-green-700 tabular-nums shrink-0">
-                  {fmtBRL(val)}
-                </span>
+
+                {isManual ? (
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span className="text-[10px] text-indigo-400 font-medium">R$</span>
+                    <Input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      className="h-8 w-24 text-xs font-bold text-green-700 border-indigo-200 bg-indigo-50/10 focus:bg-white"
+                      value={row.manualValue ?? ""}
+                      onChange={(e) => {
+                        const val = e.target.value === "" ? 0 : parseFloat(e.target.value)
+                        const updated = extraRows.map((r) =>
+                          r.id === row.id ? { ...r, manualValue: val } : r
+                        )
+                        persistRows(updated)
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <span className="text-xs font-bold text-green-700 tabular-nums shrink-0 px-2">
+                    {fmtBRL(val)}
+                  </span>
+                )}
+
                 <Button
                   type="button"
                   size="icon"
