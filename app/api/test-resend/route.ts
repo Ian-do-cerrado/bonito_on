@@ -1,18 +1,17 @@
-import { Resend } from "resend"
 import { type NextRequest, NextResponse } from "next/server"
-import { getResendFromAddress } from "@/lib/resend-email"
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+import { assertResendConfigured, getResendClient, getResendFromAddress } from "@/lib/resend-email"
 
 export async function POST(request: NextRequest) {
   try {
+    assertResendConfigured()
+
     const { to, subject, message } = await request.json()
 
     if (!to || !subject || !message) {
       return NextResponse.json({ error: "Missing required fields: to, subject, message" }, { status: 400 })
     }
 
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResendClient().emails.send({
       from: getResendFromAddress(),
       to: [to],
       subject: subject,

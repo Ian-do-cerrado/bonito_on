@@ -1,12 +1,10 @@
 "use server"
 
-import { Resend } from "resend"
 import {
   assertResendConfigured,
+  getResendClient,
   sendLeadEmail,
 } from "@/lib/resend-email"
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 interface NewsletterData {
   email: string
@@ -16,7 +14,7 @@ export async function subscribeNewsletter(data: NewsletterData) {
   try {
     assertResendConfigured()
 
-    const { id: emailId } = await sendLeadEmail(resend, {
+    const { id: emailId } = await sendLeadEmail(getResendClient(), {
       subject: `📧 Nova Inscrição Newsletter - ${data.email}`,
       html: `
         <!DOCTYPE html>

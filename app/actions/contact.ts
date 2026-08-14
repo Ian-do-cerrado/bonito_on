@@ -1,15 +1,13 @@
 "use server"
 
-import { Resend } from "resend"
 import {
   assertResendConfigured,
   escapeHtml,
   getLeadDestinationEmail,
   getReplyToAddress,
+  getResendClient,
   sendLeadEmail,
 } from "@/lib/resend-email"
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 export interface SubmitContactFormData {
   name: string;
@@ -47,7 +45,7 @@ export async function submitContactForm(data: SubmitContactFormData) {
       timeZone: "America/Campo_Grande",
     })
 
-    const { id: emailId, deliveredTo } = await sendLeadEmail(resend, {
+    const { id: emailId, deliveredTo } = await sendLeadEmail(getResendClient(), {
       reply_to: getReplyToAddress(data.email),
       subject: `🌿 Novo Lead - ${data.name} interessado em Bonito`,
       html: `

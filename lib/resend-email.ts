@@ -1,6 +1,6 @@
 /** Shared Resend configuration for lead/notification emails */
 
-import type { Resend } from "resend"
+import { Resend } from "resend"
 
 /** Fixed destination for all website leads (do not use CONTACT_EMAIL — it may be stale in older builds). */
 export const LEAD_DESTINATION_EMAIL = "atendimento@bonitoon.com.br"
@@ -24,6 +24,16 @@ export function getReplyToAddress(email?: string): string | undefined {
 }
 
 type ResendClient = InstanceType<typeof Resend>
+
+let cachedResendClient: ResendClient | undefined
+
+/** Lazily creates the Resend client so a missing RESEND_API_KEY never breaks `next build` (Resend throws in its constructor when the key is empty). */
+export function getResendClient(): ResendClient {
+  if (!cachedResendClient) {
+    cachedResendClient = new Resend(process.env.RESEND_API_KEY)
+  }
+  return cachedResendClient
+}
 
 export type LeadEmailPayload = {
   subject: string
