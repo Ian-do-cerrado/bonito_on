@@ -43,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scripts de debug/one-off — não versionar (histórico já teve credenciais hardcoded aqui)
+/tmp/
+test_supabase.mjs
